@@ -1,0 +1,2 @@
+rootProject.name='EntregableAndroid'
+include ':app'
