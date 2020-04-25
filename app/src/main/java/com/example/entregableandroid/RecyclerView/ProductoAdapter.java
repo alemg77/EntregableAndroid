@@ -1,4 +1,4 @@
-package com.example.entregableandroid;
+package com.example.entregableandroid.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,14 +9,17 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.entregableandroid.AvisosActivity;
+import com.example.entregableandroid.R;
+
 import java.util.List;
 
 public class ProductoAdapter extends RecyclerView.Adapter {
 
     private List<Producto> listadDeProductos;
-    private AvisosMainActivity listener;
+    private AvisosActivity listener;
 
-    public ProductoAdapter(List<Producto> listadDeProductos, AvisosMainActivity listener) {
+    public ProductoAdapter(List<Producto> listadDeProductos, AvisosActivity listener) {
         this.listadDeProductos = listadDeProductos;
         this.listener = listener;
     }
