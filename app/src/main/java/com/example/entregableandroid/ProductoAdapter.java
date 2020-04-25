@@ -11,42 +11,42 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class SillaAdapter extends RecyclerView.Adapter {
+public class ProductoAdapter extends RecyclerView.Adapter {
 
-    private List<Silla> listaDeSillas;
-    private SillaAdapterListener listener;
+    private List<Producto> listadDeProductos;
+    private AvisosMainActivity listener;
 
-    public SillaAdapter (List<Silla> listaDeSillas, SillaAdapterListener sillaAdapterListener){
-        this.listaDeSillas = listaDeSillas;
-        this.listener = sillaAdapterListener;
+    public ProductoAdapter(List<Producto> listadDeProductos, AvisosMainActivity listener) {
+        this.listadDeProductos = listadDeProductos;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.celda_silla, parent, false);
-        SillaViewHolder viewHolder = new SillaViewHolder(view);
+        View view = layoutInflater.inflate(R.layout.celda_producto, parent, false);
+        ProductoAdapter.ProductoViewHolder viewHolder = new ProductoAdapter.ProductoViewHolder(view);
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        SillaViewHolder sillaViewHolder = (SillaViewHolder)holder;
-        sillaViewHolder.cargarSilla(listaDeSillas.get(position));
+        ProductoAdapter.ProductoViewHolder sillaViewHolder = (ProductoAdapter.ProductoViewHolder)holder;
+        sillaViewHolder.cargarProducto(listadDeProductos.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return listaDeSillas.size();
+        return listadDeProductos.size();
     }
 
-    private class SillaViewHolder extends RecyclerView.ViewHolder {
+    private class ProductoViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
         private TextView textViewNombre;
         private TextView textViewPrecio;
 
-        public SillaViewHolder(@NonNull View itemView) {
+        public ProductoViewHolder(@NonNull View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.celdaSillaImagen);
             textViewNombre = itemView.findViewById(R.id.celdaSillaNombre);
@@ -56,16 +56,16 @@ public class SillaAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View v) {
                     int posicion = getAdapterPosition();
-                    Silla unaSilla = listaDeSillas.get(posicion);
-                    listener.pulsaronElemento(unaSilla);
+                    Producto unProducto = listadDeProductos.get(posicion);
+                    listener.pulsaronElemento(unProducto);
                 }
             });
         }
 
-        public void cargarSilla ( Silla unaSilla){
-            imageView.setImageResource(unaSilla.getImagen());
-            textViewPrecio.setText(unaSilla.getPrecio().toString());
-            textViewNombre.setText(unaSilla.getNombre());
+        public void cargarProducto (Producto unProducto){
+            imageView.setImageResource(unProducto.getImagen());
+            textViewPrecio.setText(unProducto.getPrecio().toString());
+            textViewNombre.setText(unProducto.getNombre());
         }
     }
 }
