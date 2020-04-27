@@ -11,10 +11,10 @@
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginLeft="5dp"
-        android:background="@color/FondoNombreProducto"
+        android:background="@color/RecyclerViewTipoFondoTexto"
         android:gravity="center"
         android:hint="Tipo de producto"
-        android:textColor="@color/nombreProducto"
+        android:textColor="@color/RecyclerViewTipoTexto"
         android:textSize="15dp"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.entregableandroid.AvisosActivity;
@@ -23,6 +24,8 @@ public class ProductoAdapter extends RecyclerView.Adapter {
         this.listadDeProductos = listadDeProductos;
         this.listener = listener;
     }
+
+    CardView mCardView;
 
     @NonNull
     @Override
