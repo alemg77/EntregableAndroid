@@ -1,4 +1,4 @@
-package com.example.entregableandroid.RecyclerView;
+package com.example.entregableandroid.RecyclerViewTipoDeProducto;
 
 import java.io.Serializable;
 import java.util.ArrayList;

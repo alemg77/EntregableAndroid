@@ -1,4 +1,4 @@
-package com.example.entregableandroid.RecyclerView;
+package com.example.entregableandroid.RecyclerViewProducto;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,10 +7,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.entregableandroid.AvisosActivity;
 import com.example.entregableandroid.R;
 
 import java.util.List;
@@ -69,7 +67,7 @@ public class ProductoAdapter extends RecyclerView.Adapter {
 
         public void cargarProducto (Producto unProducto){
             imageView.setImageResource(unProducto.getImagen());
-            textViewPrecio.setText(unProducto.getPrecio().toString());
+            textViewPrecio.setText("$" + unProducto.getPrecio().toString());
             textViewNombre.setText(unProducto.getNombre());
         }
     }

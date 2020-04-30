@@ -12,15 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.entregableandroid.AvisosActivity;
 import com.example.entregableandroid.R;
-import com.example.entregableandroid.RecyclerView.ListaDeProductos;
-import com.example.entregableandroid.RecyclerView.ListaDeTiposDeProductos;
-import com.example.entregableandroid.RecyclerView.ProductoAdapter;
-import com.example.entregableandroid.RecyclerView.TipoDeProducto;
-import com.example.entregableandroid.RecyclerView.TipoDeProductosAdapter;
-
-import java.util.List;
+import com.example.entregableandroid.RecyclerViewTipoDeProducto.ListaDeTiposDeProductos;
+import com.example.entregableandroid.RecyclerViewTipoDeProducto.TipoDeProducto;
+import com.example.entregableandroid.RecyclerViewTipoDeProducto.TipoDeProductosAdapter;
 
 public class FragTipoProducto extends Fragment implements TipoDeProductosAdapter.TipoDeProductoListener{
 

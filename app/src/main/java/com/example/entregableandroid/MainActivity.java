@@ -8,15 +8,17 @@ import android.widget.Toast;
 
 import com.example.entregableandroid.Fragments.FragTipoProducto;
 import com.example.entregableandroid.Fragments.FragmentProducto;
-import com.example.entregableandroid.RecyclerView.ListaDeProductos;
-import com.example.entregableandroid.RecyclerView.ListaDeTiposDeProductos;
-import com.example.entregableandroid.RecyclerView.Producto;
-import com.example.entregableandroid.RecyclerView.TipoDeProducto;
+import com.example.entregableandroid.RecyclerViewProducto.ListaDeProductos;
+import com.example.entregableandroid.RecyclerViewTipoDeProducto.ListaDeTiposDeProductos;
+import com.example.entregableandroid.RecyclerViewProducto.Producto;
+import com.example.entregableandroid.RecyclerViewTipoDeProducto.TipoDeProducto;
 
 import java.io.Serializable;
 
 
 public class MainActivity extends AppCompatActivity implements FragTipoProducto.FragTipoProductoListener, FragmentProducto.FragmentProductoListener {
+
+    // TODO:  EL fragment de seleccion de precio deberia ser un menu desplegable
 
     private void pegarFragment(Fragment fragmentAPegar, int containerViewId, Serializable serializable) {
         Bundle bundle = new Bundle();
@@ -46,6 +48,6 @@ public class MainActivity extends AppCompatActivity implements FragTipoProducto.
 
     @Override
     public void selleccionProducto(Producto producto) {
-        Toast.makeText(this, "Nada por aqui....", Toast.LENGTH_SHORT ).show();
+        Toast.makeText(this, producto.getDescripcion(), Toast.LENGTH_SHORT ).show();
     }
 }
