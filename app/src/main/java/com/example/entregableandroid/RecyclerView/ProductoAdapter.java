@@ -18,14 +18,13 @@ import java.util.List;
 public class ProductoAdapter extends RecyclerView.Adapter {
 
     private List<Producto> listadDeProductos;
-    private AvisosActivity listener;
+    private ProductoAdapterListener listener;
 
-    public ProductoAdapter(List<Producto> listadDeProductos, AvisosActivity listener) {
+
+    public ProductoAdapter(List<Producto> listadDeProductos, ProductoAdapterListener listener) {
         this.listadDeProductos = listadDeProductos;
         this.listener = listener;
     }
-
-    CardView mCardView;
 
     @NonNull
     @Override
@@ -63,7 +62,7 @@ public class ProductoAdapter extends RecyclerView.Adapter {
                 public void onClick(View v) {
                     int posicion = getAdapterPosition();
                     Producto unProducto = listadDeProductos.get(posicion);
-                    listener.pulsaronElemento(unProducto);
+                    listener.seleccionProducto(unProducto);
                 }
             });
         }
@@ -74,4 +73,9 @@ public class ProductoAdapter extends RecyclerView.Adapter {
             textViewNombre.setText(unProducto.getNombre());
         }
     }
+
+    public interface ProductoAdapterListener {
+        void seleccionProducto (Producto producto);
+    }
+
 }

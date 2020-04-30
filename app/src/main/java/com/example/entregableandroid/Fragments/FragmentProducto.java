@@ -13,38 +13,51 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.entregableandroid.AvisosActivity;
+import com.example.entregableandroid.RecyclerView.ListaDeProductos;
+import com.example.entregableandroid.RecyclerView.ListaDeTiposDeProductos;
 import com.example.entregableandroid.RecyclerView.Producto;
 import com.example.entregableandroid.RecyclerView.ProductoAdapter;
 import com.example.entregableandroid.R;
+import com.example.entregableandroid.RecyclerView.TipoDeProductosAdapter;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentProducto extends Fragment {
+public class FragmentProducto extends Fragment implements ProductoAdapter.ProductoAdapterListener {
 
     RecyclerView recyclerViewProducto;
-    List<Producto> listaDeProductos;
-    AvisosActivity listener;
+    FragmentProductoListener listener;
 
-    public FragmentProducto ( List<Producto> listaDeProductos){
-        this.listaDeProductos = listaDeProductos;
-        this.listener = listener;
+    public FragmentProducto (){
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.listener = (AvisosActivity) context;
+        this.listener = (FragmentProductoListener) context;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View inflate = inflater.inflate(R.layout.fragment_frag_tipo_producto, container, false);
         recyclerViewProducto = inflate.findViewById(R.id.FragTipoProductoRecuclerView);
-        ProductoAdapter productoAdapter = new ProductoAdapter(listaDeProductos, listener);
-        LinearLayoutManager dosLayoutManager = new LinearLayoutManager((Context)listener);
+        Bundle bundle = getArguments();
+        ListaDeProductos lista = (ListaDeProductos) bundle.getSerializable(ListaDeProductos.class.toString());
+        ProductoAdapter productoAdapter = new ProductoAdapter(lista.getListaDeProductos() ,this);
+        LinearLayoutManager dosLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewProducto.setLayoutManager(dosLayoutManager);
         recyclerViewProducto.setAdapter(productoAdapter);
         return inflate;
+    }
+
+    @Override
+    public void seleccionProducto(Producto producto) {
+        listener.selleccionProducto(producto);
+    }
+
+    public interface FragmentProductoListener {
+        void selleccionProducto ( Producto producto);
     }
 }
 

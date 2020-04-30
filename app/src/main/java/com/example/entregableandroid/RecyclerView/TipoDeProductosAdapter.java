@@ -1,5 +1,7 @@
 package com.example.entregableandroid.RecyclerView;
 
+
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,32 +10,32 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.entregableandroid.AvisosActivity;
 import com.example.entregableandroid.R;
 
 import java.util.List;
 
-public class TipoDeProductosAdapter extends RecyclerView.Adapter {
-    private List<TipoDeProducto> listaTiposDeProducto;
-    private AvisosActivity listener;
+public class TipoDeProductosAdapter extends RecyclerView.Adapter<TipoDeProductosAdapter.TipoDeProductosViewHolder> {
 
-    public TipoDeProductosAdapter(List<TipoDeProducto> listaTiposDeProducto, AvisosActivity listener) {
+    private List<TipoDeProducto> listaTiposDeProducto;
+    private TipoDeProductoListener listener;
+
+    public TipoDeProductosAdapter(List<TipoDeProducto> listaTiposDeProducto, TipoDeProductoListener listener) {
         this.listaTiposDeProducto = listaTiposDeProducto;
         this.listener = listener;
     }
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TipoDeProductosViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.celda_tipo_producto, parent, false);
-        TipoDeProductosAdapter.TipoDeProductosAdapterViewHolder viewHolder = new TipoDeProductosAdapter.TipoDeProductosAdapterViewHolder(view);
+        TipoDeProductosViewHolder viewHolder = new TipoDeProductosViewHolder(view);
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ((TipoDeProductosAdapterViewHolder) holder).cargarTipoDeProducto(listaTiposDeProducto.get(position));
+    public void onBindViewHolder(@NonNull TipoDeProductosViewHolder holder, int position) {
+        holder.cargarTipoDeProducto(listaTiposDeProducto.get(position));
     }
 
     @Override
@@ -41,23 +43,31 @@ public class TipoDeProductosAdapter extends RecyclerView.Adapter {
         return listaTiposDeProducto.size();
     }
 
-    private class TipoDeProductosAdapterViewHolder extends RecyclerView.ViewHolder {
+    protected class TipoDeProductosViewHolder extends RecyclerView.ViewHolder {
         private TextView nombre;
 
-        public TipoDeProductosAdapterViewHolder(@NonNull View itemView) {
+        public TipoDeProductosViewHolder(@NonNull View itemView) {
             super(itemView);
             nombre = itemView.findViewById(R.id.celdaTipoProductoNombre);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.seleccionTipoProducto(listaTiposDeProducto.get(getAdapterPosition()));
+                    listener.seleccionProducto(listaTiposDeProducto.get(getAdapterPosition()));
                 }
             });
         }
 
-        public void cargarTipoDeProducto(TipoDeProducto unTipoDeProducto) {
+        protected void cargarTipoDeProducto(TipoDeProducto unTipoDeProducto) {
             nombre.setText(unTipoDeProducto.getNombre());
         }
     }
+
+
+    public interface TipoDeProductoListener{
+        void seleccionProducto ( TipoDeProducto unTipoDeProducto);
+    }
+
+
 }
+
 

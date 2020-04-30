@@ -1,9 +1,10 @@
 package com.example.entregableandroid.RecyclerView;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TipoDeProducto {
+public class TipoDeProducto implements Serializable {
 
     private String nombre;
     private Integer id;
@@ -13,8 +14,7 @@ public class TipoDeProducto {
         this.id = id;
     }
 
-    public TipoDeProducto (){
-
+    public TipoDeProducto() {
     }
 
     public String getNombre() {
@@ -25,44 +25,9 @@ public class TipoDeProducto {
         return id;
     }
 
-    public List<TipoDeProducto> cargarTiposDeProductos() {
-        List<TipoDeProducto> listaDeProductos = new ArrayList<>();
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        listaDeProductos.add(new TipoDeProducto("Silla", 50));
-        listaDeProductos.add(new TipoDeProducto("Mesa", 51));
-        return listaDeProductos;
-    }
+
 
 }
+
+
 

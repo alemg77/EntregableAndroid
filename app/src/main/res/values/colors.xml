@@ -3,15 +3,15 @@
     <color name="colorPrimary">#6200EE</color>
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#03DAC5</color>
-    <color name="nombreProducto">#E91E63</color>
+    <color name="nombreProducto">#011C77</color>
     <color name="nombreTipoProducto">#283593</color>
     <color name="PrecioProducto">#8BC34A</color>
     <color name="FondoNombreProducto">#4527A0</color>
-    <color name="RecyclerViewTipoTexto">#123456</color>
-    <color name="RecyclerViewTipoFondoTexto">#4B4C4C</color>
+    <color name="RecyclerViewTipoTexto">#020202</color>
+    <color name="RecyclerViewTipoFondoTexto">#AAAAAA</color>
 
 
-    <color name="RecyclerViewProductoFondo">#FF8F00</color>
+    <color name="RecyclerViewProductoFondo">#000000</color>
     <color name="RecyclerViewProductoFondoNombre">#FFFFFF</color>
     <color name="RecyclerVierProductoPrecio">#0000FF</color>
 

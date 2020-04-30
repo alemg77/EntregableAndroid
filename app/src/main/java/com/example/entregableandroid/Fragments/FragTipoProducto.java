@@ -14,36 +14,50 @@ import android.view.ViewGroup;
 
 import com.example.entregableandroid.AvisosActivity;
 import com.example.entregableandroid.R;
+import com.example.entregableandroid.RecyclerView.ListaDeProductos;
+import com.example.entregableandroid.RecyclerView.ListaDeTiposDeProductos;
+import com.example.entregableandroid.RecyclerView.ProductoAdapter;
 import com.example.entregableandroid.RecyclerView.TipoDeProducto;
 import com.example.entregableandroid.RecyclerView.TipoDeProductosAdapter;
 
 import java.util.List;
 
-public class FragTipoProducto extends Fragment {
+public class FragTipoProducto extends Fragment implements TipoDeProductosAdapter.TipoDeProductoListener{
 
     RecyclerView recyclerViewTipoProducto;
 
-    List<TipoDeProducto> listaTiposProducto;
-    AvisosActivity listener;
+    ListaDeTiposDeProductos listaTipoDeProductos;
+    FragTipoProductoListener listener;
 
-    public FragTipoProducto(List<TipoDeProducto> listaDeProductos) {
-        this.listaTiposProducto = listaDeProductos;
+    public FragTipoProducto() {
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.listener = (AvisosActivity) context;
+        this.listener = (FragTipoProductoListener) context;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View inflate = inflater.inflate(R.layout.fragment_frag_tipo_producto, container, false);
         recyclerViewTipoProducto = inflate.findViewById(R.id.FragTipoProductoRecuclerView);
-        TipoDeProductosAdapter tipoDeProductosAdapter = new TipoDeProductosAdapter(listaTiposProducto, listener);
+        Bundle bundle = getArguments();
+        listaTipoDeProductos = (ListaDeTiposDeProductos)bundle.getSerializable(ListaDeTiposDeProductos.class.toString());
+        TipoDeProductosAdapter tipoDeProductosAdapter = new TipoDeProductosAdapter(listaTipoDeProductos.getListaDeTipoDeProductos(), this);
         LinearLayoutManager dosLayoutManager = new LinearLayoutManager((Context)listener);
         recyclerViewTipoProducto.setLayoutManager(dosLayoutManager);
         recyclerViewTipoProducto.setAdapter(tipoDeProductosAdapter);
         return inflate;
+
+    }
+
+    @Override
+    public void seleccionProducto(TipoDeProducto unTipoDeProducto) {
+        listener.TipoProuctoSeleccionado(unTipoDeProducto);
+    }
+
+    public interface FragTipoProductoListener {
+        void TipoProuctoSeleccionado ( TipoDeProducto unTipoDeProducto);
     }
 }
