@@ -1,4 +1,4 @@
-package com.example.entregableandroid.Fragments;
+package com.example.entregableandroid.FragmentProductos;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -12,17 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.entregableandroid.RecyclerViewProducto.ListaDeProductos;
-import com.example.entregableandroid.RecyclerViewProducto.Producto;
-import com.example.entregableandroid.RecyclerViewProducto.ProductoAdapter;
+import com.example.entregableandroid.ApiML.ElementoLista;
+import com.example.entregableandroid.ApiML.ListaDeVentasML;
 import com.example.entregableandroid.R;
 
-public class FragmentProducto extends Fragment implements ProductoAdapter.ProductoAdapterListener {
+public class FragmentListaProductos extends Fragment implements ProductoAdapter.ProductoAdapterListener {
 
     RecyclerView recyclerViewProducto;
     FragmentProductoListener listener;
 
-    public FragmentProducto (){
+    public FragmentListaProductos(){
     }
 
     @Override
@@ -33,11 +32,12 @@ public class FragmentProducto extends Fragment implements ProductoAdapter.Produc
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View inflate = inflater.inflate(R.layout.fragment_frag_tipo_producto, container, false);
-        recyclerViewProducto = inflate.findViewById(R.id.FragTipoProductoRecuclerView);
+        View inflate = inflater.inflate(R.layout.fragment_recyclerview, container, false);
+        recyclerViewProducto = inflate.findViewById(R.id.FragmentRecyclerView);
         Bundle bundle = getArguments();
-        ListaDeProductos lista = (ListaDeProductos) bundle.getSerializable(ListaDeProductos.class.toString());
-        ProductoAdapter productoAdapter = new ProductoAdapter(lista.getListaDeProductos() ,this);
+        ListaDeVentasML lista = (ListaDeVentasML) bundle.getSerializable(ListaDeVentasML.class.toString());
+        Context context = getActivity().getApplicationContext();
+        ProductoAdapter productoAdapter = new ProductoAdapter(context, this, lista);
         LinearLayoutManager dosLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewProducto.setLayoutManager(dosLayoutManager);
         recyclerViewProducto.setAdapter(productoAdapter);
@@ -45,8 +45,8 @@ public class FragmentProducto extends Fragment implements ProductoAdapter.Produc
     }
 
     @Override
-    public void seleccionProducto(Producto producto) {
-        listener.selleccionProducto(producto);
+    public void seleccionProducto(ElementoLista elementoLista) {
+        //listener.selleccionProducto(elementoLista);
     }
 
     public interface FragmentProductoListener {

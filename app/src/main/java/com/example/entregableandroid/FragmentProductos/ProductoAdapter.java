@@ -1,5 +1,6 @@
-package com.example.entregableandroid.RecyclerViewProducto;
+package com.example.entregableandroid.FragmentProductos;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,18 +10,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.entregableandroid.ApiML.ElementoLista;
+import com.example.entregableandroid.ApiML.ListaDeVentasML;
 import com.example.entregableandroid.R;
-
-import java.util.List;
+import com.squareup.picasso.Picasso;
 
 public class ProductoAdapter extends RecyclerView.Adapter {
 
-    private List<Producto> listadDeProductos;
+    private ListaDeVentasML listadDeProductos;
     private ProductoAdapterListener listener;
+    private Context context;
 
-
-    public ProductoAdapter(List<Producto> listadDeProductos, ProductoAdapterListener listener) {
+    public ProductoAdapter(Context context, ProductoAdapterListener listener,ListaDeVentasML listadDeProductos) {
         this.listadDeProductos = listadDeProductos;
+        this.context = context;
         this.listener = listener;
     }
 
@@ -28,7 +31,7 @@ public class ProductoAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View view = layoutInflater.inflate(R.layout.celda_producto, parent, false);
+        View view = layoutInflater.inflate(R.layout.celda_listado_producto, parent, false);
         ProductoAdapter.ProductoViewHolder viewHolder = new ProductoAdapter.ProductoViewHolder(view);
         return viewHolder;
     }
@@ -36,44 +39,41 @@ public class ProductoAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ProductoAdapter.ProductoViewHolder sillaViewHolder = (ProductoAdapter.ProductoViewHolder)holder;
-        sillaViewHolder.cargarProducto(listadDeProductos.get(position));
+        sillaViewHolder.cargarProducto(listadDeProductos.obtenerElemento(position));
     }
 
     @Override
     public int getItemCount() {
-        return listadDeProductos.size();
+        return listadDeProductos.cantidadElementos();
     }
 
     private class ProductoViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
-        private TextView textViewNombre;
-        private TextView textViewPrecio;
+        private TextView textView1,textViewPrecio;
 
         public ProductoViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageView = itemView.findViewById(R.id.celdaSillaImagen);
-            textViewNombre = itemView.findViewById(R.id.celdaSillaNombre);
-            textViewPrecio = itemView.findViewById(R.id.celdaSillaPrecio);
-
+            imageView = itemView.findViewById(R.id.celdaListadoImagen);
+            textView1 = itemView.findViewById(R.id.celdaListadoText1);
+            textViewPrecio = itemView.findViewById(R.id.celdaListadoPrecio);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int posicion = getAdapterPosition();
-                    Producto unProducto = listadDeProductos.get(posicion);
-                    listener.seleccionProducto(unProducto);
+                    ElementoLista elementoLista = listadDeProductos.obtenerElemento(getAdapterPosition());
+                    listener.seleccionProducto(elementoLista);
                 }
             });
         }
 
-        public void cargarProducto (Producto unProducto){
-            imageView.setImageResource(unProducto.getImagen());
-            textViewPrecio.setText("$" + unProducto.getPrecio().toString());
-            textViewNombre.setText(unProducto.getNombre());
+        public void cargarProducto (ElementoLista elementoLista){
+            textView1.setText(elementoLista.getTitle());
+            textViewPrecio.setText("$" + elementoLista.getPrice());
+            Picasso.get().load(elementoLista.getThumbnail()).into(imageView);
         }
     }
 
     public interface ProductoAdapterListener {
-        void seleccionProducto (Producto producto);
+        void seleccionProducto (ElementoLista elementoLista);
     }
 
 }

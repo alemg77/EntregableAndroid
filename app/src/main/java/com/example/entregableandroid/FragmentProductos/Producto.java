@@ -1,4 +1,4 @@
-package com.example.entregableandroid.RecyclerViewProducto;
+package com.example.entregableandroid.FragmentProductos;
 
 import com.example.entregableandroid.R;
 
