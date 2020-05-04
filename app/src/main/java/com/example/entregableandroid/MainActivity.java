@@ -3,19 +3,26 @@ package com.example.entregableandroid;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.entregableandroid.ApiML.ApiMercadoLibre;
+import com.example.entregableandroid.ApiML.ElementoLista;
 import com.example.entregableandroid.ApiML.ItemVenta;
 import com.example.entregableandroid.ApiML.ListaDeVentasML;
 import com.example.entregableandroid.ApiML.RecepcionApiMercadoLibre;
+import com.example.entregableandroid.FragmentDetalleProducto.FragmentDetalleProducto;
 import com.example.entregableandroid.FragmentProductos.FragmentListaProductos;
 import com.example.entregableandroid.FragmentProductos.Producto;
 import com.google.android.material.navigation.NavigationView;
@@ -23,22 +30,20 @@ import com.google.android.material.navigation.NavigationView;
 import java.io.Serializable;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentListaProductos.FragmentProductoListener,
-        RecepcionApiMercadoLibre {
-
-    // TODO:  EL fragment de seleccion de precio deberia ser un menu desplegable
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentListaProductos.FragmentProductoListener, RecepcionApiMercadoLibre {
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    private CardView navigationViewCardView;
     private String TAG = getClass().toString();
-
+    private ApiMercadoLibre apiMercadoLibre;
 
     private void pegarFragment(Fragment fragmentAPegar, int containerViewId, Serializable serializable) {
         Bundle bundle = new Bundle();
         bundle.putSerializable(serializable.getClass().toString(), serializable);
         fragmentAPegar.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(containerViewId, fragmentAPegar).commit();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(containerViewId, fragmentAPegar).commit();
     }
 
     @Override
@@ -63,53 +68,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(this);
 
-        ApiMercadoLibre apiMercadoLibre = new ApiMercadoLibre(this);
-        apiMercadoLibre.buscarPorDescripcion("fiat");
-
-
-        /*
-        // FIXME: Para Ver mas adelante
-        View headerView = navigationView.getHeaderView(0);
-        navigationViewCardView = headerView.findViewById(R.id.navHeaderCardView);
-        navigationViewCardView.setOnClickListener(new View.OnClickListener() {
+        View actionView = navigationView.getMenu().findItem(R.id.menuSwich).getActionView();
+        actionView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                boolean checked = ((Switch) v).isChecked();
+                if ( checked ) {
+                    Log.d(TAG, "Swith del navigation menu activado");
+                }
+                else {
+                    Log.d(TAG, "Swith del navigation menu apagado");
+                }
             }
         });
-        */
+
+        apiMercadoLibre = new ApiMercadoLibre(this);
+        apiMercadoLibre.buscarPorDescripcion("fiat");
 
     }
 
     @Override
-    public void selleccionProducto(Producto producto) {
-        Toast.makeText(this, producto.getDescripcion(), Toast.LENGTH_SHORT ).show();
+    public void selleccionProducto(ElementoLista elementoLista) {
+        Log.d(TAG, "El usuario seleciono un elemento");
+        apiMercadoLibre.buscarPorId(elementoLista.getId());
     }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.menuInicio:
-                Toast.makeText(MainActivity.this, "Presionaron inicio", Toast.LENGTH_SHORT).show();
-                drawerLayout.closeDrawers();
-                break;
-
-            case R.id.menuFavorito:
-                drawerLayout.closeDrawers();
-                break;
-            default:
-                Toast.makeText(MainActivity.this, "En construccion", Toast.LENGTH_SHORT).show();
-                break;
-        }
-        return true;
-    }
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
-    }
-
-
 
     @Override
     public void recepcionMLlistaVenta(ListaDeVentasML listaDeVentasML) {
@@ -119,11 +101,49 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void recepcionMLitemVenta(ItemVenta itemVenta) {
-
+        Log.d(TAG, "Llego un item a la venta desde la Api de Mercado Libre");
+        pegarFragment(new FragmentDetalleProducto(), R.id.MainFragProductos, itemVenta);
     }
 
     @Override
     public void errorPedidoApiMercadolibre() {
 
     }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menuAudi:
+                apiMercadoLibre.buscarPorDescripcion("audi");
+                drawerLayout.closeDrawers();
+                break;
+
+            case R.id.menuBMW:
+                apiMercadoLibre.buscarPorDescripcion("bmw");
+                drawerLayout.closeDrawers();
+                break;
+
+            case R.id.menuFiat:
+                apiMercadoLibre.buscarPorDescripcion("fiat");
+                drawerLayout.closeDrawers();
+                break;
+
+            case R.id.menuPeugeot:
+                apiMercadoLibre.buscarPorDescripcion("Peugeot");
+                drawerLayout.closeDrawers();
+                break;
+
+            case R.id.menuRenault:
+                apiMercadoLibre.buscarPorDescripcion("Renault");
+                drawerLayout.closeDrawers();
+                break;
+
+
+            default:
+                Toast.makeText(MainActivity.this, "En construccion", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return true;
+    }
+
 }

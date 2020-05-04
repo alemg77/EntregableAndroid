@@ -3,7 +3,9 @@ package com.example.entregableandroid.ApiML;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class ElementoLista {
+import java.io.Serializable;
+
+public class ElementoLista implements Serializable {
     private String id;
     private String title;
     private String thumbnail;

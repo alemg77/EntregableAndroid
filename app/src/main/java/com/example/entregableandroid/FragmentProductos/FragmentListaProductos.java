@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +32,11 @@ public class FragmentListaProductos extends Fragment implements ProductoAdapter.
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View inflate = inflater.inflate(R.layout.fragment_recyclerview, container, false);
         recyclerViewProducto = inflate.findViewById(R.id.FragmentRecyclerView);
@@ -46,11 +52,11 @@ public class FragmentListaProductos extends Fragment implements ProductoAdapter.
 
     @Override
     public void seleccionProducto(ElementoLista elementoLista) {
-        //listener.selleccionProducto(elementoLista);
+        listener.selleccionProducto(elementoLista);
     }
 
     public interface FragmentProductoListener {
-        void selleccionProducto ( Producto producto);
+        void selleccionProducto (ElementoLista elementoLista);
     }
 }
 
