@@ -19,8 +19,8 @@ import com.example.entregableandroid.R;
 
 public class FragmentListaProductos extends Fragment implements ProductoAdapter.ProductoAdapterListener {
 
-    RecyclerView recyclerViewProducto;
-    FragmentProductoListener listener;
+    private RecyclerView recyclerViewProducto;
+    private FragmentListaProductos.Aviso listener;
 
     public FragmentListaProductos(){
     }
@@ -28,7 +28,7 @@ public class FragmentListaProductos extends Fragment implements ProductoAdapter.
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.listener = (FragmentProductoListener) context;
+        this.listener = (Aviso) context;
     }
 
     @Override
@@ -55,8 +55,9 @@ public class FragmentListaProductos extends Fragment implements ProductoAdapter.
         listener.selleccionProducto(elementoLista);
     }
 
-    public interface FragmentProductoListener {
+    public interface Aviso {
         void selleccionProducto (ElementoLista elementoLista);
     }
 }
+
 

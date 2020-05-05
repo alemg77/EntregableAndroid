@@ -8,6 +8,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,12 +26,14 @@ import com.example.entregableandroid.ApiML.RecepcionApiMercadoLibre;
 import com.example.entregableandroid.FragmentDetalleProducto.FragmentDetalleProducto;
 import com.example.entregableandroid.FragmentProductos.FragmentListaProductos;
 import com.example.entregableandroid.FragmentProductos.Producto;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.Serializable;
 
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentListaProductos.FragmentProductoListener, RecepcionApiMercadoLibre {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        FragmentListaProductos.Aviso, FragmentDetalleProducto.Aviso, RecepcionApiMercadoLibre {
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -73,10 +76,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onClick(View v) {
                 boolean checked = ((Switch) v).isChecked();
-                if ( checked ) {
+                if (checked) {
                     Log.d(TAG, "Swith del navigation menu activado");
-                }
-                else {
+                } else {
                     Log.d(TAG, "Swith del navigation menu apagado");
                 }
             }
@@ -107,12 +109,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void errorPedidoApiMercadolibre() {
-
+        Log.d(TAG, "****** ERROR EN LA COMUNICACION CON LA API DE MERCADOLIBRE ************");
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menuAudi:
                 apiMercadoLibre.buscarPorDescripcion("audi");
                 drawerLayout.closeDrawers();
@@ -146,4 +148,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    public void FragmentDetalleAviso(Object object) {
+        if (object instanceof LatLng) {
+            LatLng coordenadas = (LatLng) object;
+//            Toast.makeText(this, "Latitud:" + coordenadas.latitude + "\nLongitud:" + coordenadas.longitude, Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+            intent.putExtra(LatLng.class.toString(), coordenadas);
+            startActivity(intent);
+        }
+    }
 }
