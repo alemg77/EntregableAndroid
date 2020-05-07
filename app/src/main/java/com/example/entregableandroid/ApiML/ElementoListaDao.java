@@ -22,9 +22,12 @@ public interface ElementoListaDao {
     @Insert
     void instarAll(ElementoLista ... elementos);
 
+    /*
     //eliminar
     @Query("DELETE FROM " + ElementoLista.TABLE_NAME + " WHERE " + ElementoLista.COLUMN_ID + " = :id")
     int deleteById(String id);
+
+     */
 
     //actualizar
     @Update

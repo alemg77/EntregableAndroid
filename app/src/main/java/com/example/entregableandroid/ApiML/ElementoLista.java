@@ -22,7 +22,7 @@ public class ElementoLista implements Serializable {
 
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "_id")
+    @ColumnInfo(name = "id")
     private String id;
 
     @ColumnInfo(name = "title")

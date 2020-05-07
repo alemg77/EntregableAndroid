@@ -1,20 +1,21 @@
 package com.example.entregableandroid;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.room.Room;
-
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.room.Room;
 
 import com.example.entregableandroid.ApiML.ApiMercadoLibre;
 import com.example.entregableandroid.ApiML.ElementoLista;
@@ -30,7 +31,6 @@ import com.google.android.material.navigation.NavigationView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -67,13 +67,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.d(TAG, " ************************************ MODO NOCHE *******************************");
                 break;
         }
-
-
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(this);
-
-
 
         db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, Constantes.BD_NAME).allowMainThreadQueries().build();
 
@@ -98,12 +94,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void selleccionProducto(ElementoLista elementoLista) {
         Log.d(TAG, "El usuario seleciono un elemento");
-
-        long insert = db.elementoListaDao().insert(elementoLista);
-        if ( insert > 0 ){
-            Log.d(TAG, "Insercion en la base de datos correcto!!");
-        } else  {
-            Log.d(TAG, "Error en la insercion en la base de datos!!");
+        try {
+            long insert = db.elementoListaDao().insert(elementoLista);
+            if (insert > 0) {
+                Log.d(TAG, "Insercion en la base de datos correcto!!");
+                if ( insert > 4 ) {
+                    // TODO: Si hay muchos elementos deberia borrar el mas viejo.
+                }
+            } else {
+                Log.d(TAG, "Error en la insercion en la base de datos!!");
+            }
+        } catch ( Exception e ) {
+            if ( e instanceof SQLiteConstraintException ) {
+                Log.d(TAG, "No se agrego el elemento porque ya estaba");
+            } else {
+                Log.d(TAG, "Ocurrio la excepcion: " + e.toString());
+            }
         }
         apiMercadoLibre.buscarPorId(elementoLista.getId());
     }
@@ -158,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 pegarFragment(new FragmentListaProductos(), R.id.MainFragProductos,  new ListaDeVentasML(arrayList));
                 break;
 
-
             default:
                 Toast.makeText(MainActivity.this, "En construccion", Toast.LENGTH_SHORT).show();
                 break;
@@ -169,10 +174,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void FragmentDetalleAviso(Object object) {
         if (object instanceof LatLng) {
-            LatLng coordenadas = (LatLng) object;
-//            Toast.makeText(this, "Latitud:" + coordenadas.latitude + "\nLongitud:" + coordenadas.longitude, Toast.LENGTH_LONG).show();
             Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-            intent.putExtra(LatLng.class.toString(), coordenadas);
+            intent.putExtra(LatLng.class.toString(), (LatLng) object);
             startActivity(intent);
         }
     }
