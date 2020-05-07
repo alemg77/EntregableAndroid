@@ -2,11 +2,10 @@ package com.example.entregableandroid;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.room.Room;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -14,7 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -23,13 +21,16 @@ import com.example.entregableandroid.ApiML.ElementoLista;
 import com.example.entregableandroid.ApiML.ItemVenta;
 import com.example.entregableandroid.ApiML.ListaDeVentasML;
 import com.example.entregableandroid.ApiML.RecepcionApiMercadoLibre;
+import com.example.entregableandroid.Database.AppDatabase;
 import com.example.entregableandroid.FragmentDetalleProducto.FragmentDetalleProducto;
 import com.example.entregableandroid.FragmentProductos.FragmentListaProductos;
-import com.example.entregableandroid.FragmentProductos.Producto;
+import com.example.entregableandroid.ROOM.Constantes;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
     private String TAG = getClass().toString();
     private ApiMercadoLibre apiMercadoLibre;
+    private AppDatabase db;
 
     private void pegarFragment(Fragment fragmentAPegar, int containerViewId, Serializable serializable) {
         Bundle bundle = new Bundle();
@@ -71,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView = findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(this);
 
+
+
+        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, Constantes.BD_NAME).allowMainThreadQueries().build();
+
         View actionView = navigationView.getMenu().findItem(R.id.menuSwich).getActionView();
         actionView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +98,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void selleccionProducto(ElementoLista elementoLista) {
         Log.d(TAG, "El usuario seleciono un elemento");
+
+        long insert = db.elementoListaDao().insert(elementoLista);
+        if ( insert > 0 ){
+            Log.d(TAG, "Insercion en la base de datos correcto!!");
+        } else  {
+            Log.d(TAG, "Error en la insercion en la base de datos!!");
+        }
         apiMercadoLibre.buscarPorId(elementoLista.getId());
     }
 
@@ -138,6 +151,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.menuRenault:
                 apiMercadoLibre.buscarPorDescripcion("Renault");
                 drawerLayout.closeDrawers();
+                break;
+
+            case R.id.Recientes:
+                ArrayList<ElementoLista> arrayList = (ArrayList<ElementoLista>) db.elementoListaDao().getTodos();
+                pegarFragment(new FragmentListaProductos(), R.id.MainFragProductos,  new ListaDeVentasML(arrayList));
                 break;
 
 

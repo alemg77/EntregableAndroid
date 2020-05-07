@@ -5,12 +5,8 @@
 
     <group>
         <item
-            android:id="@+id/Usuario"
-            android:title="Usuario" />
-
-        <item
-            android:id="@+id/Favoritos"
-            android:title="Favoritos" />
+            android:id="@+id/Recientes"
+            android:title="Recientes" />
     </group>
 
     <item android:title="Premium">
