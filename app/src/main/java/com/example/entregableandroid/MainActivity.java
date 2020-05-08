@@ -99,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             if (insert > 0) {
                 Log.d(TAG, "Insercion en la base de datos correcto!!");
                 if ( insert > 4 ) {
+                    ElementoLista elementoLista1 = db.elementoListaDao().getPrimerElemento();
+                    db.elementoListaDao().deleteById(elementoLista1.getId());
                     // TODO: Si hay muchos elementos deberia borrar el mas viejo.
                 }
             } else {
