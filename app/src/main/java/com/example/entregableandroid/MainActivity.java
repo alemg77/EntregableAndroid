@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if ( insert > 4 ) {
                     ElementoLista elementoLista1 = db.elementoListaDao().getPrimerElemento();
                     db.elementoListaDao().deleteById(elementoLista1.getId());
-                    // TODO: Si hay muchos elementos deberia borrar el mas viejo.
                 }
             } else {
                 Log.d(TAG, "Error en la insercion en la base de datos!!");
@@ -162,8 +161,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.Recientes:
-                ArrayList<ElementoLista> arrayList = (ArrayList<ElementoLista>) db.elementoListaDao().getTodos();
-                pegarFragment(new FragmentListaProductos(), R.id.MainFragProductos,  new ListaDeVentasML(arrayList));
+                if ( db.elementoListaDao().cantidadElementos() > 0 ){
+                    ArrayList<ElementoLista> arrayList = (ArrayList<ElementoLista>) db.elementoListaDao().getTodos();
+                    pegarFragment(new FragmentListaProductos(), R.id.MainFragProductos,  new ListaDeVentasML(arrayList));
+                } else {
+                    Toast.makeText(MainActivity.this, "Cuando veas algun producto se iran guardando aqui automagicamente", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             default:
