@@ -1,5 +1,7 @@
 package com.example.entregableandroid.ApiML;
 
+import com.example.entregableandroid.Modelo.ElementoLista;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 

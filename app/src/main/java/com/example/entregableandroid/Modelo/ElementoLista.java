@@ -1,4 +1,4 @@
-package com.example.entregableandroid.ApiML;
+package com.example.entregableandroid.Modelo;
 
 import android.provider.BaseColumns;
 

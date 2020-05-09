@@ -12,11 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.entregableandroid.ApiML.ItemVenta;
-import com.example.entregableandroid.ApiML.ListaDeVentasML;
-import com.example.entregableandroid.FragmentProductos.FragmentListaProductos;
+import com.example.entregableandroid.Modelo.ItemVenta;
 import com.example.entregableandroid.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;

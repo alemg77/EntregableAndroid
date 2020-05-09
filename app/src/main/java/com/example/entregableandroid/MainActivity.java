@@ -18,14 +18,17 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.room.Room;
 
 import com.example.entregableandroid.ApiML.ApiMercadoLibre;
-import com.example.entregableandroid.ApiML.ElementoLista;
-import com.example.entregableandroid.ApiML.ItemVenta;
+import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
+import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
+import com.example.entregableandroid.Modelo.ElementoLista;
+import com.example.entregableandroid.Modelo.ItemVenta;
 import com.example.entregableandroid.ApiML.ListaDeVentasML;
 import com.example.entregableandroid.ApiML.RecepcionApiMercadoLibre;
 import com.example.entregableandroid.Database.AppDatabase;
 import com.example.entregableandroid.FragmentDetalleProducto.FragmentDetalleProducto;
 import com.example.entregableandroid.FragmentProductos.FragmentListaProductos;
-import com.example.entregableandroid.ROOM.Constantes;
+import com.example.entregableandroid.Database.Constantes;
+import com.example.entregableandroid.Retrofit.ApiMLDao;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
 
@@ -34,13 +37,14 @@ import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        FragmentListaProductos.Aviso, FragmentDetalleProducto.Aviso, RecepcionApiMercadoLibre {
+        FragmentListaProductos.Aviso, FragmentDetalleProducto.Aviso, RecepcionApiMercadoLibre, ApiMLDao.Avisos {
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private String TAG = getClass().toString();
     private ApiMercadoLibre apiMercadoLibre;
     private AppDatabase db;
+    private ApiMLDao apiMLDao;
 
     private void pegarFragment(Fragment fragmentAPegar, int containerViewId, Serializable serializable) {
         Bundle bundle = new Bundle();
@@ -88,6 +92,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         apiMercadoLibre = new ApiMercadoLibre(this);
         apiMercadoLibre.buscarPorDescripcion("fiat");
+
+        apiMLDao = new ApiMLDao(this);
+        apiMLDao.buscarPorDescripcion("fiat");
+
+        apiMLDao = new ApiMLDao(this);
+        apiMLDao.buscarPorDescripcion("audi");
 
     }
 
@@ -183,5 +193,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             intent.putExtra(LatLng.class.toString(), (LatLng) object);
             startActivity(intent);
         }
+    }
+
+    @Override
+    public void resultadoBusqueda(ResultadoBusquedaAPI resultadoBusqueda) {
+        Log.d(TAG,"Mira lo que me trajo retrofit");
+    }
+
+    @Override
+    public void LlegoItem(ItemAPI itemML) {
+        Log.d(TAG,"Mira lo que me trajo retrofit");
     }
 }

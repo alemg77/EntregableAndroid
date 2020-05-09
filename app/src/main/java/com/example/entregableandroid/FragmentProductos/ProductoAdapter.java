@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.entregableandroid.ApiML.ElementoLista;
+import com.example.entregableandroid.Modelo.ElementoLista;
 import com.example.entregableandroid.ApiML.ListaDeVentasML;
 import com.example.entregableandroid.R;
 import com.squareup.picasso.Picasso;

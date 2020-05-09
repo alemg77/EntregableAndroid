@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.entregableandroid.ApiML.ApiWeb.PedidosApiWeb;
 import com.example.entregableandroid.ApiML.ApiWeb.RecepcionPedidoAPI;
+import com.example.entregableandroid.Modelo.ElementoLista;
+import com.example.entregableandroid.Modelo.ItemVenta;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,8 +23,6 @@ public class ApiMercadoLibre extends AppCompatActivity implements RecepcionPedid
     private RecepcionApiMercadoLibre listener;
     private PedidosApiWeb apiWebMercadolibre;
     private String TAG = getClass().toString();
-
-
     private String pedido_api;
 
     public ApiMercadoLibre(RecepcionApiMercadoLibre listener) {
@@ -33,7 +33,6 @@ public class ApiMercadoLibre extends AppCompatActivity implements RecepcionPedid
     public void buscarPorDescripcion(String string) {
         apiWebMercadolibre.getRequest(URL_API_MERCADOLIBRE_ARGENTINA + "sites/MLA/search?q=" + string);
     }
-
 
     public void buscarPorId(String string) {
         apiWebMercadolibre.getRequest(URL_API_MERCADOLIBRE_ARGENTINA + "items/" + string);

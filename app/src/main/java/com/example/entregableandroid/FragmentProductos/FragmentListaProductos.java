@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.entregableandroid.ApiML.ElementoLista;
+import com.example.entregableandroid.Modelo.ElementoLista;
 import com.example.entregableandroid.ApiML.ListaDeVentasML;
 import com.example.entregableandroid.R;
 

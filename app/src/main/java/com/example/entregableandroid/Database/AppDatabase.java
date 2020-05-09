@@ -4,7 +4,7 @@ package com.example.entregableandroid.Database;
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 
-import com.example.entregableandroid.ApiML.ElementoLista;
+import com.example.entregableandroid.Modelo.ElementoLista;
 import com.example.entregableandroid.ApiML.ElementoListaDao;
 
 @Database(entities = {ElementoLista.class}, version = 1)

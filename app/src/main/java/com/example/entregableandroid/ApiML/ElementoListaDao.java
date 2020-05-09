@@ -6,7 +6,8 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import java.util.ArrayList;
+import com.example.entregableandroid.Modelo.ElementoLista;
+
 import java.util.List;
 
 @Dao
@@ -20,7 +21,7 @@ public interface ElementoListaDao {
 
     //insertar
     @Insert
-    void instarAll(ElementoLista ... elementos);
+    void instarAll(ElementoLista... elementos);
 
     @Query("SELECT * FROM "+ElementoLista.TABLE_NAME+" LIMIT 1")
     ElementoLista getPrimerElemento();
