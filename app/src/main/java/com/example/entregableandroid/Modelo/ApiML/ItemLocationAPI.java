@@ -2,23 +2,24 @@ package com.example.entregableandroid.Modelo.ApiML;
 
 import org.json.JSONObject;
 
-public class ItemLocationAPI {
+import java.io.Serializable;
+
+public class ItemLocationAPI implements Serializable {
     private String address_line;
     private String zip_code;
+    /*
     private JSONObject neighborhood;
     private JSONObject city;
     private JSONObject state;
     private JSONObject country;
+
+     */
     private Double latitude;
     private Double longitude;
 
     public ItemLocationAPI(String address_line, String zip_code, JSONObject neighborhood, JSONObject city, JSONObject state, JSONObject country, Double latitude, Double longitude) {
         this.address_line = address_line;
         this.zip_code = zip_code;
-        this.neighborhood = neighborhood;
-        this.city = city;
-        this.state = state;
-        this.country = country;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -37,38 +38,6 @@ public class ItemLocationAPI {
 
     public void setZip_code(String zip_code) {
         this.zip_code = zip_code;
-    }
-
-    public JSONObject getNeighborhood() {
-        return neighborhood;
-    }
-
-    public void setNeighborhood(JSONObject neighborhood) {
-        this.neighborhood = neighborhood;
-    }
-
-    public JSONObject getCity() {
-        return city;
-    }
-
-    public void setCity(JSONObject city) {
-        this.city = city;
-    }
-
-    public JSONObject getState() {
-        return state;
-    }
-
-    public void setState(JSONObject state) {
-        this.state = state;
-    }
-
-    public JSONObject getCountry() {
-        return country;
-    }
-
-    public void setCountry(JSONObject country) {
-        this.country = country;
     }
 
     public Double getLatitude() {

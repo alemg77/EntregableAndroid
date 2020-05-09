@@ -10,18 +10,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.entregableandroid.Modelo.ElementoLista;
-import com.example.entregableandroid.ApiML.ListaDeVentasML;
+import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 public class ProductoAdapter extends RecyclerView.Adapter {
 
-    private ListaDeVentasML listadDeProductos;
+    private List<ItemListaAPI> listadDeProductos;
     private ProductoAdapterListener listener;
     private Context context;
 
-    public ProductoAdapter(Context context, ProductoAdapterListener listener,ListaDeVentasML listadDeProductos) {
+    public ProductoAdapter(Context context, ProductoAdapterListener listener, List<ItemListaAPI> listadDeProductos) {
         this.listadDeProductos = listadDeProductos;
         this.context = context;
         this.listener = listener;
@@ -39,12 +40,12 @@ public class ProductoAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ProductoAdapter.ProductoViewHolder sillaViewHolder = (ProductoAdapter.ProductoViewHolder)holder;
-        sillaViewHolder.cargarProducto(listadDeProductos.obtenerElemento(position));
+        sillaViewHolder.cargarProducto(listadDeProductos.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return listadDeProductos.cantidadElementos();
+        return listadDeProductos.size();
     }
 
     private class ProductoViewHolder extends RecyclerView.ViewHolder {
@@ -59,21 +60,21 @@ public class ProductoAdapter extends RecyclerView.Adapter {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ElementoLista elementoLista = listadDeProductos.obtenerElemento(getAdapterPosition());
-                    listener.seleccionProducto(elementoLista);
+                    ItemListaAPI itemListaAPI = listadDeProductos.get(getAdapterPosition());
+                    listener.seleccionProducto(itemListaAPI);
                 }
             });
         }
 
-        public void cargarProducto (ElementoLista elementoLista){
-            textView1.setText(elementoLista.getTitle());
-            textViewPrecio.setText("$" + elementoLista.getPrice());
-            Picasso.get().load(elementoLista.getThumbnail()).into(imageView);
+        public void cargarProducto (ItemListaAPI itemListaAPI){
+            textView1.setText(itemListaAPI.getTitle());
+            textViewPrecio.setText("$" + itemListaAPI.getPrice());
+            Picasso.get().load(itemListaAPI.getThumbnail()).into(imageView);
         }
     }
 
     public interface ProductoAdapterListener {
-        void seleccionProducto (ElementoLista elementoLista);
+        void seleccionProducto (ItemListaAPI itemListaAPI);
     }
 
 }

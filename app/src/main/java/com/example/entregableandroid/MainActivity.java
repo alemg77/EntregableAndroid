@@ -17,32 +17,25 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.room.Room;
 
-import com.example.entregableandroid.ApiML.ApiMercadoLibre;
+import com.example.entregableandroid.FragmentProductos.FragmentResultadoBusqueda;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
+import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
-import com.example.entregableandroid.Modelo.ElementoLista;
-import com.example.entregableandroid.Modelo.ItemVenta;
-import com.example.entregableandroid.ApiML.ListaDeVentasML;
-import com.example.entregableandroid.ApiML.RecepcionApiMercadoLibre;
 import com.example.entregableandroid.Database.AppDatabase;
 import com.example.entregableandroid.FragmentDetalleProducto.FragmentDetalleProducto;
-import com.example.entregableandroid.FragmentProductos.FragmentListaProductos;
 import com.example.entregableandroid.Database.Constantes;
 import com.example.entregableandroid.Retrofit.ApiMLDao;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        FragmentListaProductos.Aviso, FragmentDetalleProducto.Aviso, RecepcionApiMercadoLibre, ApiMLDao.Avisos {
+        FragmentResultadoBusqueda.Aviso, FragmentDetalleProducto.Aviso, ApiMLDao.Avisos {
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private String TAG = getClass().toString();
-    private ApiMercadoLibre apiMercadoLibre;
     private AppDatabase db;
     private ApiMLDao apiMLDao;
 
@@ -90,90 +83,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        apiMercadoLibre = new ApiMercadoLibre(this);
-        apiMercadoLibre.buscarPorDescripcion("fiat");
-
-        apiMLDao = new ApiMLDao(this);
-        apiMLDao.buscarPorDescripcion("fiat");
-
         apiMLDao = new ApiMLDao(this);
         apiMLDao.buscarPorDescripcion("audi");
 
     }
 
     @Override
-    public void selleccionProducto(ElementoLista elementoLista) {
-        Log.d(TAG, "El usuario seleciono un elemento");
-        try {
-            long insert = db.elementoListaDao().insert(elementoLista);
-            if (insert > 0) {
-                Log.d(TAG, "Insercion en la base de datos correcto!!");
-                if ( insert > 4 ) {
-                    ElementoLista elementoLista1 = db.elementoListaDao().getPrimerElemento();
-                    db.elementoListaDao().deleteById(elementoLista1.getId());
-                }
-            } else {
-                Log.d(TAG, "Error en la insercion en la base de datos!!");
-            }
-        } catch ( Exception e ) {
-            if ( e instanceof SQLiteConstraintException ) {
-                Log.d(TAG, "No se agrego el elemento porque ya estaba");
-            } else {
-                Log.d(TAG, "Ocurrio la excepcion: " + e.toString());
-            }
-        }
-        apiMercadoLibre.buscarPorId(elementoLista.getId());
-    }
-
-    @Override
-    public void recepcionMLlistaVenta(ListaDeVentasML listaDeVentasML) {
-        Log.d(TAG, "Llego una lista de elementos de la API Mercadolibre");
-        pegarFragment(new FragmentListaProductos(), R.id.MainFragProductos, listaDeVentasML);
-    }
-
-    @Override
-    public void recepcionMLitemVenta(ItemVenta itemVenta) {
-        Log.d(TAG, "Llego un item a la venta desde la Api de Mercado Libre");
-        pegarFragment(new FragmentDetalleProducto(), R.id.MainFragProductos, itemVenta);
-    }
-
-    @Override
-    public void errorPedidoApiMercadolibre() {
-        Log.d(TAG, "****** ERROR EN LA COMUNICACION CON LA API DE MERCADOLIBRE ************");
-    }
-
-    @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menuAudi:
-                apiMercadoLibre.buscarPorDescripcion("audi");
+                apiMLDao.buscarPorDescripcion("audi");
                 drawerLayout.closeDrawers();
                 break;
 
             case R.id.menuBMW:
-                apiMercadoLibre.buscarPorDescripcion("bmw");
+                apiMLDao = new ApiMLDao(this);
+                apiMLDao.buscarPorDescripcion("bmw");
                 drawerLayout.closeDrawers();
                 break;
 
             case R.id.menuFiat:
-                apiMercadoLibre.buscarPorDescripcion("fiat");
+                apiMLDao.buscarPorDescripcion("fiat");
                 drawerLayout.closeDrawers();
                 break;
 
             case R.id.menuPeugeot:
-                apiMercadoLibre.buscarPorDescripcion("Peugeot");
+                apiMLDao.buscarPorDescripcion("Peugeot");
                 drawerLayout.closeDrawers();
                 break;
 
             case R.id.menuRenault:
-                apiMercadoLibre.buscarPorDescripcion("Renault");
+                apiMLDao.buscarPorDescripcion("Renault");
                 drawerLayout.closeDrawers();
                 break;
 
             case R.id.Recientes:
                 if ( db.elementoListaDao().cantidadElementos() > 0 ){
-                    ArrayList<ElementoLista> arrayList = (ArrayList<ElementoLista>) db.elementoListaDao().getTodos();
-                    pegarFragment(new FragmentListaProductos(), R.id.MainFragProductos,  new ListaDeVentasML(arrayList));
+                    pegarFragment(new FragmentResultadoBusqueda(), R.id.MainFragProductos, new ResultadoBusquedaAPI(db.elementoListaDao().getTodos()));
                 } else {
                     Toast.makeText(MainActivity.this, "Cuando veas algun producto se iran guardando aqui automagicamente", Toast.LENGTH_SHORT).show();
                 }
@@ -197,11 +143,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void resultadoBusqueda(ResultadoBusquedaAPI resultadoBusqueda) {
-        Log.d(TAG,"Mira lo que me trajo retrofit");
+        pegarFragment(new FragmentResultadoBusqueda(), R.id.MainFragProductos, resultadoBusqueda);
     }
 
     @Override
     public void LlegoItem(ItemAPI itemML) {
-        Log.d(TAG,"Mira lo que me trajo retrofit");
+        pegarFragment(new FragmentDetalleProducto(), R.id.MainFragProductos, itemML);
     }
+
+    @Override
+    public void selleccionProducto(ItemListaAPI itemListaAPI) {
+        Log.d(TAG, "El usuario seleciono un elemento");
+        try {
+            long insert = db.elementoListaDao().insert(itemListaAPI);
+            if (insert > 0) {
+                Log.d(TAG, "Insercion en la base de datos correcto!!");
+                if ( insert > 4 ) {
+                    ItemListaAPI itemListaAPI1 = db.elementoListaDao().getPrimerElemento();
+                    db.elementoListaDao().deleteById(itemListaAPI1.getId());
+                }
+            } else {
+                Log.d(TAG, "Error en la insercion en la base de datos!!");
+            }
+        } catch ( Exception e ) {
+            if ( e instanceof SQLiteConstraintException ) {
+                Log.d(TAG, "No se agrego el elemento porque ya estaba");
+            } else {
+                Log.d(TAG, "Ocurrio la excepcion: " + e.toString());
+            }
+        }
+        apiMLDao.buscarItemPorId(itemListaAPI.getId());
+    }
+
 }

@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
+import com.example.entregableandroid.Modelo.ApiML.ItemLocationAPI;
 import com.example.entregableandroid.Modelo.ItemVenta;
 import com.example.entregableandroid.R;
 import com.google.android.gms.maps.model.LatLng;
@@ -24,7 +26,7 @@ public class FragmentDetalleProducto extends Fragment {
     private TextView textViewTitulo,textViewPrecio;
     private ImageView imageView;
     private ImageView imageViewMapa;
-    private ItemVenta itemVenta;
+    private ItemAPI itemAPI;
     private String TAG = getClass().toString();
     private FragmentDetalleProducto.Aviso listener;
 
@@ -43,8 +45,7 @@ public class FragmentDetalleProducto extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "Metodo onCreate");
         Bundle arguments = getArguments();
-        itemVenta = (ItemVenta) arguments.getSerializable(ItemVenta.class.toString());
-        Log.d(TAG, itemVenta.getTitulo());
+        itemAPI = (ItemAPI) arguments.getSerializable(ItemAPI.class.toString());
     }
 
     @Override
@@ -55,23 +56,25 @@ public class FragmentDetalleProducto extends Fragment {
         textViewPrecio = inflate.findViewById(R.id.FragmentDetalleProductoPrecio);
         imageViewMapa = inflate.findViewById(R.id.FragmentDetalleImagenMapa);
 
-
-        if ( itemVenta.getLatitud() == null ){
+        final ItemLocationAPI location = itemAPI.getLocation();
+        if ( location.getLatitude() == null ){
             imageViewMapa.setVisibility(View.GONE);
         }
         else {
             imageViewMapa.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.FragmentDetalleAviso( new LatLng(itemVenta.getLatitud(),itemVenta.getLongitud()));
+                    Double latitude = location.getLatitude();
+                    Double longitude = location.getLongitude();
+                    listener.FragmentDetalleAviso( new LatLng(latitude,longitude));
                 }
             });
         }
 
-        textViewPrecio.setText("$"+itemVenta.getPrice());
+        textViewPrecio.setText("$"+itemAPI.getPrice());
         imageView = inflate.findViewById(R.id.FragmentDetalleProductoImagen);
-        textViewTitulo.setText(itemVenta.getTitulo());
-        Picasso.get().load(itemVenta.getUrlImagen()).into(imageView);
+        textViewTitulo.setText(itemAPI.getTitle());
+        Picasso.get().load(itemAPI.getPictures().get(0).getUrl()).into(imageView);
         return inflate;
     }
 

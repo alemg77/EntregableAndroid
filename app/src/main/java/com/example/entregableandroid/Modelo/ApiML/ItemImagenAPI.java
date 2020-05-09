@@ -1,6 +1,8 @@
 package com.example.entregableandroid.Modelo.ApiML;
 
-public class ItemImagenAPI {
+import java.io.Serializable;
+
+public class ItemImagenAPI implements Serializable {
     private String id;
     private String url;
     private String secure_url;

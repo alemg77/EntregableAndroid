@@ -1,11 +1,39 @@
 package com.example.entregableandroid.Modelo.ApiML;
 
-public class ItemListaAPI {
+import android.provider.BaseColumns;
+
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+import java.io.Serializable;
+
+@Entity(tableName = ItemListaAPI.TABLE_NAME)
+public class ItemListaAPI implements Serializable {
+
+    public final static String TABLE_NAME = "ItemLista";
+    public final static String COLUMN_NAME = "name";
+    public final static String COLUMN_ID = BaseColumns._ID;
+
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = COLUMN_ID)
     private String id;
+
+    @ColumnInfo(name = "site_id")
     private String site_id;
+
+    @ColumnInfo(name = "title")
     private String title;
+
+    @ColumnInfo(name = "price")
     private String price;
+
+    @ColumnInfo(name = "permalink;")
     private String permalink;
+
+    @ColumnInfo(name = "thumbnail")
     private String thumbnail;
 
     public ItemListaAPI(String id, String site_id, String title, String price, String permalink, String thumbnail) {

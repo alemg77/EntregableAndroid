@@ -13,16 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.entregableandroid.Modelo.ElementoLista;
-import com.example.entregableandroid.ApiML.ListaDeVentasML;
+import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
+import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
 import com.example.entregableandroid.R;
 
-public class FragmentListaProductos extends Fragment implements ProductoAdapter.ProductoAdapterListener {
+import java.util.List;
+
+public class FragmentResultadoBusqueda extends Fragment implements ProductoAdapter.ProductoAdapterListener {
 
     private RecyclerView recyclerViewProducto;
-    private FragmentListaProductos.Aviso listener;
+    private FragmentResultadoBusqueda.Aviso listener;
 
-    public FragmentListaProductos(){
+    public FragmentResultadoBusqueda(){
     }
 
     @Override
@@ -41,9 +43,10 @@ public class FragmentListaProductos extends Fragment implements ProductoAdapter.
         View inflate = inflater.inflate(R.layout.fragment_recyclerview, container, false);
         recyclerViewProducto = inflate.findViewById(R.id.FragmentRecyclerView);
         Bundle bundle = getArguments();
-        ListaDeVentasML lista = (ListaDeVentasML) bundle.getSerializable(ListaDeVentasML.class.toString());
+        ResultadoBusquedaAPI resultadoBusquedaAPI = (ResultadoBusquedaAPI) bundle.getSerializable(ResultadoBusquedaAPI.class.toString());
+        List<ItemListaAPI> results = resultadoBusquedaAPI.getResults();
         Context context = getActivity().getApplicationContext();
-        ProductoAdapter productoAdapter = new ProductoAdapter(context, this, lista);
+        ProductoAdapter productoAdapter = new ProductoAdapter(context, this, results);
         LinearLayoutManager dosLayoutManager = new LinearLayoutManager(getActivity());
         recyclerViewProducto.setLayoutManager(dosLayoutManager);
         recyclerViewProducto.setAdapter(productoAdapter);
@@ -51,12 +54,12 @@ public class FragmentListaProductos extends Fragment implements ProductoAdapter.
     }
 
     @Override
-    public void seleccionProducto(ElementoLista elementoLista) {
-        listener.selleccionProducto(elementoLista);
+    public void seleccionProducto(ItemListaAPI itemListaAPI) {
+        listener.selleccionProducto(itemListaAPI);
     }
 
     public interface Aviso {
-        void selleccionProducto (ElementoLista elementoLista);
+        void selleccionProducto (ItemListaAPI itemListaAPI);
     }
 }
 

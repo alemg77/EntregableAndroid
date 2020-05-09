@@ -1,8 +1,9 @@
 package com.example.entregableandroid.Modelo.ApiML;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ItemAPI {
+public class ItemAPI implements Serializable {
     private String id;
     private String site_id;
     private String title;
