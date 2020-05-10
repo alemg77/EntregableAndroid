@@ -1,4 +1,4 @@
-package com.example.entregableandroid.Retrofit;
+package com.example.entregableandroid.DAO.ApiML;
 
 import android.util.Log;
 
@@ -17,6 +17,7 @@ public class ApiMLDao {
     private ServicioML servicioML;
     private String TAG = getClass().toString();
     private Avisos avisos;
+    private String provincia;
 
     public ApiMLDao(Avisos listening) {
         retrofit = new Retrofit.Builder()
@@ -25,13 +26,26 @@ public class ApiMLDao {
                 .build();
 
         servicioML = retrofit.create(ServicioML.class);
-
+        this.provincia = ConstantesML.CAPITAL_FEDERAL;
         this.avisos = listening;
     }
 
+    public String getProvincia() {
+        return provincia;
+    }
+
+    public void setProvincia(String provincia) {
+        this.provincia = provincia;
+    }
+
+
     public void buscarPorDescripcion(String descripcion) {
+        buscarPorDescripcion("*-*",descripcion);
+    }
+
+    public void buscarPorDescripcion(String rangoPrecio, String descripcion) {
         Log.d(TAG, "Vamos a hacer una busqueda en MercadoLibre");
-        servicioML.getItemsPorDescripcion(descripcion).enqueue(new Callback<ResultadoBusquedaAPI>() {
+        servicioML.getItemsPorDescripcion("all",rangoPrecio,provincia,descripcion).enqueue(new Callback<ResultadoBusquedaAPI>() {
             @Override
             public void onResponse(Call<ResultadoBusquedaAPI> call, Response<ResultadoBusquedaAPI> response) {
                 if (!response.isSuccessful()) {

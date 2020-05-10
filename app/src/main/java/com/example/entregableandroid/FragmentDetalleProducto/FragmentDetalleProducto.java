@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemLocationAPI;
-import com.example.entregableandroid.Modelo.ItemVenta;
 import com.example.entregableandroid.R;
 import com.google.android.gms.maps.model.LatLng;
 import com.squareup.picasso.Picasso;

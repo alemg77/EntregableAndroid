@@ -17,14 +17,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.room.Room;
 
+import com.example.entregableandroid.DAO.ApiML.ConstantesML;
 import com.example.entregableandroid.FragmentProductos.FragmentResultadoBusqueda;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
-import com.example.entregableandroid.Database.AppDatabase;
+import com.example.entregableandroid.DAO.BaseDeDatos.AppDatabase;
 import com.example.entregableandroid.FragmentDetalleProducto.FragmentDetalleProducto;
-import com.example.entregableandroid.Database.Constantes;
-import com.example.entregableandroid.Retrofit.ApiMLDao;
+import com.example.entregableandroid.DAO.BaseDeDatos.Constantes;
+import com.example.entregableandroid.DAO.ApiML.ApiMLDao;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
 
@@ -84,7 +85,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         apiMLDao = new ApiMLDao(this);
-        apiMLDao.buscarPorDescripcion("audi");
+        apiMLDao.setProvincia(ConstantesML.BUENOS_AIRES);
+        apiMLDao.buscarPorDescripcion("fiat");
 
     }
 
