@@ -3,11 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Vista.FragmentProductos.FragmentResultadoBusqueda">
+    tools:context=".Vista.FragmentImagenes.FragmentImages">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/FragmentRecyclerView"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/ViewPagerFragmentViewPager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+    </androidx.viewpager.widget.ViewPager>
 
 </FrameLayout>

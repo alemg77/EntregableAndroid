@@ -1,4 +1,4 @@
-package com.example.entregableandroid.DAO.BaseDeDatos;
+package com.example.entregableandroid.Controlador.BaseDeDatos;
 
 
 import androidx.room.Database;

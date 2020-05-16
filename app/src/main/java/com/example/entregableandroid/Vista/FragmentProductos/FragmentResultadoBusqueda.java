@@ -1,4 +1,4 @@
-package com.example.entregableandroid.FragmentProductos;
+package com.example.entregableandroid.Vista.FragmentProductos;
 
 import android.content.Context;
 import android.os.Bundle;

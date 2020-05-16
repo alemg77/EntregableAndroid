@@ -13,7 +13,7 @@ public class ItemAPI implements Serializable {
     private String permalink;
     private String thumbnail;
     private String secure_thumbnail;
-    private List<ItemImagenAPI> pictures;
+    private List<Imagen> pictures;
     private ItemLocationAPI location;
 
     public String getId() {
@@ -88,11 +88,11 @@ public class ItemAPI implements Serializable {
         this.secure_thumbnail = secure_thumbnail;
     }
 
-    public List<ItemImagenAPI> getPictures() {
+    public List<Imagen> getPictures() {
         return pictures;
     }
 
-    public void setPictures(List<ItemImagenAPI> pictures) {
+    public void setPictures(List<Imagen> pictures) {
         this.pictures = pictures;
     }
 

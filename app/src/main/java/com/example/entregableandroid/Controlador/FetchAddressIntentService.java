@@ -1,8 +1,7 @@
-package com.example.entregableandroid;
+package com.example.entregableandroid.Controlador;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;

@@ -14,25 +14,28 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.room.Room;
 
-import com.example.entregableandroid.DAO.ApiML.ConstantesML;
-import com.example.entregableandroid.FragmentProductos.FragmentResultadoBusqueda;
+import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
+import com.example.entregableandroid.Vista.FragmentDetalleProducto.FragmentDetalleProducto;
+import com.example.entregableandroid.Vista.FragmentProductos.FragmentResultadoBusqueda;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
-import com.example.entregableandroid.DAO.BaseDeDatos.AppDatabase;
-import com.example.entregableandroid.FragmentDetalleProducto.FragmentDetalleProducto;
-import com.example.entregableandroid.DAO.BaseDeDatos.Constantes;
-import com.example.entregableandroid.DAO.ApiML.ApiMLDao;
+import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
+import com.example.entregableandroid.Controlador.BaseDeDatos.Constantes;
+import com.example.entregableandroid.Controlador.ApiML.ApiMLDao;
+import com.example.entregableandroid.Vista.MapsActivity;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
 
 import java.io.Serializable;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        FragmentResultadoBusqueda.Aviso, FragmentDetalleProducto.Aviso, ApiMLDao.Avisos {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, ApiMLDao.Avisos, FragmentResultadoBusqueda.Aviso
+{
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;

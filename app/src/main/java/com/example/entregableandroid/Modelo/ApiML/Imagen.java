@@ -2,14 +2,14 @@ package com.example.entregableandroid.Modelo.ApiML;
 
 import java.io.Serializable;
 
-public class ItemImagenAPI implements Serializable {
+public class Imagen implements Serializable {
     private String id;
     private String url;
     private String secure_url;
     private String size;
     private String max_size;
 
-    public ItemImagenAPI(String id, String url, String secure_url, String size, String max_size) {
+    public Imagen(String id, String url, String secure_url, String size, String max_size) {
         this.id = id;
         this.url = url;
         this.secure_url = secure_url;
