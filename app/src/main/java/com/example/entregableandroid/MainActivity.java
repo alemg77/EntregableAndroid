@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
+
     private String TAG = getClass().toString();
     private AppDatabase db;
     private ApiMLDao apiMLDao;
@@ -161,14 +162,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void resultadoBusqueda(ResultadoBusquedaAPI resultadoBusqueda) {
-        pegarFragment(new FragmentResultadoBusqueda(), R.id.MainFragProductos, resultadoBusqueda);
+    public void respuestaApiMercadoLibre(Object object) {
+        if (object instanceof ResultadoBusquedaAPI) {
+            pegarFragment(new FragmentResultadoBusqueda(), R.id.MainFragProductos, (ResultadoBusquedaAPI) object);
+        } else if (object instanceof ItemAPI) {
+            pegarFragment(new FragmentDetalleProducto(), R.id.MainFragProductos, (ItemAPI) object);
+        }
     }
 
-    @Override
-    public void LlegoItem(ItemAPI itemML) {
-        pegarFragment(new FragmentDetalleProducto(), R.id.MainFragProductos, itemML);
-    }
 
     @Override
     public void selleccionProducto(ItemListaAPI itemListaAPI) {
@@ -193,6 +194,7 @@ public class MainActivity extends AppCompatActivity
         }
         apiMLDao.buscarItemPorId(itemListaAPI.getId());
     }
+
 
 }
 

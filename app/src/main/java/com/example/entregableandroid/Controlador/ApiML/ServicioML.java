@@ -1,8 +1,11 @@
 package com.example.entregableandroid.Controlador.ApiML;
 
 
+import com.example.entregableandroid.Modelo.ApiML.DescripcionItem;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -16,4 +19,8 @@ public interface ServicioML {
 
     @GET("items/{id}")
     Call<ItemAPI> getItemPorId(@Path("id") String id);
+
+    @GET("items/{id}/descriptions")
+    Call<List<DescripcionItem>> getItemDescripcionPorId(@Path("id") String id);
+
 }

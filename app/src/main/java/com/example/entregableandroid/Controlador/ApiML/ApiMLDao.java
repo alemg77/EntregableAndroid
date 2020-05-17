@@ -2,8 +2,11 @@ package com.example.entregableandroid.Controlador.ApiML;
 
 import android.util.Log;
 
+import com.example.entregableandroid.Modelo.ApiML.DescripcionItem;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -52,7 +55,7 @@ public class ApiMLDao {
                     Log.d(TAG, "Retrofit response code:" + response.code());
                     return;
                 }
-                avisos.resultadoBusqueda(response.body());
+                avisos.respuestaApiMercadoLibre(response.body());
             }
 
             @Override
@@ -63,6 +66,7 @@ public class ApiMLDao {
     }
 
     public void buscarItemPorId(String id){
+        Log.d(TAG, "Vamos buscar un item");
         servicioML.getItemPorId(id).enqueue(new Callback<ItemAPI>() {
             @Override
             public void onResponse(Call<ItemAPI> call, Response<ItemAPI> response) {
@@ -70,18 +74,37 @@ public class ApiMLDao {
                     Log.d(TAG, "Retrofit response code:" + response.code());
                     return;
                 }
-                avisos.LlegoItem(response.body());
+                avisos.respuestaApiMercadoLibre(response.body());
             }
 
             @Override
             public void onFailure(Call<ItemAPI> call, Throwable t) {
+                Log.d(TAG, "Retrofit onFailure:" + t.getMessage().toString());
+            }
+        });
+    }
 
+    public void buscarDescripcionItemm(String id) {
+        Log.d(TAG, "Vamos buscar la descripcion de un item");
+
+        servicioML.getItemDescripcionPorId(id).enqueue(new Callback<List<DescripcionItem>>() {
+            @Override
+            public void onResponse(Call<List<DescripcionItem>> call, Response<List<DescripcionItem>> response) {
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "Retrofit response code:" + response.code());
+                }
+                List<DescripcionItem> list = response.body();
+                avisos.respuestaApiMercadoLibre(list.get(0));
+            }
+
+            @Override
+            public void onFailure(Call<List<DescripcionItem>> call, Throwable t) {
+                Log.d(TAG, "Retrofit onFailure:" + t.getMessage().toString());
             }
         });
     }
 
     public interface Avisos {
-        void resultadoBusqueda(ResultadoBusquedaAPI resultadoBusqueda);
-        void LlegoItem(ItemAPI itemML);
+        void respuestaApiMercadoLibre(Object object);
     }
 }

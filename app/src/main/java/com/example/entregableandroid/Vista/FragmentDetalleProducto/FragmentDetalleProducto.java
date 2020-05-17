@@ -14,20 +14,21 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.entregableandroid.Controlador.ApiML.ApiMLDao;
+import com.example.entregableandroid.Modelo.ApiML.DescripcionItem;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.Imagen;
 import com.example.entregableandroid.Modelo.ApiML.ItemLocationAPI;
 import com.example.entregableandroid.Modelo.ApiML.ListaImagenes;
 import com.example.entregableandroid.R;
 import com.google.android.gms.maps.model.LatLng;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 
-public class FragmentDetalleProducto extends Fragment {
+public class FragmentDetalleProducto extends Fragment implements ApiMLDao.Avisos{
 
-    private TextView textViewTitulo,textViewPrecio;
+    private TextView textViewTitulo,textViewPrecio, textViewDescripcion;
     private ImageView imageViewMapa;
     private ItemAPI itemAPI;
     private String TAG = getClass().toString();
@@ -60,6 +61,10 @@ public class FragmentDetalleProducto extends Fragment {
         View inflate = inflater.inflate(R.layout.fragment_detalle_producto, container, false);
         textViewTitulo = inflate.findViewById(R.id.FragmentDetalleProductoTitulo);
         textViewPrecio = inflate.findViewById(R.id.FragmentDetalleProductoPrecio);
+        textViewDescripcion = inflate.findViewById(R.id.FragmentDetalleDescripcion);
+
+        ApiMLDao apiMLDao = new ApiMLDao(this);
+        apiMLDao.buscarDescripcionItemm(itemAPI.getId());
 
         viewPager = inflate.findViewById(R.id.FragmentDetalleViewPager);
         viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
@@ -87,6 +92,17 @@ public class FragmentDetalleProducto extends Fragment {
         // imageView = inflate.findViewById(R.id.FragmentDetalleProductoImagen);
         textViewTitulo.setText(itemAPI.getTitle());
         return inflate;
+    }
+
+    @Override
+    public void respuestaApiMercadoLibre(Object object) {
+        if ( object instanceof DescripcionItem ){
+            DescripcionItem descripcionItem = (DescripcionItem) object;
+            textViewDescripcion.setText(descripcionItem.getPlain_text());
+            Log.d(TAG, "Llego algo la descripcion de un item");
+        } else {
+            Log.d(TAG, "Llego algo no contemplado de ML");
+        }
     }
 
     public interface Aviso {
