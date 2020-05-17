@@ -1,32 +1,35 @@
 package com.example.entregableandroid;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.room.Room;
 
+import com.example.entregableandroid.Controlador.ApiML.ApiMLDao;
 import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
-import com.example.entregableandroid.Vista.FragmentDetalleProducto.FragmentDetalleProducto;
-import com.example.entregableandroid.Vista.FragmentProductos.FragmentResultadoBusqueda;
+import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
+import com.example.entregableandroid.Controlador.BaseDeDatos.Constantes;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
-import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
-import com.example.entregableandroid.Controlador.BaseDeDatos.Constantes;
-import com.example.entregableandroid.Controlador.ApiML.ApiMLDao;
+import com.example.entregableandroid.Vista.FragmentDetalleProducto.FragmentDetalleProducto;
+import com.example.entregableandroid.Vista.FragmentProductos.FragmentResultadoBusqueda;
 import com.example.entregableandroid.Vista.MapsActivity;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
@@ -42,6 +45,7 @@ public class MainActivity extends AppCompatActivity
     private String TAG = getClass().toString();
     private AppDatabase db;
     private ApiMLDao apiMLDao;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     private void pegarFragment(Fragment fragmentAPegar, int containerViewId, Serializable serializable) {
         Bundle bundle = new Bundle();
@@ -53,22 +57,34 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.accion_bar_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.accionbarItem1:
+                drawerLayout.openDrawer(Gravity.LEFT);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Log.d(TAG, "********* INICIO DE LA APLICACION Entregable Android **********************************");
-        Configuration configuracion = getResources().getConfiguration();
-        int currentNightMode = configuracion.uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        switch (currentNightMode) {
-            case Configuration.UI_MODE_NIGHT_NO:
-                Log.d(TAG, " ************************************ MODO DIA *******************************");
-                break;
-            case Configuration.UI_MODE_NIGHT_YES:
-                Log.d(TAG, " ************************************ MODO NOCHE *******************************");
-                break;
-        }
+
+        Toolbar toolbar = findViewById(R.id.MainActivityToolbar);
+        setSupportActionBar(toolbar);
         drawerLayout = findViewById(R.id.drawerLayout);
+
+        // TODO: Hacer el menu de hamburguesa como corresponde
+        //actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.abrir_menu, R.string.cerrar_menu);
         navigationView = findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -86,11 +102,9 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-
         apiMLDao = new ApiMLDao(this);
         apiMLDao.setProvincia(ConstantesML.BUENOS_AIRES);
         apiMLDao.buscarPorDescripcion("fiat");
-
     }
 
     @Override
@@ -181,3 +195,16 @@ public class MainActivity extends AppCompatActivity
     }
 
 }
+
+/*
+        Configuration configuracion = getResources().getConfiguration();
+        int currentNightMode = configuracion.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (currentNightMode) {
+            case Configuration.UI_MODE_NIGHT_NO:
+                Log.d(TAG, " ************************************ MODO DIA *******************************");
+                break;
+            case Configuration.UI_MODE_NIGHT_YES:
+                Log.d(TAG, " ************************************ MODO NOCHE *******************************");
+                break;
+        }
+ */
