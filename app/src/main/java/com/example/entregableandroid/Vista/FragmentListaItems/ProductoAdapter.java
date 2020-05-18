@@ -1,4 +1,4 @@
-package com.example.entregableandroid.Vista.FragmentProductos;
+package com.example.entregableandroid.Vista.FragmentListaItems;
 
 import android.content.Context;
 import android.view.LayoutInflater;

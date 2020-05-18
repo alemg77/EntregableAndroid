@@ -29,7 +29,7 @@ import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
 import com.example.entregableandroid.Vista.FragmentDetalleProducto.FragmentDetalleProducto;
-import com.example.entregableandroid.Vista.FragmentProductos.FragmentResultadoBusqueda;
+import com.example.entregableandroid.Vista.FragmentListaItems.FragmentListaItems;
 import com.example.entregableandroid.Vista.MapsActivity;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
@@ -37,7 +37,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.io.Serializable;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, ApiMLDao.Avisos, FragmentResultadoBusqueda.Aviso
+        implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, ApiMLDao.Avisos, FragmentListaItems.Aviso
 {
 
     private DrawerLayout drawerLayout;
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.Recientes:
                 if ( db.elementoListaDao().cantidadElementos() > 0 ){
-                    pegarFragment(new FragmentResultadoBusqueda(), R.id.MainFragProductos, new ResultadoBusquedaAPI(db.elementoListaDao().getTodos()));
+                    pegarFragment(new FragmentListaItems(), R.id.MainFragProductos, new ResultadoBusquedaAPI(db.elementoListaDao().getTodos()));
                 } else {
                     Toast.makeText(MainActivity.this, "Cuando veas algun producto se iran guardando aqui automagicamente", Toast.LENGTH_SHORT).show();
                 }
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void respuestaApiMercadoLibre(Object object) {
         if (object instanceof ResultadoBusquedaAPI) {
-            pegarFragment(new FragmentResultadoBusqueda(), R.id.MainFragProductos, (ResultadoBusquedaAPI) object);
+            pegarFragment(new FragmentListaItems(), R.id.MainFragProductos, (ResultadoBusquedaAPI) object);
         } else if (object instanceof ItemAPI) {
             pegarFragment(new FragmentDetalleProducto(), R.id.MainFragProductos, (ItemAPI) object);
         }
