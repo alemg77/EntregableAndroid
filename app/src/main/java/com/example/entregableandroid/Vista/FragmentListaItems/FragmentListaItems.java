@@ -21,6 +21,7 @@ import com.example.entregableandroid.MainActivity;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
 import com.example.entregableandroid.R;
+import com.example.entregableandroid.databinding.FragmentDetalleProductoBinding;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Collections;
@@ -54,7 +55,11 @@ public class FragmentListaItems extends Fragment implements ProductoAdapter.Prod
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+
         View inflate = inflater.inflate(R.layout.fragment_recyclerview, container, false);
+
+
         recyclerViewProducto = inflate.findViewById(R.id.FragmentRecyclerView);
         Bundle bundle = getArguments();
         ResultadoBusquedaAPI resultadoBusquedaAPI = (ResultadoBusquedaAPI) bundle.getSerializable(ResultadoBusquedaAPI.class.toString());

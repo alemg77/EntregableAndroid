@@ -13,6 +13,12 @@ public class ConstantesML {
     public final static String CHUBUT="AR-U";
 
 
+    public final static String CAREGORIA_AUTOS_FIAT = "MLA407544";
+    public final static String CAREGORIA_AUTOS_RENAULT = "MLA412078";
+    public final static String CAREGORIA_AUTOS_FORD = "MLA62732";
+    public final static String CAREGORIA_AUTOS_AUDI = "MLA62732";
+
+
 }
 /*
         {

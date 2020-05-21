@@ -65,6 +65,25 @@ public class ApiMLDao {
         });
     }
 
+    public void buscarPorCategoria(String categoria, String sort){
+        Log.d(TAG, "Vamos a hacer una busqueda en MercadoLibre");
+        servicioML.getItemsPorCategoria(categoria, sort).enqueue(new Callback<ResultadoBusquedaAPI>() {
+            @Override
+            public void onResponse(Call<ResultadoBusquedaAPI> call, Response<ResultadoBusquedaAPI> response) {
+                if (!response.isSuccessful()) {
+                    Log.d(TAG, "Retrofit response code:" + response.code());
+                    return;
+                }
+                avisos.respuestaApiMercadoLibre(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ResultadoBusquedaAPI> call, Throwable t) {
+                Log.d(TAG, "Retrofit onFailure:" + t.getMessage().toString());
+            }
+        });
+    }
+
     public void buscarItemPorId(String id){
         Log.d(TAG, "Vamos buscar un item");
         servicioML.getItemPorId(id).enqueue(new Callback<ItemAPI>() {

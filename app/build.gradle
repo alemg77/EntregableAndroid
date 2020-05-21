@@ -20,6 +20,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    
+    viewBinding {
+        enabled = true
+    }
 
 }
 
@@ -58,5 +62,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.maps:google-maps-services:0.2.9'
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.2.2'
+
+
+
 
 }

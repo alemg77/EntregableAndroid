@@ -17,6 +17,9 @@ public interface ServicioML {
     @GET("sites/MLA/search")
     Call<ResultadoBusquedaAPI> getItemsPorDescripcion(@Query("condition") String condicion, @Query("price") String rangoPrecio, @Query("state") String provincia, @Query("q") String d);
 
+    @GET("sites/MLA/search")
+    Call<ResultadoBusquedaAPI> getItemsPorCategoria(@Query("category") String categoria,@Query("sort") String sort);
+
     @GET("items/{id}")
     Call<ItemAPI> getItemPorId(@Path("id") String id);
 

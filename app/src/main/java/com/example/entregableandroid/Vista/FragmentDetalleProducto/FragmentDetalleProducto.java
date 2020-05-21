@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -21,20 +22,19 @@ import com.example.entregableandroid.Modelo.ApiML.Imagen;
 import com.example.entregableandroid.Modelo.ApiML.ItemLocationAPI;
 import com.example.entregableandroid.Modelo.ApiML.ListaImagenes;
 import com.example.entregableandroid.R;
+import com.example.entregableandroid.databinding.FragmentDetalleProductoBinding;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
-
 public class FragmentDetalleProducto extends Fragment implements ApiMLDao.Avisos{
 
-    private TextView textViewTitulo,textViewPrecio, textViewDescripcion;
-    private ImageView imageViewMapa;
+    FragmentDetalleProductoBinding binding;
+
     private ItemAPI itemAPI;
     private String TAG = getClass().toString();
     private FragmentDetalleProducto.Aviso listener;
     private ListaImagenes listaImagenes;
-    private ViewPager viewPager;
 
     public FragmentDetalleProducto() {
         // Required empty public constructor
@@ -56,29 +56,31 @@ public class FragmentDetalleProducto extends Fragment implements ApiMLDao.Avisos
     }
 
     @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        binding.FragmentDetalleProductoPrecio.setText("$"+itemAPI.getPrice());
+        binding.FragmentDetalleProductoTitulo.setText(itemAPI.getTitle());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "Metodo onCreateView");
-        View inflate = inflater.inflate(R.layout.fragment_detalle_producto, container, false);
-        textViewTitulo = inflate.findViewById(R.id.FragmentDetalleProductoTitulo);
-        textViewPrecio = inflate.findViewById(R.id.FragmentDetalleProductoPrecio);
-        textViewDescripcion = inflate.findViewById(R.id.FragmentDetalleDescripcion);
+        binding = FragmentDetalleProductoBinding.inflate(getLayoutInflater());
 
         ApiMLDao apiMLDao = new ApiMLDao(this);
         apiMLDao.buscarDescripcionItemm(itemAPI.getId());
 
-        viewPager = inflate.findViewById(R.id.FragmentDetalleViewPager);
-        viewPager.setPageTransformer(true, new ZoomOutPageTransformer());
+        binding.FragmentDetalleViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         List<Imagen> pictures = listaImagenes.getPictures();
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager(),pictures);
-        viewPager.setAdapter(viewPagerAdapter);
+        binding.FragmentDetalleViewPager.setAdapter(viewPagerAdapter);
 
-        imageViewMapa = inflate.findViewById(R.id.FragmentDetalleImagenMapa);
         final ItemLocationAPI location = itemAPI.getLocation();
         if ( location.getLatitude() == null ){
-            imageViewMapa.setVisibility(View.GONE);
+            binding.FragmentDetalleImagenMapa.setVisibility(View.GONE);
         }
         else {
-            imageViewMapa.setOnClickListener(new View.OnClickListener() {
+            binding.FragmentDetalleImagenMapa.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Double latitude = location.getLatitude();
@@ -87,18 +89,14 @@ public class FragmentDetalleProducto extends Fragment implements ApiMLDao.Avisos
                 }
             });
         }
-
-        textViewPrecio.setText("$"+itemAPI.getPrice());
-        // imageView = inflate.findViewById(R.id.FragmentDetalleProductoImagen);
-        textViewTitulo.setText(itemAPI.getTitle());
-        return inflate;
+        return binding.getRoot();
     }
 
     @Override
     public void respuestaApiMercadoLibre(Object object) {
         if ( object instanceof DescripcionItem ){
             DescripcionItem descripcionItem = (DescripcionItem) object;
-            textViewDescripcion.setText(descripcionItem.getPlain_text());
+            binding.FragmentDetalleDescripcion.setText(descripcionItem.getPlain_text());
             Log.d(TAG, "Llego algo la descripcion de un item");
         } else {
             Log.d(TAG, "Llego algo no contemplado de ML");
