@@ -12,8 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.entregableandroid.Controlador.ApiML.ApiMLDao;
 import com.example.entregableandroid.Modelo.ApiML.DescripcionItem;
@@ -21,7 +19,6 @@ import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.Imagen;
 import com.example.entregableandroid.Modelo.ApiML.ItemLocationAPI;
 import com.example.entregableandroid.Modelo.ApiML.ListaImagenes;
-import com.example.entregableandroid.R;
 import com.example.entregableandroid.databinding.FragmentDetalleProductoBinding;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -36,9 +33,7 @@ public class FragmentDetalleProducto extends Fragment implements ApiMLDao.Avisos
     private FragmentDetalleProducto.Aviso listener;
     private ListaImagenes listaImagenes;
 
-    public FragmentDetalleProducto() {
-        // Required empty public constructor
-    }
+    public FragmentDetalleProducto() { }
 
     @Override
     public void onAttach(@NonNull Context context) {

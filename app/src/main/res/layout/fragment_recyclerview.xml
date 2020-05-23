@@ -6,7 +6,7 @@
     tools:context=".Vista.FragmentListaItems.FragmentListaItems">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/FragmentRecyclerView"
+        android:id="@+id/RecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

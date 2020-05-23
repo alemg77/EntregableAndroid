@@ -11,6 +11,8 @@ import android.widget.ImageView;
 
 import com.example.entregableandroid.Modelo.ApiML.Imagen;
 import com.example.entregableandroid.R;
+import com.example.entregableandroid.databinding.FragmentDetalleProductoBinding;
+import com.example.entregableandroid.databinding.FragmentImagenBinding;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -18,32 +20,24 @@ import com.squareup.picasso.Picasso;
  */
 public class FragmentImagen extends Fragment {
 
-    private ImageView imageView;
+    private FragmentImagenBinding binding;
 
-    public FragmentImagen() {
-        // Required empty public constructor
-    }
+    public FragmentImagen() {  }
 
-    //fabrica de fragments
     public static FragmentImagen dameUnFragment(Imagen imagen){
-        //crear el fragment
         FragmentImagen fragmentImagen = new FragmentImagen();
-        //pasarle el bundle
         Bundle bundle = new Bundle();
         bundle.putSerializable(Imagen.class.toString(),imagen);
         fragmentImagen.setArguments(bundle);
-        //hacerle un return
         return fragmentImagen;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View inflate = inflater.inflate(R.layout.fragment_imagen, container, false);
-        imageView = inflate.findViewById(R.id.FragmentImagenImagen);
+        binding = FragmentImagenBinding.inflate(getLayoutInflater());
         Bundle bundle = getArguments();
         Imagen imagen = (Imagen) bundle.getSerializable(Imagen.class.toString());
-        Picasso.get().load(imagen.getUrl()).into(imageView);
-        return inflate;
+        Picasso.get().load(imagen.getUrl()).into(binding.Imagen);
+        return binding.getRoot();
     }
 }

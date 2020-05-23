@@ -16,12 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import com.example.entregableandroid.MainActivity;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
 import com.example.entregableandroid.R;
-import com.example.entregableandroid.databinding.FragmentDetalleProductoBinding;
+import com.example.entregableandroid.databinding.FragmentRecyclerviewBinding;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.Collections;
@@ -31,9 +31,9 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-public class FragmentListaItems extends Fragment implements ProductoAdapter.ProductoAdapterListener {
+public class FragmentListaItems extends Fragment implements RecyclerViewClickInterfase {
 
-    private RecyclerView recyclerViewProducto;
+    private FragmentRecyclerviewBinding binding;
     private FragmentListaItems.Aviso listener;
     private List<ItemListaAPI> listaElementos;
     private ProductoAdapter productoAdapter;
@@ -55,27 +55,18 @@ public class FragmentListaItems extends Fragment implements ProductoAdapter.Prod
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-
-        View inflate = inflater.inflate(R.layout.fragment_recyclerview, container, false);
-
-
-        recyclerViewProducto = inflate.findViewById(R.id.FragmentRecyclerView);
+        binding = FragmentRecyclerviewBinding.inflate(getLayoutInflater());
         Bundle bundle = getArguments();
         ResultadoBusquedaAPI resultadoBusquedaAPI = (ResultadoBusquedaAPI) bundle.getSerializable(ResultadoBusquedaAPI.class.toString());
         listaElementos = resultadoBusquedaAPI.getResults();
         Context context = getActivity().getApplicationContext();
-
-
         productoAdapter = new ProductoAdapter(context, this, listaElementos);
         LinearLayoutManager dosLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerViewProducto.setLayoutManager(dosLayoutManager);
-        recyclerViewProducto.setAdapter(productoAdapter);
-
+        binding.RecyclerView.setLayoutManager(dosLayoutManager);
+        binding.RecyclerView.setAdapter(productoAdapter);
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(recyclerViewProducto);
-
-        return inflate;
+        itemTouchHelper.attachToRecyclerView(binding.RecyclerView);
+        return binding.getRoot();
     }
 
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback( ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START| ItemTouchHelper.END ,
@@ -99,7 +90,7 @@ public class FragmentListaItems extends Fragment implements ProductoAdapter.Prod
                     elementoBorrado = listaElementos.get(posicion);
                     listaElementos.remove(posicion);
                     productoAdapter.notifyItemRemoved(posicion);
-                    Snackbar.make(recyclerViewProducto, "Regresar?", Snackbar.LENGTH_LONG)
+                    Snackbar.make(binding.RecyclerView, "Regresar?", Snackbar.LENGTH_LONG)
                             .setAction("Si", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
@@ -127,10 +118,14 @@ public class FragmentListaItems extends Fragment implements ProductoAdapter.Prod
         }
     };
 
+    @Override
+    public void onItemClick(int position) {
+        listener.selleccionProducto(listaElementos.get(position));
+    }
 
     @Override
-    public void seleccionProducto(ItemListaAPI itemListaAPI) {
-        listener.selleccionProducto(itemListaAPI);
+    public void onLongItemClick(int position) {
+        Toast.makeText(getContext(), "Toma por curioso", Toast.LENGTH_SHORT).show();
     }
 
     public interface Aviso {

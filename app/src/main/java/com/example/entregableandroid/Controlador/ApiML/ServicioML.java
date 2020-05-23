@@ -26,4 +26,7 @@ public interface ServicioML {
     @GET("items/{id}/descriptions")
     Call<List<DescripcionItem>> getItemDescripcionPorId(@Path("id") String id);
 
+    // TODO: PAGINACION!!!!
+    // https://api.mercadolibre.com/sites/MLA/search?q=fiat&limit=20&offset=25/
+
 }

@@ -6,7 +6,7 @@
     tools:context=".Vista.FragmentDetalleProducto.FragmentImagen">
 
     <ImageView
-        android:id="@+id/FragmentImagenImagen"
+        android:id="@+id/Imagen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
