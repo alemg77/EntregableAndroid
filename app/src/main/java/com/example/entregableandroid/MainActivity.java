@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -31,6 +30,7 @@ import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
 import com.example.entregableandroid.Vista.FragmentDetalleProducto.FragmentDetalleProducto;
 import com.example.entregableandroid.Vista.FragmentListaItems.FragmentListaItems;
+import com.example.entregableandroid.Vista.FragmentLogin;
 import com.example.entregableandroid.Vista.MapsActivity;
 import com.example.entregableandroid.databinding.ActivityMainBinding;
 import com.google.android.gms.maps.model.LatLng;
@@ -100,13 +100,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return false;
             }
         });
-
-
-
-
         return super.onCreateOptionsMenu(menu);
     }
 
+
+    private void pegarFragment(Fragment fragmentAPegar, int containerViewId) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.add(containerViewId, fragmentAPegar).commit();
+    }
 
     private void pegarFragment(Fragment fragmentAPegar, int containerViewId, Serializable serializable) {
         Bundle bundle = new Bundle();
@@ -114,20 +116,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         fragmentAPegar.setArguments(bundle);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.replace(containerViewId, fragmentAPegar).commit();
+        fragmentTransaction.add(containerViewId, fragmentAPegar).commit();
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            /*
-            case R.id.accionbarItem1:
-                binding.drawerLayout.openDrawer(Gravity.LEFT);
+            case R.id.action_bar_usuario:
+                pegarFragment(new FragmentLogin(), R.id.MainFragment );
                 break;
-
-             */
         }
         return super.onOptionsItemSelected(item);
     }
@@ -171,7 +168,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.Recientes:
                 if ( db.elementoListaDao().cantidadElementos() > 0 ){
-                    pegarFragment(new FragmentListaItems(), R.id.MainFragProductos, new ResultadoBusquedaAPI(db.elementoListaDao().getTodos()));
+                    pegarFragment(new FragmentListaItems(), R.id.MainFragment, new ResultadoBusquedaAPI(db.elementoListaDao().getTodos()));
                 } else {
                     Toast.makeText(MainActivity.this, "Cuando veas algun producto se iran guardando aqui automagicamente", Toast.LENGTH_SHORT).show();
                 }
@@ -196,9 +193,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void respuestaApiMercadoLibre(Object object) {
         if (object instanceof ResultadoBusquedaAPI) {
-            pegarFragment(new FragmentListaItems(), R.id.MainFragProductos, (ResultadoBusquedaAPI) object);
+            pegarFragment(new FragmentListaItems(), R.id.MainFragment, (ResultadoBusquedaAPI) object);
         } else if (object instanceof ItemAPI) {
-            pegarFragment(new FragmentDetalleProducto(), R.id.MainFragProductos, (ItemAPI) object);
+            pegarFragment(new FragmentDetalleProducto(), R.id.MainFragment, (ItemAPI) object);
         }
     }
 

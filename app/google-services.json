@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "675391435294",
+    "firebase_url": "https://entregableandroid2020.firebaseio.com",
+    "project_id": "entregableandroid2020",
+    "storage_bucket": "entregableandroid2020.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:675391435294:android:e8244e7ace50330375f40f",
+        "android_client_info": {
+          "package_name": "com.example.entregableandroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "675391435294-qgket0ihq9t9uubrf1828fq6fdlrrdqk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.entregableandroid",
+            "certificate_hash": "05c676398281adc996b3d737e8ba4ccfec9efc9a"
+          }
+        },
+        {
+          "client_id": "675391435294-6t239d8c9qhgc1c7n2rv0q4q7tqbct9k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQ_hNX4YM_1XODML_hRfPUHN93RpADhhs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "675391435294-6t239d8c9qhgc1c7n2rv0q4q7tqbct9k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
