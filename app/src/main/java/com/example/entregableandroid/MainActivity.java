@@ -9,10 +9,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -41,32 +44,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String TAG = getClass().toString();
     private AppDatabase db;
     private ApiMLDao apiMLDao;
-
-    private void pegarFragment(Fragment fragmentAPegar, int containerViewId, Serializable serializable) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(serializable.getClass().toString(), serializable);
-        fragmentAPegar.setArguments(bundle);
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.replace(containerViewId, fragmentAPegar).commit();
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.accion_bar_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.accionbarItem1:
-                binding.drawerLayout.openDrawer(Gravity.LEFT);
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = findViewById(R.id.MainActivityToolbar);
         setSupportActionBar(toolbar);
 
-        // TODO: Hacer el menu de hamburguesa como corresponde
-        //actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.abrir_menu, R.string.cerrar_menu);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.drawerLayout, toolbar, R.string.abrir_menu, R.string.cerrar_menu);
 
         binding.navigation.setNavigationItemSelectedListener(this);
         db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, Constantes.BD_NAME).allowMainThreadQueries().build();
@@ -100,6 +77,67 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         apiMLDao = new ApiMLDao(this);
         apiMLDao.setProvincia(ConstantesML.BUENOS_AIRES);
         apiMLDao.buscarPorDescripcion("fiat");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.accion_bar_menu, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.app_bar_search);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setQueryHint("Buscar aqui...");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                apiMLDao.buscarPorDescripcion(query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // Esto se ejecuta cuando cambia el texto
+                return false;
+            }
+        });
+
+
+
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    private void pegarFragment(Fragment fragmentAPegar, int containerViewId, Serializable serializable) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(serializable.getClass().toString(), serializable);
+        fragmentAPegar.setArguments(bundle);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.replace(containerViewId, fragmentAPegar).commit();
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            /*
+            case R.id.accionbarItem1:
+                binding.drawerLayout.openDrawer(Gravity.LEFT);
+                break;
+
+             */
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        actionBarDrawerToggle.syncState();
     }
 
     @Override
