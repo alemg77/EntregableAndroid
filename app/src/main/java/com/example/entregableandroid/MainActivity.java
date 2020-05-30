@@ -29,12 +29,14 @@ import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
 import com.example.entregableandroid.Vista.FragmentDetalleProducto.FragmentDetalleProducto;
+import com.example.entregableandroid.Vista.FragmentFirestone;
 import com.example.entregableandroid.Vista.FragmentListaItems.FragmentListaItems;
 import com.example.entregableandroid.Vista.FragmentLogin;
 import com.example.entregableandroid.Vista.MapsActivity;
 import com.example.entregableandroid.databinding.ActivityMainBinding;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.Serializable;
 
@@ -124,6 +126,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case R.id.action_bar_usuario:
                 pegarFragment(new FragmentLogin(), R.id.MainFragment );
+                break;
+
+            case R.id.action_firebase:
+                if ( FirebaseAuth.getInstance() != null ) {
+                    pegarFragment(new FragmentFirestone(), R.id.MainFragment);
+                } else {
+                    Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
