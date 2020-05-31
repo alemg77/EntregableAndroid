@@ -16,6 +16,16 @@ public class ItemAPI implements Serializable {
     private List<Imagen> pictures;
     private ItemLocationAPI location;
 
+    public ItemAPI() {
+    }
+
+    public ItemAPI(String id, String title, String seller_id, String price) {
+        this.id = id;
+        this.title = title;
+        this.seller_id = seller_id;
+        this.price = price;
+    }
+
     public String getId() {
         return id;
     }

@@ -25,11 +25,11 @@ import com.example.entregableandroid.Controlador.ApiML.ApiMLDao;
 import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
 import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
 import com.example.entregableandroid.Controlador.BaseDeDatos.Constantes;
+import com.example.entregableandroid.Firebase.FragmentFirebase;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
 import com.example.entregableandroid.Vista.FragmentDetalleProducto.FragmentDetalleProducto;
-import com.example.entregableandroid.Vista.FragmentFirestone;
 import com.example.entregableandroid.Vista.FragmentListaItems.FragmentListaItems;
 import com.example.entregableandroid.Vista.FragmentLogin;
 import com.example.entregableandroid.Vista.MapsActivity;
@@ -130,7 +130,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.action_firebase:
                 if ( FirebaseAuth.getInstance() != null ) {
-                    pegarFragment(new FragmentFirestone(), R.id.MainFragment);
+                    pegarFragment(new FragmentFirebase(), R.id.MainFragment);
+//                    pegarFragment(new EnsayoKotlin("Articulos a la venta"), R.id.MainFragment);
                 } else {
                     Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
                 }
