@@ -2,6 +2,9 @@ package com.example.entregableandroid.Controlador.ApiML;
 
 import android.util.Log;
 
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
 import com.example.entregableandroid.Modelo.ApiML.DescripcionItem;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
@@ -14,15 +17,18 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ApiMLDao {
+public class ApiMLDao extends ViewModel {
+
+    private MutableLiveData<List<DescripcionItem>> descripcionItem;
+    private MutableLiveData<ItemAPI> itemAPIMutableLiveData;
+    private MutableLiveData<ResultadoBusquedaAPI> resultadoBusquedaAPIMutableLiveData;
 
     private Retrofit retrofit;
     private ServicioML servicioML;
     private String TAG = getClass().toString();
-    private Avisos avisos;
     private String provincia;
 
-    public ApiMLDao(Avisos listening) {
+    public ApiMLDao() {
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.mercadolibre.com/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -30,7 +36,27 @@ public class ApiMLDao {
 
         servicioML = retrofit.create(ServicioML.class);
         this.provincia = ConstantesML.CAPITAL_FEDERAL;
-        this.avisos = listening;
+    }
+
+    public MutableLiveData<ItemAPI> getItemAPIMutableLiveData() {
+        if ( itemAPIMutableLiveData == null ) {
+            itemAPIMutableLiveData = new MutableLiveData<ItemAPI>();
+        }
+        return itemAPIMutableLiveData;
+    }
+
+    public MutableLiveData<ResultadoBusquedaAPI> getResultadoBusquedaAPIMutableLiveData(){
+        if ( resultadoBusquedaAPIMutableLiveData == null) {
+            resultadoBusquedaAPIMutableLiveData = new MutableLiveData<ResultadoBusquedaAPI>();
+        }
+        return resultadoBusquedaAPIMutableLiveData;
+    }
+
+    public MutableLiveData<List<DescripcionItem>> getDescripcionItem(){
+        if ( descripcionItem == null) {
+            descripcionItem = new MutableLiveData<List<DescripcionItem>>();
+        }
+        return descripcionItem;
     }
 
     public String getProvincia() {
@@ -55,7 +81,7 @@ public class ApiMLDao {
                     Log.d(TAG, "Retrofit response code:" + response.code());
                     return;
                 }
-                avisos.respuestaApiMercadoLibre(response.body());
+                resultadoBusquedaAPIMutableLiveData.setValue(response.body());
             }
 
             @Override
@@ -74,7 +100,7 @@ public class ApiMLDao {
                     Log.d(TAG, "Retrofit response code:" + response.code());
                     return;
                 }
-                avisos.respuestaApiMercadoLibre(response.body());
+                resultadoBusquedaAPIMutableLiveData.setValue(response.body());
             }
 
             @Override
@@ -93,7 +119,7 @@ public class ApiMLDao {
                     Log.d(TAG, "Retrofit response code:" + response.code());
                     return;
                 }
-                avisos.respuestaApiMercadoLibre(response.body());
+                itemAPIMutableLiveData.setValue(response.body());
             }
 
             @Override
@@ -112,8 +138,7 @@ public class ApiMLDao {
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "Retrofit response code:" + response.code());
                 }
-                List<DescripcionItem> list = response.body();
-                avisos.respuestaApiMercadoLibre(list.get(0));
+                descripcionItem.setValue(response.body());
             }
 
             @Override
@@ -121,9 +146,5 @@ public class ApiMLDao {
                 Log.d(TAG, "Retrofit onFailure:" + t.getMessage().toString());
             }
         });
-    }
-
-    public interface Avisos {
-        void respuestaApiMercadoLibre(Object object);
     }
 }

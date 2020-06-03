@@ -6,6 +6,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import android.util.Log;
@@ -19,12 +21,16 @@ import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.Imagen;
 import com.example.entregableandroid.Modelo.ApiML.ItemLocationAPI;
 import com.example.entregableandroid.Modelo.ApiML.ListaImagenes;
+import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
+import com.example.entregableandroid.R;
+import com.example.entregableandroid.Vista.FragmentListaItems.FragmentListaItems;
 import com.example.entregableandroid.databinding.FragmentDetalleProductoBinding;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
+import java.util.Observable;
 
-public class FragmentDetalleProducto extends Fragment implements ApiMLDao.Avisos{
+public class FragmentDetalleProducto extends Fragment {
 
     FragmentDetalleProductoBinding binding;
 
@@ -62,8 +68,16 @@ public class FragmentDetalleProducto extends Fragment implements ApiMLDao.Avisos
         Log.d(TAG, "Metodo onCreateView");
         binding = FragmentDetalleProductoBinding.inflate(getLayoutInflater());
 
-        ApiMLDao apiMLDao = new ApiMLDao(this);
-        apiMLDao.buscarDescripcionItemm(itemAPI.getId());
+        ApiMLDao apiMLDao = new ViewModelProvider(this).get(ApiMLDao.class);
+
+
+        final Observer<List<DescripcionItem>> observadorResultadoBusqueda = new Observer<List<DescripcionItem>>() {
+            @Override
+            public void onChanged(List<DescripcionItem> descripcionItems) {
+                DescripcionItem descripcionItem = descripcionItems.get(0);
+                binding.FragmentDetalleDescripcion.setText(descripcionItem.getPlain_text());
+            }
+        };
 
         binding.FragmentDetalleViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         List<Imagen> pictures = listaImagenes.getPictures();
@@ -85,17 +99,6 @@ public class FragmentDetalleProducto extends Fragment implements ApiMLDao.Avisos
             });
         }
         return binding.getRoot();
-    }
-
-    @Override
-    public void respuestaApiMercadoLibre(Object object) {
-        if ( object instanceof DescripcionItem ){
-            DescripcionItem descripcionItem = (DescripcionItem) object;
-            binding.FragmentDetalleDescripcion.setText(descripcionItem.getPlain_text());
-            Log.d(TAG, "Llego algo la descripcion de un item");
-        } else {
-            Log.d(TAG, "Llego algo no contemplado de ML");
-        }
     }
 
     public interface Aviso {

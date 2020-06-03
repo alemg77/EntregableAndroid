@@ -19,12 +19,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.room.Room;
 
 import com.example.entregableandroid.Controlador.ApiML.ApiMLDao;
 import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
 import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
 import com.example.entregableandroid.Controlador.BaseDeDatos.Constantes;
+import com.example.entregableandroid.Firebase.EnsayoKotlin;
 import com.example.entregableandroid.Firebase.FragmentFirebase;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
@@ -34,13 +39,14 @@ import com.example.entregableandroid.Vista.FragmentListaItems.FragmentListaItems
 import com.example.entregableandroid.Vista.FragmentLogin;
 import com.example.entregableandroid.Vista.MapsActivity;
 import com.example.entregableandroid.databinding.ActivityMainBinding;
+import com.example.entregableandroid.databinding.CabezeraBinding;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.Serializable;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, ApiMLDao.Avisos, FragmentListaItems.Aviso
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, FragmentListaItems.Aviso
 {
     private ActivityMainBinding binding;
     private String TAG = getClass().toString();
@@ -56,9 +62,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(view);
 
         Log.d(TAG, "********* INICIO DE LA APLICACION Entregable Android **********************************");
-        Toolbar toolbar = findViewById(R.id.MainActivityToolbar);
+        Toolbar toolbar = binding.MainActivityToolbar.cabezeratool;
         setSupportActionBar(toolbar);
-
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.drawerLayout, toolbar, R.string.abrir_menu, R.string.cerrar_menu);
 
         binding.navigation.setNavigationItemSelectedListener(this);
@@ -76,9 +81,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-        apiMLDao = new ApiMLDao(this);
+
+        apiMLDao = new ViewModelProvider(this).get(ApiMLDao.class);
         apiMLDao.setProvincia(ConstantesML.BUENOS_AIRES);
         apiMLDao.buscarPorDescripcion("fiat");
+        final Observer<ResultadoBusquedaAPI> observadorResultadoBusqueda = new Observer<ResultadoBusquedaAPI>() {
+            @Override
+            public void onChanged(ResultadoBusquedaAPI resultadoBusquedaAPI) {
+                pegarFragment(new FragmentListaItems(), R.id.MainFragment, resultadoBusquedaAPI);
+            }
+        };
+        apiMLDao.getResultadoBusquedaAPIMutableLiveData().observe(this, observadorResultadoBusqueda);
+
+
+        final Observer<ItemAPI> observadorItem = new Observer<ItemAPI>() {
+            @Override
+            public void onChanged(ItemAPI itemAPI) {
+                pegarFragment(new FragmentDetalleProducto(), R.id.MainFragment, itemAPI);
+            }
+        };
+        apiMLDao.getItemAPIMutableLiveData().observe(this, observadorItem);
+
     }
 
     @Override
@@ -90,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setQueryHint("Buscar aqui...");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
             @Override
             public boolean onQueryTextSubmit(String query) {
                 apiMLDao.buscarPorDescripcion(query);
@@ -104,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
         return super.onCreateOptionsMenu(menu);
     }
-
 
     private void pegarFragment(Fragment fragmentAPegar, int containerViewId) {
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -131,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.action_firebase:
                 if ( FirebaseAuth.getInstance() != null ) {
                     pegarFragment(new FragmentFirebase(), R.id.MainFragment);
-//                    pegarFragment(new EnsayoKotlin("Articulos a la venta"), R.id.MainFragment);
+//                    pegarFragment(new EnsayoKotlin("Items a la venta"), R.id.MainFragment);
                 } else {
                     Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
                 }
@@ -139,8 +162,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -157,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.menuBMW:
-                apiMLDao = new ApiMLDao(this);
+                apiMLDao = new ApiMLDao();
                 apiMLDao.buscarPorDescripcion("bmw");
                 binding.drawerLayout.closeDrawers();
                 break;
@@ -198,15 +219,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Intent intent = new Intent(MainActivity.this, MapsActivity.class);
             intent.putExtra(LatLng.class.toString(), (LatLng) object);
             startActivity(intent);
-        }
-    }
-
-    @Override
-    public void respuestaApiMercadoLibre(Object object) {
-        if (object instanceof ResultadoBusquedaAPI) {
-            pegarFragment(new FragmentListaItems(), R.id.MainFragment, (ResultadoBusquedaAPI) object);
-        } else if (object instanceof ItemAPI) {
-            pegarFragment(new FragmentDetalleProducto(), R.id.MainFragment, (ItemAPI) object);
         }
     }
 

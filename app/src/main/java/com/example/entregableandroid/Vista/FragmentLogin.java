@@ -55,6 +55,15 @@ public class FragmentLogin extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if ( binding!= null ) {
+            binding = null;
+        }
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentLoginBinding.inflate(getLayoutInflater());
         escucharBotonGoogle();
