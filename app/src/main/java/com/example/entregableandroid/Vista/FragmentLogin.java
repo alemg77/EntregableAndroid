@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.entregableandroid.R;
 import com.example.entregableandroid.databinding.FragmentImagenBinding;
 import com.example.entregableandroid.databinding.FragmentLoginBinding;
@@ -30,7 +31,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 import java.util.List;
@@ -128,7 +128,7 @@ public class FragmentLogin extends Fragment {
             binding.usuarioNombre.setText(user.getDisplayName());
             binding.usuarioMail.setText(user.getEmail());
             Uri photoUrl = user.getPhotoUrl();
-            Picasso.get().load(photoUrl).into(binding.imgenUsuario);
+            Glide.with(binding.getRoot()).load(photoUrl).into(binding.imgenUsuario);
 
             // The user's ID, unique to the Firebase project. Do NOT use this value to
             // authenticate with your backend server, if you have one. Use

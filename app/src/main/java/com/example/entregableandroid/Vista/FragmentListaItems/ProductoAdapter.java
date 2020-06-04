@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.databinding.CeldaListadoProductoBinding;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -72,7 +72,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         public void cargarProducto (ItemListaAPI itemListaAPI){
             binding.celdaListadoText1.setText(itemListaAPI.getTitle());
             binding.celdaListadoPrecio.setText("$" + itemListaAPI.getPrice());
-            Picasso.get().load(itemListaAPI.getThumbnail()).into(binding.celdaListadoImagen);
+            Glide.with(binding.getRoot()).load(itemListaAPI.getThumbnail()).into(binding.celdaListadoImagen);
         }
     }
 

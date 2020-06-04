@@ -9,11 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.entregableandroid.Modelo.ApiML.Imagen;
 import com.example.entregableandroid.R;
 import com.example.entregableandroid.databinding.FragmentDetalleProductoBinding;
 import com.example.entregableandroid.databinding.FragmentImagenBinding;
-import com.squareup.picasso.Picasso;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -37,7 +37,7 @@ public class FragmentImagen extends Fragment {
         binding = FragmentImagenBinding.inflate(getLayoutInflater());
         Bundle bundle = getArguments();
         Imagen imagen = (Imagen) bundle.getSerializable(Imagen.class.toString());
-        Picasso.get().load(imagen.getUrl()).into(binding.Imagen);
+        Glide.with(binding.getRoot()).load(imagen.getUrl()).into(binding.Imagen);
         return binding.getRoot();
     }
 }

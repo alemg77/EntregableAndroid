@@ -69,15 +69,16 @@ public class FragmentDetalleProducto extends Fragment {
         binding = FragmentDetalleProductoBinding.inflate(getLayoutInflater());
 
         ApiMLDao apiMLDao = new ViewModelProvider(this).get(ApiMLDao.class);
-
-
-        final Observer<List<DescripcionItem>> observadorResultadoBusqueda = new Observer<List<DescripcionItem>>() {
+        apiMLDao.buscarDescripcionItemm(itemAPI.getId());
+        final Observer<List<DescripcionItem>> observadorDescripcion = new Observer<List<DescripcionItem>>() {
             @Override
             public void onChanged(List<DescripcionItem> descripcionItems) {
                 DescripcionItem descripcionItem = descripcionItems.get(0);
                 binding.FragmentDetalleDescripcion.setText(descripcionItem.getPlain_text());
             }
         };
+        apiMLDao.getDescripcionItem().observe(this, observadorDescripcion);
+
 
         binding.FragmentDetalleViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         List<Imagen> pictures = listaImagenes.getPictures();
