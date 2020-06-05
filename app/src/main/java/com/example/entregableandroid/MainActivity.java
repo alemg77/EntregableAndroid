@@ -20,16 +20,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.room.Room;
 
 import com.example.entregableandroid.Controlador.ApiML.ApiMLDao;
 import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
 import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
 import com.example.entregableandroid.Controlador.BaseDeDatos.Constantes;
-import com.example.entregableandroid.Firebase.EnsayoKotlin;
 import com.example.entregableandroid.Firebase.FragmentFirebase;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
@@ -39,7 +36,6 @@ import com.example.entregableandroid.Vista.FragmentListaItems.FragmentListaItems
 import com.example.entregableandroid.Vista.FragmentLogin;
 import com.example.entregableandroid.Vista.MapsActivity;
 import com.example.entregableandroid.databinding.ActivityMainBinding;
-import com.example.entregableandroid.databinding.CabezeraBinding;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -155,6 +151,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if ( FirebaseAuth.getInstance() != null ) {
                     pegarFragment(new FragmentFirebase(), R.id.MainFragment);
 //                    pegarFragment(new EnsayoKotlin("Items a la venta"), R.id.MainFragment);
+                } else {
+                    Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
+                }
+                break;
+
+            case R.id.action_bar_publicar:
+                if ( FirebaseAuth.getInstance() != null ) {
+                    pegarFragment(new FragmentPublicar(), R.id.MainFragment);
                 } else {
                     Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
                 }

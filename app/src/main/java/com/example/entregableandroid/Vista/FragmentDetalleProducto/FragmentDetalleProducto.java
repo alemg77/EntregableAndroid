@@ -77,7 +77,7 @@ public class FragmentDetalleProducto extends Fragment {
                 binding.FragmentDetalleDescripcion.setText(descripcionItem.getPlain_text());
             }
         };
-        apiMLDao.getDescripcionItem().observe(this, observadorDescripcion);
+        apiMLDao.getDescripcionItem().observe(getViewLifecycleOwner(), observadorDescripcion);
 
 
         binding.FragmentDetalleViewPager.setPageTransformer(true, new ZoomOutPageTransformer());

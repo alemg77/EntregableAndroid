@@ -18,4 +18,11 @@
         android:id="@+id/action_firebase"
         android:title="Firebase"
         app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_bar_publicar"
+        android:title="Publicar"
+        app:showAsAction="never"
+        />
+
 </menu>

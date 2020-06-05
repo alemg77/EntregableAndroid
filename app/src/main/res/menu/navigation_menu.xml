@@ -45,10 +45,6 @@
     <item android:title="En construccion...">
         <menu>
             <item
-                android:id="@+id/CheckBox"
-                android:title="CheckBox"
-                app:actionLayout="@layout/widget_check" />
-            <item
                 android:id="@+id/menuSwich"
                 android:title="Swich"
                 app:actionLayout="@layout/widget_switch" />
