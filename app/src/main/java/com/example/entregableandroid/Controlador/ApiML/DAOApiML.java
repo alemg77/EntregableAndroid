@@ -17,7 +17,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ApiMLDao extends ViewModel {
+public class DAOApiML extends ViewModel {
 
     private MutableLiveData<List<DescripcionItem>> descripcionItem;
     private MutableLiveData<ItemAPI> itemAPIMutableLiveData;
@@ -28,7 +28,7 @@ public class ApiMLDao extends ViewModel {
     private String TAG = getClass().toString();
     private String provincia;
 
-    public ApiMLDao() {
+    public DAOApiML() {
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.mercadolibre.com/")
                 .addConverterFactory(GsonConverterFactory.create())

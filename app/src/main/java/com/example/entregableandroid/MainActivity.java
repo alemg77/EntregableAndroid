@@ -19,14 +19,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Room;
 
-import com.example.entregableandroid.Controlador.ApiML.ApiMLDao;
+import com.example.entregableandroid.Controlador.ApiML.DAOApiML;
 import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
 import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
 import com.example.entregableandroid.Controlador.BaseDeDatos.Constantes;
+import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
 import com.example.entregableandroid.Firebase.FragmentFirebase;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
@@ -41,13 +44,14 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, FragmentListaItems.Aviso
 {
     private ActivityMainBinding binding;
     private String TAG = getClass().toString();
     private AppDatabase db;
-    private ApiMLDao apiMLDao;
+    private DAOApiML apiMLDao;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
@@ -78,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        apiMLDao = new ViewModelProvider(this).get(ApiMLDao.class);
+        apiMLDao = new ViewModelProvider(this).get(DAOApiML.class);
         apiMLDao.setProvincia(ConstantesML.BUENOS_AIRES);
         apiMLDao.buscarPorDescripcion("fiat");
         final Observer<ResultadoBusquedaAPI> observadorResultadoBusqueda = new Observer<ResultadoBusquedaAPI>() {
@@ -97,6 +101,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
         apiMLDao.getItemAPIMutableLiveData().observe(this, observadorItem);
+
+
+        DAOFirebase.get().getListaItems().observe(this, new Observer<List<ItemAPI>>() {
+            @Override
+            public void onChanged(List<ItemAPI> itemAPIS) {
+                Log.d(TAG, "Exito en la implementacion de Live Data!!");
+            }
+        });
 
     }
 
@@ -182,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.menuBMW:
-                apiMLDao = new ApiMLDao();
+                apiMLDao = new DAOApiML();
                 apiMLDao.buscarPorDescripcion("bmw");
                 binding.drawerLayout.closeDrawers();
                 break;

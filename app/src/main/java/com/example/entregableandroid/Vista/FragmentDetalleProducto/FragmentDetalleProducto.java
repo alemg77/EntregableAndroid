@@ -15,20 +15,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.entregableandroid.Controlador.ApiML.ApiMLDao;
+import com.example.entregableandroid.Controlador.ApiML.DAOApiML;
 import com.example.entregableandroid.Modelo.ApiML.DescripcionItem;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.Imagen;
 import com.example.entregableandroid.Modelo.ApiML.ItemLocationAPI;
 import com.example.entregableandroid.Modelo.ApiML.ListaImagenes;
-import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
-import com.example.entregableandroid.R;
-import com.example.entregableandroid.Vista.FragmentListaItems.FragmentListaItems;
 import com.example.entregableandroid.databinding.FragmentDetalleProductoBinding;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
-import java.util.Observable;
 
 public class FragmentDetalleProducto extends Fragment {
 
@@ -68,7 +64,7 @@ public class FragmentDetalleProducto extends Fragment {
         Log.d(TAG, "Metodo onCreateView");
         binding = FragmentDetalleProductoBinding.inflate(getLayoutInflater());
 
-        ApiMLDao apiMLDao = new ViewModelProvider(this).get(ApiMLDao.class);
+        DAOApiML apiMLDao = new ViewModelProvider(this).get(DAOApiML.class);
         apiMLDao.buscarDescripcionItemm(itemAPI.getId());
         final Observer<List<DescripcionItem>> observadorDescripcion = new Observer<List<DescripcionItem>>() {
             @Override
