@@ -66,7 +66,7 @@ public class FragmentPublicar extends Fragment {
         return binding.getRoot();
     }
 
-    private static final int ANCHO_MAXIMO = 1280;
+    private static final int ANCHO_MAXIMO = 1024;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -79,7 +79,7 @@ public class FragmentPublicar extends Fragment {
                 Bitmap scaledBitmap = null;
                 int width = bitmap.getWidth();
                 if ( width > ANCHO_MAXIMO ) {
-                    float escala = bitmap.getWidth()/ANCHO_MAXIMO;
+                    float escala = (float)bitmap.getWidth()/(float)ANCHO_MAXIMO;
                     int alto = (int) (bitmap.getHeight()/escala);
                     scaledBitmap = Bitmap.createScaledBitmap(bitmap, ANCHO_MAXIMO, alto, true);
                 }
