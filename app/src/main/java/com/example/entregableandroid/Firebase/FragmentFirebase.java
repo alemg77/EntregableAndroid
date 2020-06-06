@@ -11,18 +11,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
-import com.example.entregableandroid.Controlador.Firebase.DAOFirebaseGenerico;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
-import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
-import com.example.entregableandroid.R;
-import com.example.entregableandroid.Vista.FragmentListaItems.FragmentListaItems;
 import com.example.entregableandroid.databinding.FragmentBlankBinding;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
-import java.util.Observable;
 
 import static android.content.ContentValues.TAG;
 
@@ -71,7 +64,7 @@ public class FragmentFirebase extends Fragment  {
         binding.Leer2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DAOFirebase.get().leerTodos();
+                DAOFirebase.get().buscarMisPublicaciones();
             }
         });
     }

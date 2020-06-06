@@ -3,6 +3,7 @@ package com.example.entregableandroid;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,11 +15,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
 import com.example.entregableandroid.databinding.FragmentPublicarBinding;
+import com.google.firebase.storage.FirebaseStorage;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import io.grpc.Compressor;
 import pl.aprilapps.easyphotopicker.DefaultCallback;
 import pl.aprilapps.easyphotopicker.EasyImage;
 
@@ -27,6 +35,7 @@ public class FragmentPublicar extends Fragment {
 
     private String TAG = getClass().toString();
     FragmentPublicarBinding binding;
+
 
     public FragmentPublicar() {   }
 
@@ -57,14 +66,30 @@ public class FragmentPublicar extends Fragment {
         return binding.getRoot();
     }
 
+    private static final int ANCHO_MAXIMO = 1280;
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         EasyImage.handleActivityResult(requestCode, resultCode, data, getActivity(), new DefaultCallback() {
             @Override
             public void onImagesPicked(@NonNull List<File> imageFiles, EasyImage.ImageSource source, int type) {
+
                 Bitmap bitmap = BitmapFactory.decodeFile(imageFiles.get(0).getAbsolutePath());
-                binding.imagenProducto.setImageBitmap(bitmap);
+                Bitmap scaledBitmap = null;
+                int width = bitmap.getWidth();
+                if ( width > ANCHO_MAXIMO ) {
+                    float escala = bitmap.getWidth()/ANCHO_MAXIMO;
+                    int alto = (int) (bitmap.getHeight()/escala);
+                    scaledBitmap = Bitmap.createScaledBitmap(bitmap, ANCHO_MAXIMO, alto, true);
+                }
+                else {
+                    scaledBitmap = bitmap;
+                }
+                binding.imagenProducto.setImageBitmap(scaledBitmap);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bos);
+                DAOFirebase.get().guardarNuevo(bos.toByteArray());
             }
 
             @Override
@@ -74,4 +99,6 @@ public class FragmentPublicar extends Fragment {
             }
         });
     }
+
+
 }
