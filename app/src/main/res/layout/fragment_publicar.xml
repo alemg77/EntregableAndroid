@@ -59,10 +59,21 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="10dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/indeterminateBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/buscarImagen" />
+
+        <ProgressBar
+            android:id="@+id/indeterminateBar"
+            android:layout_width="0dp"
+            android:progress="0"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

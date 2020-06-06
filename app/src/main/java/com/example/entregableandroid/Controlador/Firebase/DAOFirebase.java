@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -38,6 +39,22 @@ public class DAOFirebase extends ViewModel {
     private CollectionReference referenciaDB;
     private MutableLiveData<List<ItemAPI>> listaItems;
     private MutableLiveData<Boolean> confirmacionFirebase;
+    private MutableLiveData<Integer> progreso;
+
+    public DAOFirebase() {
+        this.referenciaDB = FirebaseFirestore.getInstance().collection(NOMBRE_BD_ITEMS);
+        this.storage = FirebaseStorage.getInstance();
+        this.listaItems = new MutableLiveData<List<ItemAPI>>();
+        this.confirmacionFirebase = new MutableLiveData<Boolean>();
+        this.progreso = new MutableLiveData<Integer>();
+    }
+
+    public MutableLiveData<Integer> getProgreso(){
+        if ( progreso == null ) {
+            progreso = new MutableLiveData<Integer>();
+        }
+        return progreso;
+    }
 
     public MutableLiveData<List<ItemAPI>> getListaItems() {
         if (listaItems == null) {
@@ -58,13 +75,6 @@ public class DAOFirebase extends ViewModel {
             instanciaUnica = new DAOFirebase();
         }
         return instanciaUnica;
-    }
-
-    public DAOFirebase() {
-        this.referenciaDB = FirebaseFirestore.getInstance().collection(NOMBRE_BD_ITEMS);
-        this.storage = FirebaseStorage.getInstance();
-        this.listaItems = new MutableLiveData<List<ItemAPI>>();
-        this.confirmacionFirebase = new MutableLiveData<Boolean>();
     }
 
     public void leerTodos() {
@@ -124,6 +134,7 @@ public class DAOFirebase extends ViewModel {
 
 
     public void guardarNuevo(ItemAPI itemAPI) {
+        progreso.setValue(0);
         confirmacionFirebase.setValue(false);
         referenciaDB.document().set(itemAPI)
                 .addOnFailureListener(new OnFailureListener() {
@@ -148,7 +159,7 @@ public class DAOFirebase extends ViewModel {
     }
 
     public void guardarNuevo(Uri uriFile) {
-
+        progreso.setValue(0);
         String fechayHora = Calendar.getInstance().getTime().toString();
         String uid = FirebaseAuth.getInstance().getUid();
 
@@ -168,7 +179,7 @@ public class DAOFirebase extends ViewModel {
     }
 
     public void guardarNuevo(@NonNull byte[] bytes) {
-
+        progreso.setValue(0);
         String fechayHora = Calendar.getInstance().getTime().toString();
         String uid = FirebaseAuth.getInstance().getUid();
 
@@ -183,6 +194,14 @@ public class DAOFirebase extends ViewModel {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d(TAG, "Subio archivo en Firestore");
+                StorageReference storage = taskSnapshot.getStorage();
+                String path = taskSnapshot.getMetadata().getPath();
+            }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
+                Long aux = (taskSnapshot.getBytesTransferred()*100)/taskSnapshot.getTotalByteCount();
+                progreso.setValue(aux.intValue());
             }
         });
     }

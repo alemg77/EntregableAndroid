@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,7 +35,7 @@ import pl.aprilapps.easyphotopicker.EasyImage;
 public class FragmentPublicar extends Fragment {
 
     private String TAG = getClass().toString();
-    FragmentPublicarBinding binding;
+    private FragmentPublicarBinding binding;
 
 
     public FragmentPublicar() {   }
@@ -57,6 +58,14 @@ public class FragmentPublicar extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentPublicarBinding.inflate(getLayoutInflater());
+
+        DAOFirebase.get().getProgreso().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                binding.indeterminateBar.setProgress(integer);
+            }
+        });
+
         binding.buscarImagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,30 +75,15 @@ public class FragmentPublicar extends Fragment {
         return binding.getRoot();
     }
 
-    private static final int ANCHO_MAXIMO = 1024;
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         EasyImage.handleActivityResult(requestCode, resultCode, data, getActivity(), new DefaultCallback() {
             @Override
             public void onImagesPicked(@NonNull List<File> imageFiles, EasyImage.ImageSource source, int type) {
-
                 Bitmap bitmap = BitmapFactory.decodeFile(imageFiles.get(0).getAbsolutePath());
-                Bitmap scaledBitmap = null;
-                int width = bitmap.getWidth();
-                if ( width > ANCHO_MAXIMO ) {
-                    float escala = (float)bitmap.getWidth()/(float)ANCHO_MAXIMO;
-                    int alto = (int) (bitmap.getHeight()/escala);
-                    scaledBitmap = Bitmap.createScaledBitmap(bitmap, ANCHO_MAXIMO, alto, true);
-                }
-                else {
-                    scaledBitmap = bitmap;
-                }
-                binding.imagenProducto.setImageBitmap(scaledBitmap);
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bos);
-                DAOFirebase.get().guardarNuevo(bos.toByteArray());
+                binding.imagenProducto.setImageBitmap(bitmap);
+                DAOFirebase.get().guardarNuevo(comprimir_imagen(bitmap, 1280, 90));
             }
 
             @Override
@@ -100,5 +94,19 @@ public class FragmentPublicar extends Fragment {
         });
     }
 
-
+    public byte[] comprimir_imagen (Bitmap bitmap, int anchoMaximo, int calidad){
+        Bitmap scaledBitmap = null;
+        int width = bitmap.getWidth();
+        if ( width > anchoMaximo ) {
+            float escala = (float)bitmap.getWidth()/(float)anchoMaximo;
+            int alto = (int) (bitmap.getHeight()/escala);
+            scaledBitmap = Bitmap.createScaledBitmap(bitmap, anchoMaximo, alto, true);
+        }
+        else {
+            scaledBitmap = bitmap;
+        }
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, calidad, byteArrayOutputStream);
+        return byteArrayOutputStream.toByteArray();
+    }
 }

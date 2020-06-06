@@ -85,6 +85,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         apiMLDao = new ViewModelProvider(this).get(DAOApiML.class);
         apiMLDao.setProvincia(ConstantesML.BUENOS_AIRES);
         apiMLDao.buscarPorDescripcion("fiat");
+
+
         final Observer<ResultadoBusquedaAPI> observadorResultadoBusqueda = new Observer<ResultadoBusquedaAPI>() {
             @Override
             public void onChanged(ResultadoBusquedaAPI resultadoBusquedaAPI) {
