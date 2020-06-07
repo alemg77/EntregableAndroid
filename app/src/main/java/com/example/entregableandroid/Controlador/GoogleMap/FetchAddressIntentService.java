@@ -1,4 +1,4 @@
-package com.example.entregableandroid.Controlador;
+package com.example.entregableandroid.Controlador.GoogleMap;
 
 import android.app.IntentService;
 import android.content.Intent;

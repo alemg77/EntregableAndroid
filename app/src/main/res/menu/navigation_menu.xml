@@ -9,6 +9,11 @@
             android:title="Recientes" />
 
         <item
+            android:id="@+id/misPublicaciones"
+            android:title="Mis Publicaciones"
+            />
+
+        <item
             android:id="@+id/publicar"
             android:title="Publicar"
             />

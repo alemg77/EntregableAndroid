@@ -9,6 +9,7 @@
     <string name="usuario">Usuario</string>
     <string name="labelTituloPublicacion">Titulo</string>
     <string name="labelPrecio">Precio</string>
+    <string name="labeldescripcion">descripcion</string>
 </resources>
 
 

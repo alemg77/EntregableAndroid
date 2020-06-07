@@ -52,8 +52,8 @@ class EnsayoKotlin(val nombreColeccion: String) : Fragment() {
 
     private fun escucharBotonEscribir() {
         binding.botonFirestore.setOnClickListener(View.OnClickListener {
-            val itemAPI = ItemAPI("007", "Placa de video Garlompa", "Yo", "15")
-            guardarNuevoItem(itemAPI)
+            //val itemAPI = ItemAPI("007", "Placa de video Garlompa", "Yo", "15")
+            //guardarNuevoItem(itemAPI)
         })
     }
 

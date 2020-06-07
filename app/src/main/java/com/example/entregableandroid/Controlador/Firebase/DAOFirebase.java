@@ -38,15 +38,17 @@ public class DAOFirebase extends ViewModel {
     private FirebaseStorage storage;
     private CollectionReference referenciaDB;
     private MutableLiveData<List<ItemAPI>> listaItems;
-    private MutableLiveData<Boolean> confirmacionFirebase;
+    private MutableLiveData<String> itemPublicado;
     private MutableLiveData<Integer> progreso;
+    private MutableLiveData<String> archivoSubido;
 
     public DAOFirebase() {
         this.referenciaDB = FirebaseFirestore.getInstance().collection(NOMBRE_BD_ITEMS);
         this.storage = FirebaseStorage.getInstance();
-        this.listaItems = new MutableLiveData<List<ItemAPI>>();
-        this.confirmacionFirebase = new MutableLiveData<Boolean>();
-        this.progreso = new MutableLiveData<Integer>();
+        this.listaItems = new MutableLiveData<>();
+        this.itemPublicado = new MutableLiveData<>();
+        this.progreso = new MutableLiveData<>();
+        this.archivoSubido = new MutableLiveData<>();
     }
 
     public MutableLiveData<Integer> getProgreso(){
@@ -63,11 +65,18 @@ public class DAOFirebase extends ViewModel {
         return listaItems;
     }
 
-    private MutableLiveData<Boolean> getConfirmacionFirebase() {
-        if (confirmacionFirebase == null) {
-            confirmacionFirebase = new MutableLiveData<Boolean>();
+    public MutableLiveData<String> getItemPublicado() {
+        if ( itemPublicado == null) {
+            itemPublicado = new MutableLiveData<>();
         }
-        return confirmacionFirebase;
+        return itemPublicado;
+    }
+
+    public MutableLiveData<String> getArchivoSubido() {
+        if ( archivoSubido == null ) {
+            archivoSubido = new MutableLiveData<String>();
+        }
+        return archivoSubido;
     }
 
     public static DAOFirebase get() {
@@ -105,11 +114,13 @@ public class DAOFirebase extends ViewModel {
     }
 
     public void buscarMisPublicaciones() {
+        Log.d(TAG, "Me piden la lista de mis publicaciones");
         String uid = FirebaseAuth.getInstance().getUid();
         referenciaDB.whereEqualTo("seller_id", uid).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        Log.d(TAG, "Trajimos la lista de mis publicaciones");
                         List<ItemAPI> lista = new ArrayList<>();
                         for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                             ItemAPI dato = (ItemAPI) queryDocumentSnapshot.toObject(ItemAPI.class);
@@ -134,8 +145,7 @@ public class DAOFirebase extends ViewModel {
 
 
     public void guardarNuevo(ItemAPI itemAPI) {
-        progreso.setValue(0);
-        confirmacionFirebase.setValue(false);
+        itemPublicado.setValue(null);
         referenciaDB.document().set(itemAPI)
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -153,13 +163,12 @@ public class DAOFirebase extends ViewModel {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d(TAG, "Exito guardado en Firebase");
-                        confirmacionFirebase.setValue(true);
+                        itemPublicado.setValue("Se subio un archivo");
                     }
                 });
     }
 
     public void guardarNuevo(Uri uriFile) {
-        progreso.setValue(0);
         String fechayHora = Calendar.getInstance().getTime().toString();
         String uid = FirebaseAuth.getInstance().getUid();
 
@@ -180,9 +189,9 @@ public class DAOFirebase extends ViewModel {
 
     public void guardarNuevo(@NonNull byte[] bytes) {
         progreso.setValue(0);
+        archivoSubido.setValue(null);
         String fechayHora = Calendar.getInstance().getTime().toString();
         String uid = FirebaseAuth.getInstance().getUid();
-
         StorageReference riversRef = storage.getReference().child(uid+fechayHora);
         UploadTask uploadTask = riversRef.putBytes(bytes);
         uploadTask.addOnFailureListener(new OnFailureListener() {
@@ -196,6 +205,7 @@ public class DAOFirebase extends ViewModel {
                 Log.d(TAG, "Subio archivo en Firestore");
                 StorageReference storage = taskSnapshot.getStorage();
                 String path = taskSnapshot.getMetadata().getPath();
+                archivoSubido.setValue(path);
             }
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override

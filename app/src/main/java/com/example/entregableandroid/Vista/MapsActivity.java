@@ -25,7 +25,7 @@ import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import com.example.entregableandroid.Controlador.FetchAddressIntentService;
+import com.example.entregableandroid.Controlador.GoogleMap.FetchAddressIntentService;
 import com.example.entregableandroid.MainActivity;
 import com.example.entregableandroid.R;
 import com.google.android.gms.maps.CameraUpdateFactory;

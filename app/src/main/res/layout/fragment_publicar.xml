@@ -40,40 +40,72 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
+                android:inputType="number"
                 android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/descripcion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/labeldescripcion"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/precio">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/buscarImagen"
-            android:layout_margin="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="10dp"
             android:text="Imagen"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/precio" />
+            app:layout_constraintStart_toEndOf="@+id/precio"
+            app:layout_constraintTop_toBottomOf="@+id/titulo" />
+
 
         <ImageView
             android:id="@+id/imagenProducto"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="10dp"
-            app:layout_constraintBottom_toTopOf="@+id/indeterminateBar"
+            app:layout_constraintBottom_toTopOf="@+id/buttonPublicar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buscarImagen" />
+            app:layout_constraintTop_toBottomOf="@+id/descripcion" />
+
+        <Button
+            android:id="@+id/buttonPublicar"
+            android:text="Publicar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ProgressBar
             android:id="@+id/indeterminateBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
             android:layout_width="0dp"
-            android:progress="0"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_marginBottom="16dp"
+            android:progress="0"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/buttonPublicar"
+
+            app:layout_constraintTop_toBottomOf="@+id/imagenProducto" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

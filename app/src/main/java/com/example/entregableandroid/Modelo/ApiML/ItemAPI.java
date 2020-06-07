@@ -13,17 +13,26 @@ public class ItemAPI implements Serializable {
     private String permalink;
     private String thumbnail;
     private String secure_thumbnail;
+    private String descripcion;
     private List<Imagen> pictures;
     private ItemLocationAPI location;
 
     public ItemAPI() {
     }
 
-    public ItemAPI(String id, String title, String seller_id, String price) {
+    public ItemAPI(String id, String site_id, String title, String seller_id, String category_id, String price, String permalink, String thumbnail, String secure_thumbnail, String descripcion, List<Imagen> pictures, ItemLocationAPI location) {
         this.id = id;
+        this.site_id = site_id;
         this.title = title;
         this.seller_id = seller_id;
+        this.category_id = category_id;
         this.price = price;
+        this.permalink = permalink;
+        this.thumbnail = thumbnail;
+        this.secure_thumbnail = secure_thumbnail;
+        this.descripcion = descripcion;
+        this.pictures = pictures;
+        this.location = location;
     }
 
     public String getId() {
@@ -96,6 +105,14 @@ public class ItemAPI implements Serializable {
 
     public void setSecure_thumbnail(String secure_thumbnail) {
         this.secure_thumbnail = secure_thumbnail;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public List<Imagen> getPictures() {

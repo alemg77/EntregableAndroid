@@ -19,8 +19,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Lifecycle;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Room;
@@ -30,7 +28,6 @@ import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
 import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
 import com.example.entregableandroid.Controlador.BaseDeDatos.Constantes;
 import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
-import com.example.entregableandroid.Firebase.FragmentFirebase;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
@@ -69,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         binding.navigation.setNavigationItemSelectedListener(this);
         db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, Constantes.BD_NAME).allowMainThreadQueries().build();
         NavigationView navigation = binding.navigation;
+
         View actionView =  navigation.getMenu().findItem(R.id.menuSwich).getActionView();
         actionView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DAOFirebase.get().getListaItems().observe(this, new Observer<List<ItemAPI>>() {
             @Override
             public void onChanged(List<ItemAPI> itemAPIS) {
-                Log.d(TAG, "Exito en la implementacion de Live Data!!");
+                Log.d(TAG, "Exito en la implementacion de Live Data?");
             }
         });
 
@@ -161,13 +159,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 pegarFragment(new FragmentLogin(), R.id.MainFragment );
                 break;
 
-            case R.id.action_firebase:
-                if ( FirebaseAuth.getInstance() != null ) {
-                    pegarFragment(new FragmentFirebase(), R.id.MainFragment);
-//                    pegarFragment(new EnsayoKotlin("Items a la venta"), R.id.MainFragment);
-                } else {
-                    Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
-                }
+            case R.id.action_ensayoFirebase:
+                pegarFragment(new FragmentEnsayos(), R.id.MainFragment);
                 break;
 
             case R.id.action_bar_publicar:
@@ -190,6 +183,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
+
+            case R.id.misPublicaciones:
+                if ( FirebaseAuth.getInstance() != null ) {
+                    // TODO: Ver porque no funciona esto!!!!!
+                    DAOFirebase.get().buscarMisPublicaciones();
+                } else {
+                    Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
+                }
+                break;
+
             case R.id.menuAudi:
                 apiMLDao.buscarPorDescripcion("audi");
                 binding.drawerLayout.closeDrawers();

@@ -15,8 +15,8 @@
         app:showAsAction="never"/>
 
     <item
-        android:id="@+id/action_firebase"
-        android:title="Firebase"
+        android:id="@+id/action_ensayoFirebase"
+        android:title="Ensayo Firebase"
         app:showAsAction="never"/>
 
     <item
