@@ -30,19 +30,43 @@ public class ItemListaAPI implements Serializable {
     @ColumnInfo(name = "price")
     private String price;
 
-    @ColumnInfo(name = "permalink;")
-    private String permalink;
-
     @ColumnInfo(name = "thumbnail")
     private String thumbnail;
 
-    public ItemListaAPI(String id, String site_id, String title, String price, String permalink, String thumbnail) {
-        this.id = id;
-        this.site_id = site_id;
-        this.title = title;
-        this.price = price;
-        this.permalink = permalink;
-        this.thumbnail = thumbnail;
+    @ColumnInfo(name = "descripcion")
+    private String descripcion;
+
+    @ColumnInfo(name = "vendedor")
+    private String vendedor;
+
+    @ColumnInfo(name = "imagenFirebase")
+    private String imagenFirebase;
+
+    public ItemListaAPI() {
+    }
+
+    public String getImagenFirebase() {
+        return imagenFirebase;
+    }
+
+    public void setImagenFirebase(String imagenFirebase) {
+        this.imagenFirebase = imagenFirebase;
+    }
+
+    public String getVendedor() {
+        return vendedor;
+    }
+
+    public void setVendedor(String vendedor) {
+        this.vendedor = vendedor;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public String getId() {
@@ -75,14 +99,6 @@ public class ItemListaAPI implements Serializable {
 
     public void setPrice(String price) {
         this.price = price;
-    }
-
-    public String getPermalink() {
-        return permalink;
-    }
-
-    public void setPermalink(String permalink) {
-        this.permalink = permalink;
     }
 
     public String getThumbnail() {

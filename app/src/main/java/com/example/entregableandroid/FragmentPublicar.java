@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
+import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.databinding.FragmentPublicarBinding;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -63,15 +64,15 @@ public class FragmentPublicar extends Fragment {
         // Cuando termine de subir la imagen, sube el elemento
         DAOFirebase.get().getArchivoSubido().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
-            public void onChanged(String s) {
-                if ( s != null ) {
-                    ItemAPI itemAPI = new ItemAPI();
-                    itemAPI.setSecure_thumbnail(s);
-                    itemAPI.setSeller_id(FirebaseAuth.getInstance().getUid());
-                    itemAPI.setPrice(precio);
-                    itemAPI.setTitle(titulo);
-                    itemAPI.setDescripcion(descripcion);
-                    DAOFirebase.get().guardarNuevo(itemAPI);
+            public void onChanged(String direccionFirebase) {
+                if ( direccionFirebase != null ) {
+                    ItemListaAPI itemListaAPI = new ItemListaAPI();
+                    itemListaAPI.setImagenFirebase(direccionFirebase);
+                    itemListaAPI.setVendedor(FirebaseAuth.getInstance().getUid());
+                    itemListaAPI.setPrice(precio);
+                    itemListaAPI.setTitle(titulo);
+                    itemListaAPI.setDescripcion(descripcion);
+                    DAOFirebase.get().guardarNuevo(itemListaAPI);
                 }
             }
         });

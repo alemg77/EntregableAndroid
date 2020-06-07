@@ -3,11 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/RecyclerViewProductoFondo"
-    tools:context=".Vista.FragmentListaItems.FragmentMostrarBusqueda">
+    tools:context=".Vista.FragmentListaItems.FragmentBusquedaFirebase">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/RecyclerView"
+        android:id="@+id/RecyclerViewBusquedaFirebase"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

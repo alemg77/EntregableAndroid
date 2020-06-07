@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
+import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,7 +38,7 @@ public class DAOFirebase extends ViewModel {
 
     private FirebaseStorage storage;
     private CollectionReference referenciaDB;
-    private MutableLiveData<List<ItemAPI>> listaItems;
+    private MutableLiveData<List<ItemListaAPI>> listaItems;
     private MutableLiveData<String> itemPublicado;
     private MutableLiveData<Integer> progreso;
     private MutableLiveData<String> archivoSubido;
@@ -58,9 +59,9 @@ public class DAOFirebase extends ViewModel {
         return progreso;
     }
 
-    public MutableLiveData<List<ItemAPI>> getListaItems() {
+    public MutableLiveData<List<ItemListaAPI>> getListaItems() {
         if (listaItems == null) {
-            listaItems = new MutableLiveData<List<ItemAPI>>();
+            listaItems = new MutableLiveData<List<ItemListaAPI>>();
         }
         return listaItems;
     }
@@ -91,9 +92,9 @@ public class DAOFirebase extends ViewModel {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        List<ItemAPI> lista = new ArrayList<>();
+                        List<ItemListaAPI> lista = new ArrayList<>();
                         for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
-                            ItemAPI dato = (ItemAPI) queryDocumentSnapshot.toObject(ItemAPI.class);
+                            ItemListaAPI dato = queryDocumentSnapshot.toObject(ItemListaAPI.class);
                             lista.add(dato);
                         }
                         listaItems.setValue(lista);
@@ -116,14 +117,14 @@ public class DAOFirebase extends ViewModel {
     public void buscarMisPublicaciones() {
         Log.d(TAG, "Me piden la lista de mis publicaciones");
         String uid = FirebaseAuth.getInstance().getUid();
-        referenciaDB.whereEqualTo("seller_id", uid).get()
+        referenciaDB.whereEqualTo("vendedor", uid).get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         Log.d(TAG, "Trajimos la lista de mis publicaciones");
-                        List<ItemAPI> lista = new ArrayList<>();
+                        List<ItemListaAPI> lista = new ArrayList<>();
                         for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
-                            ItemAPI dato = (ItemAPI) queryDocumentSnapshot.toObject(ItemAPI.class);
+                            ItemListaAPI dato = queryDocumentSnapshot.toObject(ItemListaAPI.class);
                             lista.add(dato);
                         }
                         listaItems.setValue(lista);
@@ -144,9 +145,9 @@ public class DAOFirebase extends ViewModel {
     }
 
 
-    public void guardarNuevo(ItemAPI itemAPI) {
+    public void guardarNuevo(ItemListaAPI itemListaAPI) {
         itemPublicado.setValue(null);
-        referenciaDB.document().set(itemAPI)
+        referenciaDB.document().set(itemListaAPI)
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {

@@ -1,6 +1,5 @@
 package com.example.entregableandroid.Controlador.ApiML;
 
-import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
@@ -10,7 +9,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.example.entregableandroid.Modelo.ApiML.DescripcionItem;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
-import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
+import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
 
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class DaoApiML extends ViewModel {
 
     private MutableLiveData<List<DescripcionItem>> descripcionItem;
     private MutableLiveData<ItemAPI> itemAPIMutableLiveData;
-    private MutableLiveData<ResultadoBusquedaAPI> resultadoBusquedaAPIMutableLiveData;
+    private MutableLiveData<ResultadoBusqueda> resultadoBusquedaAPIMutableLiveData;
 
     private Retrofit retrofit;
     private ServicioML servicioML;
@@ -59,9 +58,9 @@ public class DaoApiML extends ViewModel {
         return itemAPIMutableLiveData;
     }
 
-    public MutableLiveData<ResultadoBusquedaAPI> getResultadoBusquedaAPIMutableLiveData(){
+    public MutableLiveData<ResultadoBusqueda> getResultadoBusquedaAPIMutableLiveData(){
         if ( resultadoBusquedaAPIMutableLiveData == null) {
-            resultadoBusquedaAPIMutableLiveData = new MutableLiveData<ResultadoBusquedaAPI>();
+            resultadoBusquedaAPIMutableLiveData = new MutableLiveData<ResultadoBusqueda>();
         }
         return resultadoBusquedaAPIMutableLiveData;
     }
@@ -88,9 +87,9 @@ public class DaoApiML extends ViewModel {
 
     public void buscarPorDescripcion(String rangoPrecio, String descripcion) {
         Log.d(TAG, "Vamos a hacer una busqueda en MercadoLibre");
-        servicioML.getItemsPorDescripcion("all",rangoPrecio,provincia,descripcion).enqueue(new Callback<ResultadoBusquedaAPI>() {
+        servicioML.getItemsPorDescripcion("all",rangoPrecio,provincia,descripcion).enqueue(new Callback<ResultadoBusqueda>() {
             @Override
-            public void onResponse(Call<ResultadoBusquedaAPI> call, Response<ResultadoBusquedaAPI> response) {
+            public void onResponse(Call<ResultadoBusqueda> call, Response<ResultadoBusqueda> response) {
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "Retrofit response code:" + response.code());
                     return;
@@ -99,7 +98,7 @@ public class DaoApiML extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<ResultadoBusquedaAPI> call, Throwable t) {
+            public void onFailure(Call<ResultadoBusqueda> call, Throwable t) {
                 Log.d(TAG, "Retrofit onFailure:" + t.getMessage().toString());
             }
         });
@@ -107,9 +106,9 @@ public class DaoApiML extends ViewModel {
 
     public void buscarPorCategoria(String categoria, String sort){
         Log.d(TAG, "Vamos a hacer una busqueda en MercadoLibre");
-        servicioML.getItemsPorCategoria(categoria, sort).enqueue(new Callback<ResultadoBusquedaAPI>() {
+        servicioML.getItemsPorCategoria(categoria, sort).enqueue(new Callback<ResultadoBusqueda>() {
             @Override
-            public void onResponse(Call<ResultadoBusquedaAPI> call, Response<ResultadoBusquedaAPI> response) {
+            public void onResponse(Call<ResultadoBusqueda> call, Response<ResultadoBusqueda> response) {
                 if (!response.isSuccessful()) {
                     Log.d(TAG, "Retrofit response code:" + response.code());
                     return;
@@ -118,7 +117,7 @@ public class DaoApiML extends ViewModel {
             }
 
             @Override
-            public void onFailure(Call<ResultadoBusquedaAPI> call, Throwable t) {
+            public void onFailure(Call<ResultadoBusqueda> call, Throwable t) {
                 Log.d(TAG, "Retrofit onFailure:" + t.getMessage().toString());
             }
         });

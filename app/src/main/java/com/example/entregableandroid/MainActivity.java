@@ -1,5 +1,8 @@
 package com.example.entregableandroid;
 
+// TODO: VERIFICAR PORQUE NO VERIFICO CORRECTAMENTE SI ESTANA LOGEADO O NO EN FIREBASE
+// TODO: PORQUE ME DEJO IR A PUBLICAR SI NO ESTABA CONECTADO CON FIREBASE ???
+
 import android.content.Intent;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
@@ -20,18 +23,17 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.example.entregableandroid.Controlador.ApiML.DaoApiML;
 import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
-import com.example.entregableandroid.Controlador.BaseDeDatos.AccesoDB;
 import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
 import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
-import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
+import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
 import com.example.entregableandroid.Vista.FragmentDetalleProducto.FragmentDetalleProducto;
-import com.example.entregableandroid.Vista.FragmentListaItems.FragmentListaItems;
+import com.example.entregableandroid.Vista.FragmentListaItems.FragmentMostrarBusqueda;
+import com.example.entregableandroid.Vista.FragmentListaItems.FragmentBusquedaFirebase;
 import com.example.entregableandroid.Vista.FragmentLogin;
 import com.example.entregableandroid.Vista.MapsActivity;
 import com.example.entregableandroid.databinding.ActivityMainBinding;
@@ -42,7 +44,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.io.Serializable;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, FragmentListaItems.Aviso
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, FragmentMostrarBusqueda.Aviso
 {
     private ActivityMainBinding binding;
     private String TAG = getClass().toString();
@@ -88,10 +90,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         // ************************************* Escuchadores *************************************
-        final Observer<ResultadoBusquedaAPI> observadorResultadoBusqueda = new Observer<ResultadoBusquedaAPI>() {
+        final Observer<ResultadoBusqueda> observadorResultadoBusqueda = new Observer<ResultadoBusqueda>() {
             @Override
-            public void onChanged(ResultadoBusquedaAPI resultadoBusquedaAPI) {
-                pegarFragment(new FragmentListaItems(), R.id.MainFragment, resultadoBusquedaAPI);
+            public void onChanged(ResultadoBusqueda resultadoBusquedaAPI) {
+                pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment, resultadoBusquedaAPI);
             }
         };
         apiMLDao.getResultadoBusquedaAPIMutableLiveData().observe(this, observadorResultadoBusqueda);
@@ -106,10 +108,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         apiMLDao.getItemAPIMutableLiveData().observe(this, observadorItem);
 
 
-        DAOFirebase.get().getListaItems().observe(this, new Observer<List<ItemAPI>>() {
+        DAOFirebase.get().getListaItems().observe(this, new Observer<List<ItemListaAPI>>() {
             @Override
-            public void onChanged(List<ItemAPI> itemAPIS) {
-                Log.d(TAG, "Exito en la implementacion de Live Data?");
+            public void onChanged(List<ItemListaAPI> itemListaAPI) {
+                ResultadoBusqueda busqueda = new ResultadoBusqueda(itemListaAPI, ResultadoBusqueda.BUSQUEDA_FIREBASE);
+                pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment, busqueda);
             }
         });
 
@@ -180,8 +183,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.misPublicaciones:
                 if ( FirebaseAuth.getInstance() != null ) {
-                    // TODO: Ver porque no funciona esto!!!!!
                     DAOFirebase.get().buscarMisPublicaciones();
+                    binding.drawerLayout.closeDrawers();
                 } else {
                     Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
                 }
@@ -215,7 +218,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.Recientes:
                 if ( db.elementoListaDao().cantidadElementos() > 0 ){
-                    pegarFragment(new FragmentListaItems(), R.id.MainFragment, new ResultadoBusquedaAPI(db.elementoListaDao().getTodos()));
+                    ResultadoBusqueda busqueda = new ResultadoBusqueda(db.elementoListaDao().getTodos(), ResultadoBusqueda.BUSQUEDA_DB_LOCAL);
+                    pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment, busqueda);
                     binding.drawerLayout.closeDrawers();
                 } else {
                     Toast.makeText(MainActivity.this, "Cuando veas algun producto se iran guardando aqui automagicamente", Toast.LENGTH_SHORT).show();

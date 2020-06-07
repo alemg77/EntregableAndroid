@@ -19,7 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
-import com.example.entregableandroid.Modelo.ApiML.ResultadoBusquedaAPI;
+import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
 import com.example.entregableandroid.R;
 import com.example.entregableandroid.databinding.FragmentRecyclerviewBinding;
 import com.google.android.material.snackbar.Snackbar;
@@ -31,15 +31,15 @@ import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
 
-public class FragmentListaItems extends Fragment implements RecyclerViewClickInterfase {
+public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewClickInterfase {
 
     private FragmentRecyclerviewBinding binding;
-    private FragmentListaItems.Aviso listener;
+    private FragmentMostrarBusqueda.Aviso listener;
     private List<ItemListaAPI> listaElementos;
     private ProductoAdapter productoAdapter;
     private ItemListaAPI elementoBorrado;
 
-    public FragmentListaItems(){
+    public FragmentMostrarBusqueda(){
     }
 
     @Override
@@ -57,7 +57,7 @@ public class FragmentListaItems extends Fragment implements RecyclerViewClickInt
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentRecyclerviewBinding.inflate(getLayoutInflater());
         Bundle bundle = getArguments();
-        ResultadoBusquedaAPI resultadoBusquedaAPI = (ResultadoBusquedaAPI) bundle.getSerializable(ResultadoBusquedaAPI.class.toString());
+        ResultadoBusqueda resultadoBusquedaAPI = (ResultadoBusqueda) bundle.getSerializable(ResultadoBusqueda.class.toString());
         listaElementos = resultadoBusquedaAPI.getResults();
         Context context = getActivity().getApplicationContext();
         productoAdapter = new ProductoAdapter(context, this, listaElementos);
