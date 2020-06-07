@@ -19,22 +19,24 @@ public interface ElementoListaDao {
     @Query("SELECT * FROM "+ItemListaAPI.TABLE_NAME)
     List<ItemListaAPI> getTodos();
 
-    //insertar
+    //insertar 2
     @Insert
-    void instarAll(ItemListaAPI... elementos);
-
-    @Query("SELECT * FROM "+ItemListaAPI.TABLE_NAME+" LIMIT 1")
-    ItemListaAPI getPrimerElemento();
+    long insert(ItemListaAPI usuarios);
 
     //eliminar
     @Query("DELETE FROM " + ItemListaAPI.TABLE_NAME + " WHERE " + ItemListaAPI.COLUMN_ID + " = :moco")
     int deleteById(String moco);
 
-    //actualizar
-    @Update
-    int updateEntidad(ItemListaAPI elemento);
+    @Query("SELECT * FROM "+ItemListaAPI.TABLE_NAME+" LIMIT 1")
+    ItemListaAPI getPrimerElemento();
 
-    //insertar 2
-    @Insert
-    long insert(ItemListaAPI usuarios);
+    /*
+    // TODO: Aplicar LiveData!!!!
+    @Query("SELECT * FROM "+ItemListaAPI.TABLE_NAME)
+    LiveData<List<ItemListaAPI>> getTodos();
+
+    @Query("SELECT COUNT(*) FROM " + ItemListaAPI.TABLE_NAME)
+    LiveData<Integer> cantidadElementos();
+     */
+
 }

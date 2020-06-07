@@ -15,7 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.entregableandroid.Controlador.ApiML.DAOApiML;
+import com.example.entregableandroid.Controlador.ApiML.DaoApiML;
 import com.example.entregableandroid.Modelo.ApiML.DescripcionItem;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.Imagen;
@@ -64,7 +64,7 @@ public class FragmentDetalleProducto extends Fragment {
         Log.d(TAG, "Metodo onCreateView");
         binding = FragmentDetalleProductoBinding.inflate(getLayoutInflater());
 
-        DAOApiML apiMLDao = new ViewModelProvider(this).get(DAOApiML.class);
+        DaoApiML apiMLDao = new ViewModelProvider(this).get(DaoApiML.class);
         apiMLDao.buscarDescripcionItemm(itemAPI.getId());
         final Observer<List<DescripcionItem>> observadorDescripcion = new Observer<List<DescripcionItem>>() {
             @Override
@@ -74,7 +74,6 @@ public class FragmentDetalleProducto extends Fragment {
             }
         };
         apiMLDao.getDescripcionItem().observe(getViewLifecycleOwner(), observadorDescripcion);
-
 
         binding.FragmentDetalleViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         List<Imagen> pictures = listaImagenes.getPictures();
@@ -91,7 +90,7 @@ public class FragmentDetalleProducto extends Fragment {
                 public void onClick(View v) {
                     Double latitude = location.getLatitude();
                     Double longitude = location.getLongitude();
-                    listener.FragmentDetalleAviso( new LatLng(latitude,longitude));
+                    listener.mostrarMapa( new LatLng(latitude,longitude));
                 }
             });
         }
@@ -99,9 +98,11 @@ public class FragmentDetalleProducto extends Fragment {
     }
 
     public interface Aviso {
-        void FragmentDetalleAviso (Object object);
+        // Le pide a la MainActivity que pegue una actividad con Google Map
+        void mostrarMapa (LatLng coordenadas);
     }
 
+    // Genera el efecto de transicion entre las imagenes de los Items
     public class ZoomOutPageTransformer implements ViewPager.PageTransformer {
         private static final float MIN_SCALE = 0.85f;
         private static final float MIN_ALPHA = 0.5f;

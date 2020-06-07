@@ -21,12 +21,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.room.Room;
 
-import com.example.entregableandroid.Controlador.ApiML.DAOApiML;
+import com.example.entregableandroid.Controlador.ApiML.DaoApiML;
 import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
+import com.example.entregableandroid.Controlador.BaseDeDatos.AccesoDB;
 import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
-import com.example.entregableandroid.Controlador.BaseDeDatos.Constantes;
 import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
@@ -48,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ActivityMainBinding binding;
     private String TAG = getClass().toString();
     private AppDatabase db;
-    private DAOApiML apiMLDao;
+    private DaoApiML apiMLDao;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
@@ -57,16 +56,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
         setContentView(view);
-
         Log.d(TAG, "********* INICIO DE LA APLICACION Entregable Android **********************************");
+
+        // Preparo el Acceso a la Base de Datos Local
+        db = AppDatabase.get(getApplicationContext());
+
+        // Preparo el acceso a la API de Mercado Libre
+        apiMLDao = DaoApiML.getInstancia(this);
+        apiMLDao.setProvincia(ConstantesML.BUENOS_AIRES);
+        apiMLDao.buscarPorDescripcion("fiat");
+
+        // Preparo el ToolBAR
         Toolbar toolbar = binding.MainActivityToolbar.cabezeratool;
         setSupportActionBar(toolbar);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, binding.drawerLayout, toolbar, R.string.abrir_menu, R.string.cerrar_menu);
 
+        // Preparo el menu de Navegacion
         binding.navigation.setNavigationItemSelectedListener(this);
-        db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, Constantes.BD_NAME).allowMainThreadQueries().build();
         NavigationView navigation = binding.navigation;
-
         View actionView =  navigation.getMenu().findItem(R.id.menuSwich).getActionView();
         actionView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,11 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        apiMLDao = new ViewModelProvider(this).get(DAOApiML.class);
-        apiMLDao.setProvincia(ConstantesML.BUENOS_AIRES);
-        apiMLDao.buscarPorDescripcion("fiat");
-
-
+        // ************************************* Escuchadores *************************************
         final Observer<ResultadoBusquedaAPI> observadorResultadoBusqueda = new Observer<ResultadoBusquedaAPI>() {
             @Override
             public void onChanged(ResultadoBusquedaAPI resultadoBusquedaAPI) {
@@ -93,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
         apiMLDao.getResultadoBusquedaAPIMutableLiveData().observe(this, observadorResultadoBusqueda);
 
-
+        //
         final Observer<ItemAPI> observadorItem = new Observer<ItemAPI>() {
             @Override
             public void onChanged(ItemAPI itemAPI) {
@@ -112,6 +115,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    /**
+     *  Atiende los pedidos de busqueda que se realizan en la Tool Bar.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -137,21 +143,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onCreateOptionsMenu(menu);
     }
 
-    private void pegarFragment(Fragment fragmentAPegar, int containerViewId) {
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(containerViewId, fragmentAPegar).commit();
-    }
-
-    private void pegarFragment(Fragment fragmentAPegar, int containerViewId, Serializable serializable) {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(serializable.getClass().toString(), serializable);
-        fragmentAPegar.setArguments(bundle);
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.addToBackStack(null);
-        fragmentTransaction.add(containerViewId, fragmentAPegar).commit();
-    }
-
+    /**
+     *  Atiende la seleccion en la Tool Bar
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -199,7 +193,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.menuBMW:
-                apiMLDao = new DAOApiML();
+                apiMLDao = new DaoApiML();
                 apiMLDao.buscarPorDescripcion("bmw");
                 binding.drawerLayout.closeDrawers();
                 break;
@@ -222,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.Recientes:
                 if ( db.elementoListaDao().cantidadElementos() > 0 ){
                     pegarFragment(new FragmentListaItems(), R.id.MainFragment, new ResultadoBusquedaAPI(db.elementoListaDao().getTodos()));
+                    binding.drawerLayout.closeDrawers();
                 } else {
                     Toast.makeText(MainActivity.this, "Cuando veas algun producto se iran guardando aqui automagicamente", Toast.LENGTH_SHORT).show();
                 }
@@ -235,17 +230,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void FragmentDetalleAviso(Object object) {
-        if (object instanceof LatLng) {
+    public void mostrarMapa(LatLng coordenadas) {
             Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-            intent.putExtra(LatLng.class.toString(), (LatLng) object);
+            intent.putExtra(LatLng.class.toString(), coordenadas);
             startActivity(intent);
-        }
     }
 
     @Override
     public void selleccionProducto(ItemListaAPI itemListaAPI) {
         Log.d(TAG, "El usuario seleciono un elemento");
+        // TODO: Esto no deberia estar aqui
         try {
             long insert = db.elementoListaDao().insert(itemListaAPI);
             if (insert > 0) {
@@ -265,6 +259,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         }
         apiMLDao.buscarItemPorId(itemListaAPI.getId());
+    }
+
+    private void pegarFragment(Fragment fragmentAPegar, int containerViewId) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.add(containerViewId, fragmentAPegar).commit();
+    }
+
+    private void pegarFragment(Fragment fragmentAPegar, int containerViewId, Serializable serializable) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(serializable.getClass().toString(), serializable);
+        fragmentAPegar.setArguments(bundle);
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.add(containerViewId, fragmentAPegar).commit();
     }
 }
 

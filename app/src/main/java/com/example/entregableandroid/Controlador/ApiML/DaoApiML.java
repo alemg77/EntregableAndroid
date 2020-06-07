@@ -1,9 +1,12 @@
 package com.example.entregableandroid.Controlador.ApiML;
 
+import android.content.Context;
 import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.example.entregableandroid.Modelo.ApiML.DescripcionItem;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
@@ -17,7 +20,10 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class DAOApiML extends ViewModel {
+public class DaoApiML extends ViewModel {
+
+    private static DaoApiML daoApiML;
+
 
     private MutableLiveData<List<DescripcionItem>> descripcionItem;
     private MutableLiveData<ItemAPI> itemAPIMutableLiveData;
@@ -28,7 +34,8 @@ public class DAOApiML extends ViewModel {
     private String TAG = getClass().toString();
     private String provincia;
 
-    public DAOApiML() {
+
+    public DaoApiML() {
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.mercadolibre.com/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -36,6 +43,13 @@ public class DAOApiML extends ViewModel {
 
         servicioML = retrofit.create(ServicioML.class);
         this.provincia = ConstantesML.CAPITAL_FEDERAL;
+    }
+
+    public static DaoApiML getInstancia(ViewModelStoreOwner storeOwner){
+        if ( daoApiML == null ){
+            daoApiML = new ViewModelProvider(storeOwner).get(DaoApiML.class);
+        }
+        return daoApiML;
     }
 
     public MutableLiveData<ItemAPI> getItemAPIMutableLiveData() {
