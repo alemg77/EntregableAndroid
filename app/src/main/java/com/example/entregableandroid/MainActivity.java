@@ -196,7 +196,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.menuBMW:
-                apiMLDao = new DaoApiML();
                 apiMLDao.buscarPorDescripcion("bmw");
                 binding.drawerLayout.closeDrawers();
                 break;
