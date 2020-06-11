@@ -1,7 +1,5 @@
 package com.example.entregableandroid.Modelo.ApiML;
 
-import org.json.JSONObject;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -12,10 +10,10 @@ public class ResultadoBusqueda implements Serializable {
     public final static String BUSQUEDA_DB_LOCAL = "Busque en BAse de Datos";
 
     private String origen;
-    private List<ItemListaAPI> results;
+    private List<Item> results;
 
 
-    public ResultadoBusqueda(List<ItemListaAPI> results, String origen) {
+    public ResultadoBusqueda(List<Item> results, String origen) {
         this.results = results;
         this.origen = origen;
     }
@@ -28,11 +26,11 @@ public class ResultadoBusqueda implements Serializable {
         this.origen = origen;
     }
 
-    public List<ItemListaAPI> getResults() {
+    public List<Item> getResults() {
         return results;
     }
 
-    public void setResults(List<ItemListaAPI> results) {
+    public void setResults(List<Item> results) {
         this.results = results;
     }
 

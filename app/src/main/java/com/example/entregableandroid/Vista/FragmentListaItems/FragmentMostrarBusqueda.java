@@ -18,7 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
+import com.example.entregableandroid.Modelo.ApiML.Item;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
 import com.example.entregableandroid.R;
 import com.example.entregableandroid.databinding.FragmentRecyclerviewBinding;
@@ -35,9 +35,9 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
 
     private FragmentRecyclerviewBinding binding;
     private FragmentMostrarBusqueda.Aviso listener;
-    private List<ItemListaAPI> listaElementos;
+    private List<Item> listaElementos;
     private ProductoAdapter productoAdapter;
-    private ItemListaAPI elementoBorrado;
+    private Item elementoBorrado;
 
     public FragmentMostrarBusqueda(){
     }
@@ -129,7 +129,7 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     }
 
     public interface Aviso {
-        void selleccionProducto (ItemListaAPI itemListaAPI);
+        void selleccionProducto (Item item);
     }
 }
 

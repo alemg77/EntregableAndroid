@@ -9,8 +9,8 @@ import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 
-@Entity(tableName = ItemListaAPI.TABLE_NAME)
-public class ItemListaAPI implements Serializable {
+@Entity(tableName = Item.TABLE_NAME)
+public class Item implements Serializable {
 
     public final static String TABLE_NAME = "ItemLista";
     public final static String COLUMN_NAME = "name";
@@ -42,7 +42,7 @@ public class ItemListaAPI implements Serializable {
     @ColumnInfo(name = "imagenFirebase")
     private String imagenFirebase;
 
-    public ItemListaAPI() {
+    public Item() {
     }
 
     public String getImagenFirebase() {

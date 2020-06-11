@@ -4,31 +4,30 @@ package com.example.entregableandroid.Controlador.BaseDeDatos;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
-import androidx.room.Update;
 
-import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
+import com.example.entregableandroid.Modelo.ApiML.Item;
 
 import java.util.List;
 
 @Dao
 public interface ElementoListaDao {
 
-    @Query("SELECT COUNT(*) FROM " + ItemListaAPI.TABLE_NAME)
+    @Query("SELECT COUNT(*) FROM " + Item.TABLE_NAME)
     int cantidadElementos();
 
-    @Query("SELECT * FROM "+ItemListaAPI.TABLE_NAME)
-    List<ItemListaAPI> getTodos();
+    @Query("SELECT * FROM "+ Item.TABLE_NAME)
+    List<Item> getTodos();
 
     //insertar 2
     @Insert
-    long insert(ItemListaAPI usuarios);
+    long insert(Item usuarios);
 
     //eliminar
-    @Query("DELETE FROM " + ItemListaAPI.TABLE_NAME + " WHERE " + ItemListaAPI.COLUMN_ID + " = :moco")
+    @Query("DELETE FROM " + Item.TABLE_NAME + " WHERE " + Item.COLUMN_ID + " = :moco")
     int deleteById(String moco);
 
-    @Query("SELECT * FROM "+ItemListaAPI.TABLE_NAME+" LIMIT 1")
-    ItemListaAPI getPrimerElemento();
+    @Query("SELECT * FROM "+ Item.TABLE_NAME+" LIMIT 1")
+    Item getPrimerElemento();
 
     /*
     // TODO: Aplicar LiveData!!!!

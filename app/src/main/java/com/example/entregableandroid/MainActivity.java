@@ -28,12 +28,12 @@ import com.example.entregableandroid.Controlador.ApiML.DaoApiML;
 import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
 import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
 import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
+import com.example.entregableandroid.Controlador.ItemViewModel;
+import com.example.entregableandroid.Modelo.ApiML.Item;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
-import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
 import com.example.entregableandroid.Vista.FragmentDetalleProducto.FragmentDetalleProducto;
 import com.example.entregableandroid.Vista.FragmentListaItems.FragmentMostrarBusqueda;
-import com.example.entregableandroid.Vista.FragmentListaItems.FragmentBusquedaFirebase;
 import com.example.entregableandroid.Vista.FragmentLogin;
 import com.example.entregableandroid.Vista.MapsActivity;
 import com.example.entregableandroid.databinding.ActivityMainBinding;
@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 {
     private ActivityMainBinding binding;
     private String TAG = getClass().toString();
-    private AppDatabase db;
     private DaoApiML apiMLDao;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private ItemViewModel itemViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +60,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(view);
         Log.d(TAG, "********* INICIO DE LA APLICACION Entregable Android **********************************");
 
-        // Preparo el Acceso a la Base de Datos Local
-        db = AppDatabase.get(getApplicationContext());
+        itemViewModel = ItemViewModel.getInstancia(this);
+
+        itemViewModel.getResultadoBusquedaDB().observe(this, new Observer<ResultadoBusqueda>() {
+            @Override
+            public void onChanged(ResultadoBusqueda resultadoBusqueda) {
+                Log.d(TAG, "Exito?");
+            }
+        });
+
 
         // Preparo el acceso a la API de Mercado Libre
         apiMLDao = DaoApiML.getInstancia(this);
@@ -107,11 +114,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
         apiMLDao.getItemAPIMutableLiveData().observe(this, observadorItem);
 
-
-        DAOFirebase.get().getListaItems().observe(this, new Observer<List<ItemListaAPI>>() {
+        DAOFirebase.get().getListaItems().observe(this, new Observer<List<Item>>() {
             @Override
-            public void onChanged(List<ItemListaAPI> itemListaAPI) {
-                ResultadoBusqueda busqueda = new ResultadoBusqueda(itemListaAPI, ResultadoBusqueda.BUSQUEDA_FIREBASE);
+            public void onChanged(List<Item> item) {
+                ResultadoBusqueda busqueda = new ResultadoBusqueda(item, ResultadoBusqueda.BUSQUEDA_FIREBASE);
                 pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment, busqueda);
             }
         });
@@ -216,8 +222,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.Recientes:
-                if ( db.elementoListaDao().cantidadElementos() > 0 ){
-                    ResultadoBusqueda busqueda = new ResultadoBusqueda(db.elementoListaDao().getTodos(), ResultadoBusqueda.BUSQUEDA_DB_LOCAL);
+                if ( itemViewModel.cantidadDB() > 0 ){
+                    ResultadoBusqueda busqueda = new ResultadoBusqueda(itemViewModel.getTodosDB(), ResultadoBusqueda.BUSQUEDA_DB_LOCAL);
                     pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment, busqueda);
                     binding.drawerLayout.closeDrawers();
                 } else {
@@ -240,28 +246,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void selleccionProducto(ItemListaAPI itemListaAPI) {
+    public void selleccionProducto(Item item) {
         Log.d(TAG, "El usuario seleciono un elemento");
-        // TODO: Esto no deberia estar aqui
-        try {
-            long insert = db.elementoListaDao().insert(itemListaAPI);
-            if (insert > 0) {
-                Log.d(TAG, "Insercion en la base de datos correcto!!");
-                if ( insert > 4 ) {
-                    ItemListaAPI itemListaAPI1 = db.elementoListaDao().getPrimerElemento();
-                    db.elementoListaDao().deleteById(itemListaAPI1.getId());
-                }
-            } else {
-                Log.d(TAG, "Error en la insercion en la base de datos!!");
-            }
-        } catch ( Exception e ) {
-            if ( e instanceof SQLiteConstraintException ) {
-                Log.d(TAG, "No se agrego el elemento porque ya estaba");
-            } else {
-                Log.d(TAG, "Ocurrio la excepcion: " + e.toString());
-            }
-        }
-        apiMLDao.buscarItemPorId(itemListaAPI.getId());
+        itemViewModel.agregarDB(item);
+        apiMLDao.buscarItemPorId(item.getId());
     }
 
     private void pegarFragment(Fragment fragmentAPegar, int containerViewId) {

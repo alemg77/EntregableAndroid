@@ -16,8 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
-import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
-import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
+import com.example.entregableandroid.Modelo.ApiML.Item;
 import com.example.entregableandroid.databinding.FragmentPublicarBinding;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -66,13 +65,13 @@ public class FragmentPublicar extends Fragment {
             @Override
             public void onChanged(String direccionFirebase) {
                 if ( direccionFirebase != null ) {
-                    ItemListaAPI itemListaAPI = new ItemListaAPI();
-                    itemListaAPI.setImagenFirebase(direccionFirebase);
-                    itemListaAPI.setVendedor(FirebaseAuth.getInstance().getUid());
-                    itemListaAPI.setPrice(precio);
-                    itemListaAPI.setTitle(titulo);
-                    itemListaAPI.setDescripcion(descripcion);
-                    DAOFirebase.get().guardarNuevo(itemListaAPI);
+                    Item item = new Item();
+                    item.setImagenFirebase(direccionFirebase);
+                    item.setVendedor(FirebaseAuth.getInstance().getUid());
+                    item.setPrice(precio);
+                    item.setTitle(titulo);
+                    item.setDescripcion(descripcion);
+                    DAOFirebase.get().guardarNuevo(item);
                 }
             }
         });

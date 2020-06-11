@@ -9,9 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
+import com.example.entregableandroid.Modelo.ApiML.Item;
 import com.example.entregableandroid.databinding.CeldaListadoProductoBinding;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -19,11 +18,11 @@ import java.util.List;
 
 public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.ProductoViewHolder> {
 
-    private List<ItemListaAPI> listadDeProductos;
+    private List<Item> listadDeProductos;
     private RecyclerViewClickInterfase listener;
     private Context context;
 
-    public ProductoAdapter(Context context, RecyclerViewClickInterfase listener, List<ItemListaAPI> listadDeProductos) {
+    public ProductoAdapter(Context context, RecyclerViewClickInterfase listener, List<Item> listadDeProductos) {
         this.listadDeProductos = listadDeProductos;
         this.context = context;
         this.listener = listener;
@@ -72,15 +71,15 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             });
         }
 
-        public void cargarProducto (ItemListaAPI itemListaAPI){
-            binding.celdaListadoText1.setText(itemListaAPI.getTitle());
-            binding.celdaListadoPrecio.setText("$" + itemListaAPI.getPrice());
+        public void cargarProducto (Item item){
+            binding.celdaListadoText1.setText(item.getTitle());
+            binding.celdaListadoPrecio.setText("$" + item.getPrice());
 
-            if ( itemListaAPI.getImagenFirebase() != null ){
-                StorageReference child = FirebaseStorage.getInstance().getReference().child(itemListaAPI.getImagenFirebase());
+            if ( item.getImagenFirebase() != null ){
+                StorageReference child = FirebaseStorage.getInstance().getReference().child(item.getImagenFirebase());
                 Glide.with(binding.getRoot()).load(child).into(binding.celdaListadoImagen);
-            } else if ( itemListaAPI.getThumbnail() != null ) {
-                Glide.with(binding.getRoot()).load(itemListaAPI.getThumbnail()).into(binding.celdaListadoImagen);
+            } else if ( item.getThumbnail() != null ) {
+                Glide.with(binding.getRoot()).load(item.getThumbnail()).into(binding.celdaListadoImagen);
             }
 
 

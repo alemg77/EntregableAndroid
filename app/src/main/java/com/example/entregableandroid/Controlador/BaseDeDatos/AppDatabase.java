@@ -7,9 +7,9 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
+import com.example.entregableandroid.Modelo.ApiML.Item;
 
-@Database(entities = {ItemListaAPI.class}, version = 3)
+@Database(entities = {Item.class}, version = 3)
 
 public abstract class AppDatabase extends RoomDatabase {
 

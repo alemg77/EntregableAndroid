@@ -1,17 +1,5 @@
 package com.example.entregableandroid.Controlador.BaseDeDatos;
 
-import android.app.Application;
-import android.content.Context;
-import android.os.AsyncTask;
-
-import androidx.lifecycle.LiveData;
-
-import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
-import com.example.entregableandroid.Controlador.BaseDeDatos.ElementoListaDao;
-import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
-
-import java.util.List;
-
 public class AccesoDB {
 
     /*

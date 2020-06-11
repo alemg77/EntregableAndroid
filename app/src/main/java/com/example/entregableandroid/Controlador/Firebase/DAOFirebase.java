@@ -7,8 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
-import com.example.entregableandroid.Modelo.ApiML.ItemListaAPI;
+import com.example.entregableandroid.Modelo.ApiML.Item;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -25,7 +24,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -38,7 +36,7 @@ public class DAOFirebase extends ViewModel {
 
     private FirebaseStorage storage;
     private CollectionReference referenciaDB;
-    private MutableLiveData<List<ItemListaAPI>> listaItems;
+    private MutableLiveData<List<Item>> listaItems;
     private MutableLiveData<String> itemPublicado;
     private MutableLiveData<Integer> progreso;
     private MutableLiveData<String> archivoSubido;
@@ -59,9 +57,9 @@ public class DAOFirebase extends ViewModel {
         return progreso;
     }
 
-    public MutableLiveData<List<ItemListaAPI>> getListaItems() {
+    public MutableLiveData<List<Item>> getListaItems() {
         if (listaItems == null) {
-            listaItems = new MutableLiveData<List<ItemListaAPI>>();
+            listaItems = new MutableLiveData<List<Item>>();
         }
         return listaItems;
     }
@@ -92,9 +90,9 @@ public class DAOFirebase extends ViewModel {
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        List<ItemListaAPI> lista = new ArrayList<>();
+                        List<Item> lista = new ArrayList<>();
                         for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
-                            ItemListaAPI dato = queryDocumentSnapshot.toObject(ItemListaAPI.class);
+                            Item dato = queryDocumentSnapshot.toObject(Item.class);
                             lista.add(dato);
                         }
                         listaItems.setValue(lista);
@@ -122,9 +120,9 @@ public class DAOFirebase extends ViewModel {
                     @Override
                     public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                         Log.d(TAG, "Trajimos la lista de mis publicaciones");
-                        List<ItemListaAPI> lista = new ArrayList<>();
+                        List<Item> lista = new ArrayList<>();
                         for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
-                            ItemListaAPI dato = queryDocumentSnapshot.toObject(ItemListaAPI.class);
+                            Item dato = queryDocumentSnapshot.toObject(Item.class);
                             lista.add(dato);
                         }
                         listaItems.setValue(lista);
@@ -145,9 +143,9 @@ public class DAOFirebase extends ViewModel {
     }
 
 
-    public void guardarNuevo(ItemListaAPI itemListaAPI) {
+    public void guardarNuevo(Item item) {
         itemPublicado.setValue(null);
-        referenciaDB.document().set(itemListaAPI)
+        referenciaDB.document().set(item)
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
