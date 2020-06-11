@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,12 +19,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.entregableandroid.Controlador.ApiML.DaoApiML;
+import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
+import com.example.entregableandroid.Controlador.ItemViewModel;
 import com.example.entregableandroid.Modelo.ApiML.Item;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
 import com.example.entregableandroid.R;
 import com.example.entregableandroid.databinding.FragmentRecyclerviewBinding;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,7 +44,7 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     private ProductoAdapter productoAdapter;
     private Item elementoBorrado;
 
-    public FragmentMostrarBusqueda(){
+    public FragmentMostrarBusqueda() {
     }
 
     @Override
@@ -56,21 +61,54 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentRecyclerviewBinding.inflate(getLayoutInflater());
-        Bundle bundle = getArguments();
-        ResultadoBusqueda resultadoBusquedaAPI = (ResultadoBusqueda) bundle.getSerializable(ResultadoBusqueda.class.toString());
-        listaElementos = resultadoBusquedaAPI.getResults();
+
+        listaElementos = new ArrayList<>();
         Context context = getActivity().getApplicationContext();
         productoAdapter = new ProductoAdapter(context, this, listaElementos);
         LinearLayoutManager dosLayoutManager = new LinearLayoutManager(getActivity());
         binding.RecyclerView.setLayoutManager(dosLayoutManager);
         binding.RecyclerView.setAdapter(productoAdapter);
+
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(binding.RecyclerView);
+
+        ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(getViewLifecycleOwner(), new Observer<ResultadoBusqueda>() {
+            @Override
+            public void onChanged(ResultadoBusqueda resultadoBusqueda) {
+                listaElementos = resultadoBusqueda.getResults();
+                binding.RecyclerView.getAdapter().notifyDataSetChanged();
+            }
+        });
+
+        DAOFirebase.get().getListaItems().observe(getViewLifecycleOwner(),
+                new Observer<List<Item>>() {
+                    @Override
+                    public void onChanged(List<Item> items) {
+                        listaElementos = items;
+                        binding.RecyclerView.getAdapter().notifyDataSetChanged();
+                    }
+                });
+
+
+        DaoApiML.getInstancia(getActivity()).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(),
+                new Observer<ResultadoBusqueda>() {
+                    @Override
+                    public void onChanged(ResultadoBusqueda resultadoBusqueda) {
+                        listaElementos = resultadoBusqueda.getResults();
+                        Context context = getActivity().getApplicationContext();
+                        productoAdapter = new ProductoAdapter(context, this, listaElementos);
+                        LinearLayoutManager dosLayoutManager = new LinearLayoutManager(getActivity());
+                        binding.RecyclerView.setLayoutManager(dosLayoutManager);
+                        binding.RecyclerView.setAdapter(productoAdapter);
+                        binding.RecyclerView.getAdapter().notifyDataSetChanged();
+                    }
+                });
+
         return binding.getRoot();
     }
 
-    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback( ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START| ItemTouchHelper.END ,
-            ItemTouchHelper.LEFT ) {
+    ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END,
+            ItemTouchHelper.LEFT) {
         @Override
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             int fromposition = viewHolder.getAdapterPosition();
@@ -84,7 +122,7 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
             final int posicion = viewHolder.getAdapterPosition();
 
-            switch (direction){
+            switch (direction) {
                 case ItemTouchHelper.LEFT:  // <----
 
                     elementoBorrado = listaElementos.get(posicion);
@@ -103,7 +141,7 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
                 case ItemTouchHelper.RIGHT: // ---->
                     break;
             }
-            Log.d(TAG,"Se desplazo elemento");
+            Log.d(TAG, "Se desplazo elemento");
         }
 
         @Override
@@ -129,7 +167,7 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     }
 
     public interface Aviso {
-        void selleccionProducto (Item item);
+        void selleccionProducto(Item item);
     }
 }
 

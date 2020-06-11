@@ -82,8 +82,6 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
                 Glide.with(binding.getRoot()).load(item.getThumbnail()).into(binding.celdaListadoImagen);
             }
 
-
-
         }
     }
 

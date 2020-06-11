@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String TAG = getClass().toString();
     private DaoApiML apiMLDao;
     private ActionBarDrawerToggle actionBarDrawerToggle;
-    private ItemViewModel itemViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,20 +59,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(view);
         Log.d(TAG, "********* INICIO DE LA APLICACION Entregable Android **********************************");
 
-        itemViewModel = ItemViewModel.getInstancia(this);
-
-        itemViewModel.getResultadoBusquedaDB().observe(this, new Observer<ResultadoBusqueda>() {
-            @Override
-            public void onChanged(ResultadoBusqueda resultadoBusqueda) {
-                Log.d(TAG, "Exito?");
-            }
-        });
-
-
         // Preparo el acceso a la API de Mercado Libre
         apiMLDao = DaoApiML.getInstancia(this);
         apiMLDao.setProvincia(ConstantesML.BUENOS_AIRES);
         apiMLDao.buscarPorDescripcion("fiat");
+
+        pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment);
 
         // Preparo el ToolBAR
         Toolbar toolbar = binding.MainActivityToolbar.cabezeratool;
@@ -96,15 +87,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        // ************************************* Escuchadores *************************************
-        final Observer<ResultadoBusqueda> observadorResultadoBusqueda = new Observer<ResultadoBusqueda>() {
-            @Override
-            public void onChanged(ResultadoBusqueda resultadoBusquedaAPI) {
-                pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment, resultadoBusquedaAPI);
-            }
-        };
-        apiMLDao.getResultadoBusquedaAPIMutableLiveData().observe(this, observadorResultadoBusqueda);
-
         //
         final Observer<ItemAPI> observadorItem = new Observer<ItemAPI>() {
             @Override
@@ -113,14 +95,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         };
         apiMLDao.getItemAPIMutableLiveData().observe(this, observadorItem);
-
-        DAOFirebase.get().getListaItems().observe(this, new Observer<List<Item>>() {
-            @Override
-            public void onChanged(List<Item> item) {
-                ResultadoBusqueda busqueda = new ResultadoBusqueda(item, ResultadoBusqueda.BUSQUEDA_FIREBASE);
-                pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment, busqueda);
-            }
-        });
 
     }
 
@@ -222,8 +196,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.Recientes:
-                if ( itemViewModel.cantidadDB() > 0 ){
-                    ResultadoBusqueda busqueda = new ResultadoBusqueda(itemViewModel.getTodosDB(), ResultadoBusqueda.BUSQUEDA_DB_LOCAL);
+                if ( ItemViewModel.getInstancia(this).cantidadDB() > 0 ){
+                    ResultadoBusqueda busqueda = new ResultadoBusqueda(ItemViewModel.getInstancia(this).getTodosDB(), ResultadoBusqueda.BUSQUEDA_DB_LOCAL);
                     pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment, busqueda);
                     binding.drawerLayout.closeDrawers();
                 } else {
@@ -248,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void selleccionProducto(Item item) {
         Log.d(TAG, "El usuario seleciono un elemento");
-        itemViewModel.agregarDB(item);
+        // itemViewModel.agregarDB(item);
         apiMLDao.buscarItemPorId(item.getId());
     }
 

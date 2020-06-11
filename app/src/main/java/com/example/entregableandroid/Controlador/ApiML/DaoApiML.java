@@ -58,7 +58,7 @@ public class DaoApiML extends ViewModel {
         return itemAPIMutableLiveData;
     }
 
-    public MutableLiveData<ResultadoBusqueda> getResultadoBusquedaAPIMutableLiveData(){
+    public MutableLiveData<ResultadoBusqueda> getResultadoBusquedaAPI(){
         if ( resultadoBusquedaAPIMutableLiveData == null) {
             resultadoBusquedaAPIMutableLiveData = new MutableLiveData<ResultadoBusqueda>();
         }
