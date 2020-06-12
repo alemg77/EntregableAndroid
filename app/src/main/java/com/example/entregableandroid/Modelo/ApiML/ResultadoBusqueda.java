@@ -1,6 +1,7 @@
 package com.example.entregableandroid.Modelo.ApiML;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 public class ResultadoBusqueda implements Serializable {
@@ -34,9 +35,17 @@ public class ResultadoBusqueda implements Serializable {
         this.results = results;
     }
 
+    public void swapElementos ( int  fromposition, int toposition ){
+        Collections.swap(results, fromposition, toposition);
+    }
 
+    public void eliminarElemento(int posicion ) {
+        results.remove(posicion);
+    }
 
-
+    public void agregarElemento(int posicion, Item item) {
+        results.add(posicion, item);
+    }
 
 
 

@@ -1,4 +1,4 @@
-package com.example.entregableandroid.Vista.FragmentListaItems;
+package com.example.entregableandroid.Vista.MostrarResultadoBusqueda;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -29,8 +29,6 @@ import com.example.entregableandroid.databinding.FragmentRecyclerviewBinding;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
@@ -40,31 +38,39 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
 
     private FragmentRecyclerviewBinding binding;
     private FragmentMostrarBusqueda.Aviso listener;
-    private List<Item> listaElementos;
+    private ResultadoBusqueda resultadoBusqueda;
     private ProductoAdapter productoAdapter;
     private Item elementoBorrado;
 
     public FragmentMostrarBusqueda() {
     }
 
+    // 1° en la creacion
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.listener = (Aviso) context;
     }
 
+    // 2° En la creacion
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if ( savedInstanceState != null) {
+            resultadoBusqueda = (ResultadoBusqueda) savedInstanceState.getSerializable(ResultadoBusqueda.class.toString());
+        }
     }
 
-    @Override
+    @Override // 3° En la creacion
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentRecyclerviewBinding.inflate(getLayoutInflater());
 
-        listaElementos = new ArrayList<>();
+        if (resultadoBusqueda == null) {
+            resultadoBusqueda = new ResultadoBusqueda(new ArrayList<Item>(), "Vacio");
+        }
+
         Context context = getActivity().getApplicationContext();
-        productoAdapter = new ProductoAdapter(context, this, listaElementos);
+        productoAdapter = new ProductoAdapter(context, this, resultadoBusqueda.getResults());
         LinearLayoutManager dosLayoutManager = new LinearLayoutManager(getActivity());
         binding.RecyclerView.setLayoutManager(dosLayoutManager);
         binding.RecyclerView.setAdapter(productoAdapter);
@@ -75,31 +81,56 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(getViewLifecycleOwner(),
                 new Observer<ResultadoBusqueda>() {
                     @Override
-                    public void onChanged(ResultadoBusqueda resultadoBusqueda) {
-                        listaElementos = resultadoBusqueda.getResults();
-                        productoAdapter.setListadDeProductos(listaElementos);
+                    public void onChanged(ResultadoBusqueda resultadoBusqueda_) {
+                        resultadoBusqueda = resultadoBusqueda_;
+                        productoAdapter.setListadDeProductos(resultadoBusqueda.getResults());
                     }
                 });
 
         DAOFirebase.get().getListaItems().observe(getViewLifecycleOwner(),
-                new Observer<List<Item>>() {
+                new Observer<ResultadoBusqueda>() {
                     @Override
-                    public void onChanged(List<Item> items) {
-                        listaElementos = items;
-                        productoAdapter.setListadDeProductos(items);
+                    public void onChanged(ResultadoBusqueda resultadoBusqueda_) {
+                        resultadoBusqueda = resultadoBusqueda_;
+                        productoAdapter.setListadDeProductos(resultadoBusqueda.getResults());
                     }
                 });
 
         DaoApiML.getInstancia(getActivity()).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(),
                 new Observer<ResultadoBusqueda>() {
                     @Override
-                    public void onChanged(ResultadoBusqueda resultadoBusqueda) {
-                        listaElementos = resultadoBusqueda.getResults();
-                        productoAdapter.setListadDeProductos(listaElementos);
+                    public void onChanged(ResultadoBusqueda resultadoBusqueda_) {
+                        if (resultadoBusqueda_.getOrigen() == ResultadoBusqueda.BUSQUEDA_API) {
+                            resultadoBusqueda = resultadoBusqueda_;
+                            resultadoBusqueda.setOrigen("Leido");
+                            productoAdapter.setListadDeProductos(resultadoBusqueda.getResults());
+                        }
                     }
                 });
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    // Se va el fragment, guardamos para no perder
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(ResultadoBusqueda.class.toString(),resultadoBusqueda);
     }
 
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END,
@@ -108,7 +139,7 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             int fromposition = viewHolder.getAdapterPosition();
             int toposition = target.getAdapterPosition();
-            Collections.swap(listaElementos, fromposition, toposition);
+            resultadoBusqueda.swapElementos(fromposition, toposition);
             recyclerView.getAdapter().notifyItemMoved(fromposition, toposition);
             return false;
         }
@@ -119,14 +150,14 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
 
             switch (direction) {
                 case ItemTouchHelper.LEFT:  // <----
-                    elementoBorrado = listaElementos.get(posicion);
-                    listaElementos.remove(posicion);
+                    resultadoBusqueda.eliminarElemento(posicion);
+                    elementoBorrado = resultadoBusqueda.getResults().get(posicion);
                     productoAdapter.notifyItemRemoved(posicion);
                     Snackbar.make(binding.RecyclerView, "Regresar?", Snackbar.LENGTH_LONG)
                             .setAction("Si", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    listaElementos.add(posicion, elementoBorrado);
+                                    resultadoBusqueda.agregarElemento(posicion, elementoBorrado);
                                     productoAdapter.notifyItemInserted(posicion);
                                 }
                             }).show();

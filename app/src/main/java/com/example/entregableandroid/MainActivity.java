@@ -4,7 +4,6 @@ package com.example.entregableandroid;
 // TODO: PORQUE ME DEJO IR A PUBLICAR SI NO ESTABA CONECTADO CON FIREBASE ???
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -26,15 +25,14 @@ import androidx.lifecycle.Observer;
 
 import com.example.entregableandroid.Controlador.ApiML.DaoApiML;
 import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
-import com.example.entregableandroid.Controlador.BaseDeDatos.AppDatabase;
 import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
 import com.example.entregableandroid.Controlador.ItemViewModel;
 import com.example.entregableandroid.Modelo.ApiML.Item;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
-import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
 import com.example.entregableandroid.Vista.FragmentDetalleProducto.FragmentDetalleProducto;
-import com.example.entregableandroid.Vista.FragmentListaItems.FragmentMostrarBusqueda;
+import com.example.entregableandroid.Vista.MostrarResultadoBusqueda.FragmentMostrarBusqueda;
 import com.example.entregableandroid.Vista.FragmentLogin;
+import com.example.entregableandroid.Vista.FragmentPublicar;
 import com.example.entregableandroid.Vista.MapsActivity;
 import com.example.entregableandroid.databinding.ActivityMainBinding;
 import com.google.android.gms.maps.model.LatLng;
@@ -42,14 +40,14 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.Serializable;
-import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, FragmentMostrarBusqueda.Aviso
-{
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, FragmentMostrarBusqueda.Aviso {
     private ActivityMainBinding binding;
     private String TAG = getClass().toString();
     private DaoApiML apiMLDao;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private String ultimoFragmentePegado;
+    private static final String KEY_FRAGMENT_PEGADO = "ULTIMO fragment pegado";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,12 +57,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(view);
         Log.d(TAG, "********* INICIO DE LA APLICACION Entregable Android **********************************");
 
-        // Preparo el acceso a la API de Mercado Libre
+        // Preparo la API de mercaolibre
         apiMLDao = DaoApiML.getInstancia(this);
         apiMLDao.setProvincia(ConstantesML.BUENOS_AIRES);
-        apiMLDao.buscarPorDescripcion("fiat");
 
-        pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment);
+        // Si es una reconstruccion, nos llega informacion
+        if (savedInstanceState != null) {
+            ultimoFragmentePegado = savedInstanceState.getString(KEY_FRAGMENT_PEGADO);
+        }
+
+        // Si no hay ningun fragment pegado, pido
+        if (ultimoFragmentePegado == null) {
+            // Preparo el acceso a la API de Mercado Libre informacion
+            apiMLDao.buscarPorDescripcion("fiat");
+            pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment);
+        }
 
         // Preparo el ToolBAR
         Toolbar toolbar = binding.MainActivityToolbar.cabezeratool;
@@ -73,19 +80,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         // Preparo el menu de Navegacion
         binding.navigation.setNavigationItemSelectedListener(this);
-        NavigationView navigation = binding.navigation;
-        View actionView =  navigation.getMenu().findItem(R.id.menuSwich).getActionView();
-        actionView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean checked = ((Switch) v).isChecked();
-                if (checked) {
-                    Log.d(TAG, "Swith del navigation menu activado");
-                } else {
-                    Log.d(TAG, "Swith del navigation menu apagado");
-                }
-            }
-        });
 
         //
         final Observer<ItemAPI> observadorItem = new Observer<ItemAPI>() {
@@ -99,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     *  Atiende los pedidos de busqueda que se realizan en la Tool Bar.
+     * Atiende los pedidos de busqueda que se realizan en la Tool Bar.
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -127,25 +121,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     /**
-     *  Atiende la seleccion en la Tool Bar
+     * Atiende la seleccion en la Tool Bar
      */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bar_usuario:
-                pegarFragment(new FragmentLogin(), R.id.MainFragment );
-                break;
-
-            case R.id.action_ensayoFirebase:
-                pegarFragment(new FragmentEnsayos(), R.id.MainFragment);
-                break;
-
-            case R.id.action_bar_publicar:
-                if ( FirebaseAuth.getInstance() != null ) {
-                    pegarFragment(new FragmentPublicar(), R.id.MainFragment);
-                } else {
-                    Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
-                }
+                pegarFragment(new FragmentLogin(), R.id.MainFragment);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -162,9 +144,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
 
             case R.id.misPublicaciones:
-                if ( FirebaseAuth.getInstance() != null ) {
+                if (FirebaseAuth.getInstance() != null) {
                     DAOFirebase.get().buscarMisPublicaciones();
                     binding.drawerLayout.closeDrawers();
+                } else {
+                    Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
+                }
+                break;
+
+            case R.id.publicar:
+                if (FirebaseAuth.getInstance() != null) {
+                    pegarFragment(new FragmentPublicar(), R.id.MainFragment);
                 } else {
                     Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
                 }
@@ -196,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.Recientes:
-                if ( ItemViewModel.getInstancia(this).cantidadDB() > 0 ){
+                if (ItemViewModel.getInstancia(this).cantidadDB() > 0) {
                     ItemViewModel.getInstancia(this).getTodosDB();
                     binding.drawerLayout.closeDrawers();
                 } else {
@@ -213,9 +203,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void mostrarMapa(LatLng coordenadas) {
-            Intent intent = new Intent(MainActivity.this, MapsActivity.class);
-            intent.putExtra(LatLng.class.toString(), coordenadas);
-            startActivity(intent);
+        Intent intent = new Intent(MainActivity.this, MapsActivity.class);
+        intent.putExtra(LatLng.class.toString(), coordenadas);
+        startActivity(intent);
     }
 
     @Override
@@ -229,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.add(containerViewId, fragmentAPegar).commit();
+        ultimoFragmentePegado = fragmentAPegar.getClass().toString();
     }
 
     private void pegarFragment(Fragment fragmentAPegar, int containerViewId, Serializable serializable) {
@@ -238,6 +229,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.addToBackStack(null);
         fragmentTransaction.add(containerViewId, fragmentAPegar).commit();
+        ultimoFragmentePegado = fragmentAPegar.getClass().toString();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(KEY_FRAGMENT_PEGADO, ultimoFragmentePegado);
     }
 }
 

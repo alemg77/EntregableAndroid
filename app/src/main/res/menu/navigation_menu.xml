@@ -47,13 +47,5 @@
         </menu>
     </item>
 
-    <item android:title="En construccion...">
-        <menu>
-            <item
-                android:id="@+id/menuSwich"
-                android:title="Swich"
-                app:actionLayout="@layout/widget_switch" />
-        </menu>
-    </item>
 
 </menu>

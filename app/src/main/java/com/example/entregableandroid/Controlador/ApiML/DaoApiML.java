@@ -94,6 +94,8 @@ public class DaoApiML extends ViewModel {
                     Log.d(TAG, "Retrofit response code:" + response.code());
                     return;
                 }
+                ResultadoBusqueda resultadoBusqueda = response.body();
+                resultadoBusqueda.setOrigen(ResultadoBusqueda.BUSQUEDA_API);
                 resultadoBusquedaAPIMutableLiveData.setValue(response.body());
             }
 
@@ -113,7 +115,9 @@ public class DaoApiML extends ViewModel {
                     Log.d(TAG, "Retrofit response code:" + response.code());
                     return;
                 }
-                resultadoBusquedaAPIMutableLiveData.setValue(response.body());
+                ResultadoBusqueda resultadoBusqueda = response.body();
+                resultadoBusqueda.setOrigen(ResultadoBusqueda.BUSQUEDA_API);
+                resultadoBusquedaAPIMutableLiveData.setValue(resultadoBusqueda);
             }
 
             @Override

@@ -1,4 +1,4 @@
-package com.example.entregableandroid;
+package com.example.entregableandroid.Vista;
 
 import android.content.Intent;
 import android.graphics.Bitmap;

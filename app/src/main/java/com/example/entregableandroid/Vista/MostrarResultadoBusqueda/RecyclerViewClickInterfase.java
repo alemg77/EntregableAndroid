@@ -1,4 +1,4 @@
-package com.example.entregableandroid.Vista.FragmentListaItems;
+package com.example.entregableandroid.Vista.MostrarResultadoBusqueda;
 
 import com.example.entregableandroid.Modelo.ApiML.Item;
 

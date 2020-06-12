@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.entregableandroid.Modelo.ApiML.Item;
+import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,7 +37,7 @@ public class DAOFirebase extends ViewModel {
 
     private FirebaseStorage storage;
     private CollectionReference referenciaDB;
-    private MutableLiveData<List<Item>> listaItems;
+    private MutableLiveData<ResultadoBusqueda> resultadoBusquedaMutableLiveData;
     private MutableLiveData<String> itemPublicado;
     private MutableLiveData<Integer> progreso;
     private MutableLiveData<String> archivoSubido;
@@ -44,7 +45,7 @@ public class DAOFirebase extends ViewModel {
     public DAOFirebase() {
         this.referenciaDB = FirebaseFirestore.getInstance().collection(NOMBRE_BD_ITEMS);
         this.storage = FirebaseStorage.getInstance();
-        this.listaItems = new MutableLiveData<>();
+        this.resultadoBusquedaMutableLiveData = new MutableLiveData<>();
         this.itemPublicado = new MutableLiveData<>();
         this.progreso = new MutableLiveData<>();
         this.archivoSubido = new MutableLiveData<>();
@@ -57,11 +58,11 @@ public class DAOFirebase extends ViewModel {
         return progreso;
     }
 
-    public MutableLiveData<List<Item>> getListaItems() {
-        if (listaItems == null) {
-            listaItems = new MutableLiveData<List<Item>>();
+    public MutableLiveData<ResultadoBusqueda> getListaItems() {
+        if (resultadoBusquedaMutableLiveData == null) {
+            resultadoBusquedaMutableLiveData = new MutableLiveData<>();
         }
-        return listaItems;
+        return resultadoBusquedaMutableLiveData;
     }
 
     public MutableLiveData<String> getItemPublicado() {
@@ -95,7 +96,8 @@ public class DAOFirebase extends ViewModel {
                             Item dato = queryDocumentSnapshot.toObject(Item.class);
                             lista.add(dato);
                         }
-                        listaItems.setValue(lista);
+                        ResultadoBusqueda resultadoBusqueda = new ResultadoBusqueda(lista, ResultadoBusqueda.BUSQUEDA_FIREBASE);
+                        resultadoBusquedaMutableLiveData.setValue(resultadoBusqueda);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -125,7 +127,8 @@ public class DAOFirebase extends ViewModel {
                             Item dato = queryDocumentSnapshot.toObject(Item.class);
                             lista.add(dato);
                         }
-                        listaItems.setValue(lista);
+                        ResultadoBusqueda resultadoBusqueda = new ResultadoBusqueda(lista, ResultadoBusqueda.BUSQUEDA_FIREBASE);
+                        resultadoBusquedaMutableLiveData.setValue(resultadoBusqueda);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
