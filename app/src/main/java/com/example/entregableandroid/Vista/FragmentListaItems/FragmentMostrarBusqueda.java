@@ -72,35 +72,30 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(binding.RecyclerView);
 
-        ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(getViewLifecycleOwner(), new Observer<ResultadoBusqueda>() {
-            @Override
-            public void onChanged(ResultadoBusqueda resultadoBusqueda) {
-                listaElementos = resultadoBusqueda.getResults();
-                binding.RecyclerView.getAdapter().notifyDataSetChanged();
-            }
-        });
+        ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(getViewLifecycleOwner(),
+                new Observer<ResultadoBusqueda>() {
+                    @Override
+                    public void onChanged(ResultadoBusqueda resultadoBusqueda) {
+                        listaElementos = resultadoBusqueda.getResults();
+                        productoAdapter.setListadDeProductos(listaElementos);
+                    }
+                });
 
         DAOFirebase.get().getListaItems().observe(getViewLifecycleOwner(),
                 new Observer<List<Item>>() {
                     @Override
                     public void onChanged(List<Item> items) {
                         listaElementos = items;
-                        binding.RecyclerView.getAdapter().notifyDataSetChanged();
+                        productoAdapter.setListadDeProductos(items);
                     }
                 });
-
 
         DaoApiML.getInstancia(getActivity()).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(),
                 new Observer<ResultadoBusqueda>() {
                     @Override
                     public void onChanged(ResultadoBusqueda resultadoBusqueda) {
                         listaElementos = resultadoBusqueda.getResults();
-                        Context context = getActivity().getApplicationContext();
-                        productoAdapter = new ProductoAdapter(context, this, listaElementos);
-                        LinearLayoutManager dosLayoutManager = new LinearLayoutManager(getActivity());
-                        binding.RecyclerView.setLayoutManager(dosLayoutManager);
-                        binding.RecyclerView.setAdapter(productoAdapter);
-                        binding.RecyclerView.getAdapter().notifyDataSetChanged();
+                        productoAdapter.setListadDeProductos(listaElementos);
                     }
                 });
 
@@ -124,7 +119,6 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
 
             switch (direction) {
                 case ItemTouchHelper.LEFT:  // <----
-
                     elementoBorrado = listaElementos.get(posicion);
                     listaElementos.remove(posicion);
                     productoAdapter.notifyItemRemoved(posicion);
@@ -157,8 +151,8 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     };
 
     @Override
-    public void onItemClick(int position) {
-        listener.selleccionProducto(listaElementos.get(position));
+    public void onItemClick(Item item) {
+        listener.selleccionProducto(item);
     }
 
     @Override

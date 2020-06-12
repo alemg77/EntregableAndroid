@@ -197,8 +197,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             case R.id.Recientes:
                 if ( ItemViewModel.getInstancia(this).cantidadDB() > 0 ){
-                    ResultadoBusqueda busqueda = new ResultadoBusqueda(ItemViewModel.getInstancia(this).getTodosDB(), ResultadoBusqueda.BUSQUEDA_DB_LOCAL);
-                    pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment, busqueda);
+                    ItemViewModel.getInstancia(this).getTodosDB();
                     binding.drawerLayout.closeDrawers();
                 } else {
                     Toast.makeText(MainActivity.this, "Cuando veas algun producto se iran guardando aqui automagicamente", Toast.LENGTH_SHORT).show();
@@ -222,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void selleccionProducto(Item item) {
         Log.d(TAG, "El usuario seleciono un elemento");
-        // itemViewModel.agregarDB(item);
+        ItemViewModel.getInstancia(this).agregarDB(item);
         apiMLDao.buscarItemPorId(item.getId());
     }
 

@@ -28,6 +28,11 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
         this.listener = listener;
     }
 
+    public void setListadDeProductos(List<Item> listadDeProductos) {
+        this.listadDeProductos = listadDeProductos;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ProductoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -58,7 +63,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             celdaListadoProductoBinding.cardview.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(getAdapterPosition());
+                    listener.onItemClick(listadDeProductos.get(getAdapterPosition()));
                 }
             });
 
