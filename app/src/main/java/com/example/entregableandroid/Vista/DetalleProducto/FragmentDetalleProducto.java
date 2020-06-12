@@ -1,4 +1,4 @@
-package com.example.entregableandroid.Vista.FragmentDetalleProducto;
+package com.example.entregableandroid.Vista.DetalleProducto;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,11 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.entregableandroid.Controlador.ApiML.DaoApiML;
+import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
+import com.example.entregableandroid.Controlador.ItemViewModel;
 import com.example.entregableandroid.Modelo.ApiML.DescripcionItem;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.Imagen;
 import com.example.entregableandroid.Modelo.ApiML.ItemLocationAPI;
 import com.example.entregableandroid.Modelo.ApiML.ListaImagenes;
+import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
 import com.example.entregableandroid.databinding.FragmentDetalleProductoBinding;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -34,8 +37,10 @@ public class FragmentDetalleProducto extends Fragment {
     private String TAG = getClass().toString();
     private FragmentDetalleProducto.Aviso listener;
     private ListaImagenes listaImagenes;
+//    private NuevaLista lista;
 
-    public FragmentDetalleProducto() { }
+    public FragmentDetalleProducto() {
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -55,7 +60,7 @@ public class FragmentDetalleProducto extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        binding.FragmentDetalleProductoPrecio.setText("$"+itemAPI.getPrice());
+        binding.FragmentDetalleProductoPrecio.setText("$" + itemAPI.getPrice());
         binding.FragmentDetalleProductoTitulo.setText(itemAPI.getTitle());
     }
 
@@ -77,29 +82,43 @@ public class FragmentDetalleProducto extends Fragment {
 
         binding.FragmentDetalleViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         List<Imagen> pictures = listaImagenes.getPictures();
-        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager(),pictures);
+        ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager(), pictures);
         binding.FragmentDetalleViewPager.setAdapter(viewPagerAdapter);
 
         final ItemLocationAPI location = itemAPI.getLocation();
-        if ( location.getLatitude() == null ){
+        if (location.getLatitude() == null) {
             binding.FragmentDetalleImagenMapa.setVisibility(View.GONE);
-        }
-        else {
+        } else {
             binding.FragmentDetalleImagenMapa.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Double latitude = location.getLatitude();
                     Double longitude = location.getLongitude();
-                    listener.mostrarMapa( new LatLng(latitude,longitude));
+                    listener.mostrarMapa(new LatLng(latitude, longitude));
                 }
             });
         }
+
+        final Observer<ResultadoBusqueda> analizarBusqueda = new Observer<ResultadoBusqueda>() {
+            @Override
+            public void onChanged(ResultadoBusqueda resultadoBusqueda_) {
+                if ( !resultadoBusqueda_.getOrigen().equals(ResultadoBusqueda.BUSQUEDA_VIEJA )) {
+                    listener.nuevaListaItems();
+                }
+            }
+        };
+        ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(getViewLifecycleOwner(),analizarBusqueda);
+        DAOFirebase.get().getListaItems().observe(getViewLifecycleOwner(), analizarBusqueda);
+        DaoApiML.getInstancia(getActivity()).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(),analizarBusqueda);
+
         return binding.getRoot();
     }
 
     public interface Aviso {
         // Le pide a la MainActivity que pegue una actividad con Google Map
-        void mostrarMapa (LatLng coordenadas);
+        void mostrarMapa(LatLng coordenadas);
+        // Le pide a la MainActivity que muestre la lista que llego
+        void nuevaListaItems();
     }
 
     // Genera el efecto de transicion entre las imagenes de los Items

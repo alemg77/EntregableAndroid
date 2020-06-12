@@ -33,7 +33,6 @@ public class DaoApiML extends ViewModel {
     private String TAG = getClass().toString();
     private String provincia;
 
-
     public DaoApiML() {
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.mercadolibre.com/")

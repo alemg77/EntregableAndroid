@@ -11,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
-import android.widget.Switch;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,9 +26,8 @@ import com.example.entregableandroid.Controlador.ApiML.DaoApiML;
 import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
 import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
 import com.example.entregableandroid.Controlador.ItemViewModel;
-import com.example.entregableandroid.Modelo.ApiML.Item;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
-import com.example.entregableandroid.Vista.FragmentDetalleProducto.FragmentDetalleProducto;
+import com.example.entregableandroid.Vista.DetalleProducto.FragmentDetalleProducto;
 import com.example.entregableandroid.Vista.MostrarResultadoBusqueda.FragmentMostrarBusqueda;
 import com.example.entregableandroid.Vista.FragmentLogin;
 import com.example.entregableandroid.Vista.FragmentPublicar;
@@ -41,7 +39,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.Serializable;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, FragmentMostrarBusqueda.Aviso {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso {
     private ActivityMainBinding binding;
     private String TAG = getClass().toString();
     private DaoApiML apiMLDao;
@@ -139,6 +137,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBarDrawerToggle.syncState();
     }
 
+    /**
+     * Atiende los pedidos del menu lateral
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -201,6 +202,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    /**
+     * Pasa a otra actividad para mostrar el mapa de google
+     *
+     * @param coordenadas: lugar a mostrar
+     */
     @Override
     public void mostrarMapa(LatLng coordenadas) {
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
@@ -209,10 +215,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void selleccionProducto(Item item) {
-        Log.d(TAG, "El usuario seleciono un elemento");
-        ItemViewModel.getInstancia(this).agregarDB(item);
-        apiMLDao.buscarItemPorId(item.getId());
+    public void nuevaListaItems() {
+        pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment);
     }
 
     private void pegarFragment(Fragment fragmentAPegar, int containerViewId) {
@@ -237,6 +241,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onSaveInstanceState(outState);
         outState.putString(KEY_FRAGMENT_PEGADO, ultimoFragmentePegado);
     }
+
+
 }
 
 /*

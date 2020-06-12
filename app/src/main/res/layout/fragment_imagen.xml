@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Vista.FragmentDetalleProducto.FragmentImagen">
+    tools:context=".Vista.DetalleProducto.FragmentImagen">
 
     <ImageView
         android:id="@+id/Imagen"

@@ -6,6 +6,7 @@ import java.util.List;
 
 public class ResultadoBusqueda implements Serializable {
 
+    public final static String BUSQUEDA_VIEJA = "Busqueda ya mostrada";
     public final static String BUSQUEDA_API = "Busqueda en la API";
     public final static String BUSQUEDA_FIREBASE = "Busqueda en Firebase";
     public final static String BUSQUEDA_DB_LOCAL = "Busque en BAse de Datos";

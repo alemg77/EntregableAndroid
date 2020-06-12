@@ -37,7 +37,6 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewClickInterfase {
 
     private FragmentRecyclerviewBinding binding;
-    private FragmentMostrarBusqueda.Aviso listener;
     private ResultadoBusqueda resultadoBusqueda;
     private ProductoAdapter productoAdapter;
     private Item elementoBorrado;
@@ -49,7 +48,6 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        this.listener = (Aviso) context;
     }
 
     // 2° En la creacion
@@ -78,35 +76,19 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(binding.RecyclerView);
 
-        ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(getViewLifecycleOwner(),
-                new Observer<ResultadoBusqueda>() {
-                    @Override
-                    public void onChanged(ResultadoBusqueda resultadoBusqueda_) {
-                        resultadoBusqueda = resultadoBusqueda_;
-                        productoAdapter.setListadDeProductos(resultadoBusqueda.getResults());
-                    }
-                });
-
-        DAOFirebase.get().getListaItems().observe(getViewLifecycleOwner(),
-                new Observer<ResultadoBusqueda>() {
-                    @Override
-                    public void onChanged(ResultadoBusqueda resultadoBusqueda_) {
-                        resultadoBusqueda = resultadoBusqueda_;
-                        productoAdapter.setListadDeProductos(resultadoBusqueda.getResults());
-                    }
-                });
-
-        DaoApiML.getInstancia(getActivity()).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(),
-                new Observer<ResultadoBusqueda>() {
-                    @Override
-                    public void onChanged(ResultadoBusqueda resultadoBusqueda_) {
-                        if (resultadoBusqueda_.getOrigen() == ResultadoBusqueda.BUSQUEDA_API) {
-                            resultadoBusqueda = resultadoBusqueda_;
-                            resultadoBusqueda.setOrigen("Leido");
-                            productoAdapter.setListadDeProductos(resultadoBusqueda.getResults());
-                        }
-                    }
-                });
+        final Observer<ResultadoBusqueda> analizarBusqueda = new Observer<ResultadoBusqueda>() {
+            @Override
+            public void onChanged(ResultadoBusqueda resultadoBusqueda_) {
+                if ( !resultadoBusqueda_.getOrigen().equals(ResultadoBusqueda.BUSQUEDA_VIEJA )) {
+                    resultadoBusqueda_.setOrigen(ResultadoBusqueda.BUSQUEDA_VIEJA);
+                    resultadoBusqueda = resultadoBusqueda_;
+                    productoAdapter.setListadDeProductos(resultadoBusqueda.getResults());
+                }
+            }
+        };
+        ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(getViewLifecycleOwner(),analizarBusqueda);
+        DAOFirebase.get().getListaItems().observe(getViewLifecycleOwner(), analizarBusqueda);
+        DaoApiML.getInstancia(getActivity()).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(),analizarBusqueda);
 
         return binding.getRoot();
     }
@@ -183,7 +165,8 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
 
     @Override
     public void onItemClick(Item item) {
-        listener.selleccionProducto(item);
+        ItemViewModel.getInstancia(this).agregarDB(item);
+        DaoApiML.getInstancia(this).buscarItemPorId(item.getId());
     }
 
     @Override
@@ -191,9 +174,6 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         Toast.makeText(getContext(), "Toma por curioso", Toast.LENGTH_SHORT).show();
     }
 
-    public interface Aviso {
-        void selleccionProducto(Item item);
-    }
 }
 
 

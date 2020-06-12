@@ -1,4 +1,4 @@
-package com.example.entregableandroid.Vista.FragmentDetalleProducto;
+package com.example.entregableandroid.Vista.DetalleProducto;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
