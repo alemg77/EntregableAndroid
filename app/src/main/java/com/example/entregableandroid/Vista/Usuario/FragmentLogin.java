@@ -1,4 +1,4 @@
-package com.example.entregableandroid.Vista;
+package com.example.entregableandroid.Vista.Usuario;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -60,7 +60,6 @@ public class FragmentLogin extends Fragment {
         if ( binding!= null ) {
             binding = null;
         }
-
     }
 
     @Override

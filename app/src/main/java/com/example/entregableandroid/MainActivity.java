@@ -1,8 +1,5 @@
 package com.example.entregableandroid;
 
-// TODO: VERIFICAR PORQUE NO VERIFICO CORRECTAMENTE SI ESTANA LOGEADO O NO EN FIREBASE
-// TODO: PORQUE ME DEJO IR A PUBLICAR SI NO ESTABA CONECTADO CON FIREBASE ???
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +16,8 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 
@@ -29,13 +28,15 @@ import com.example.entregableandroid.Controlador.ItemViewModel;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Vista.DetalleProducto.FragmentDetalleProducto;
 import com.example.entregableandroid.Vista.MostrarResultadoBusqueda.FragmentMostrarBusqueda;
-import com.example.entregableandroid.Vista.FragmentLogin;
+import com.example.entregableandroid.Vista.Usuario.FragmentLogin;
 import com.example.entregableandroid.Vista.FragmentPublicar;
 import com.example.entregableandroid.Vista.MapsActivity;
+import com.example.entregableandroid.Vista.Usuario.FragmentMostrarUsuario;
 import com.example.entregableandroid.databinding.ActivityMainBinding;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
 
@@ -125,7 +126,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_bar_usuario:
-                pegarFragment(new FragmentLogin(), R.id.MainFragment);
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                if ( currentUser == null) {
+                    pegarFragment(new FragmentLogin(), R.id.MainFragment);
+                } else {
+                    pegarFragment(new FragmentMostrarUsuario(), R.id.MainFragment);
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -145,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
 
             case R.id.misPublicaciones:
-                if (FirebaseAuth.getInstance() != null) {
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     DAOFirebase.get().buscarMisPublicaciones();
                     binding.drawerLayout.closeDrawers();
                 } else {
@@ -154,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.publicar:
-                if (FirebaseAuth.getInstance() != null) {
+                if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     pegarFragment(new FragmentPublicar(), R.id.MainFragment);
                 } else {
                     Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
@@ -216,7 +222,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void nuevaListaItems() {
-        pegarFragment(new FragmentMostrarBusqueda(), R.id.MainFragment);
+        FragmentManager supportFragmentManager = this.getSupportFragmentManager();
+        int backStackEntryCount = supportFragmentManager.getBackStackEntryCount();
+        if ( backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack();
+        }
     }
 
     private void pegarFragment(Fragment fragmentAPegar, int containerViewId) {
@@ -241,7 +251,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onSaveInstanceState(outState);
         outState.putString(KEY_FRAGMENT_PEGADO, ultimoFragmentePegado);
     }
-
 
 }
 

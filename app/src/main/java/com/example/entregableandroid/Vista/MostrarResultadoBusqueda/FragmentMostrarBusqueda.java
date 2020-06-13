@@ -80,9 +80,9 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
             @Override
             public void onChanged(ResultadoBusqueda resultadoBusqueda_) {
                 if ( !resultadoBusqueda_.getOrigen().equals(ResultadoBusqueda.BUSQUEDA_VIEJA )) {
-                    resultadoBusqueda_.setOrigen(ResultadoBusqueda.BUSQUEDA_VIEJA);
-                    resultadoBusqueda = resultadoBusqueda_;
-                    productoAdapter.setListadDeProductos(resultadoBusqueda.getResults());
+                        resultadoBusqueda_.setOrigen(ResultadoBusqueda.BUSQUEDA_VIEJA);
+                        resultadoBusqueda = resultadoBusqueda_;
+                        productoAdapter.setListadDeProductos(resultadoBusqueda.getResults());
                 }
             }
         };
@@ -91,6 +91,21 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         DaoApiML.getInstancia(getActivity()).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(),analizarBusqueda);
 
         return binding.getRoot();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override

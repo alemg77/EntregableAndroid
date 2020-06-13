@@ -25,7 +25,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 .build();
     }
 
-    // TODO: Hacer una version que funcione en otro hilo
+    // TODO: Hacer una version que realize la busqueda en otro hilo
 
     /*
     // synchronized: Un solo hilo puede acceder para que no se creen dos instancias.

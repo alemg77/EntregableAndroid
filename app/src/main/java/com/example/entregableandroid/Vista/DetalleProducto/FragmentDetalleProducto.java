@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
@@ -37,7 +38,7 @@ public class FragmentDetalleProducto extends Fragment {
     private String TAG = getClass().toString();
     private FragmentDetalleProducto.Aviso listener;
     private ListaImagenes listaImagenes;
-//    private NuevaLista lista;
+    private Boolean habilitarObservadores;
 
     public FragmentDetalleProducto() {
     }
@@ -68,6 +69,8 @@ public class FragmentDetalleProducto extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "Metodo onCreateView");
         binding = FragmentDetalleProductoBinding.inflate(getLayoutInflater());
+
+        habilitarObservadores = false;
 
         DaoApiML apiMLDao = new ViewModelProvider(this).get(DaoApiML.class);
         apiMLDao.buscarDescripcionItemm(itemAPI.getId());
@@ -102,17 +105,30 @@ public class FragmentDetalleProducto extends Fragment {
         final Observer<ResultadoBusqueda> analizarBusqueda = new Observer<ResultadoBusqueda>() {
             @Override
             public void onChanged(ResultadoBusqueda resultadoBusqueda_) {
-                if ( !resultadoBusqueda_.getOrigen().equals(ResultadoBusqueda.BUSQUEDA_VIEJA )) {
+                if ( habilitarObservadores ){
                     listener.nuevaListaItems();
                 }
             }
         };
+
         ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(getViewLifecycleOwner(),analizarBusqueda);
         DAOFirebase.get().getListaItems().observe(getViewLifecycleOwner(), analizarBusqueda);
         DaoApiML.getInstancia(getActivity()).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(),analizarBusqueda);
-
         return binding.getRoot();
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Habilito los observadores aca, para solamente observa lo que paso despues de iniciar la actividad
+        habilitarObservadores = true;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
 
     public interface Aviso {
         // Le pide a la MainActivity que pegue una actividad con Google Map
