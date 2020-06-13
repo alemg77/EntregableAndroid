@@ -6,6 +6,9 @@ public class ConstantesML {
     public final static String ARTICULOS_USADOS = "used";
     public final static String ARTICULOS_NUEVOS_Y_USADOS = "all";
 
+    public final static String PRECIO_ASCENDENTE = "price_asc";
+
+
     public final static String BUENOS_AIRES="AR-B";
     public final static String CAPITAL_FEDERAL="AR-C";
     public final static String CATAMARCA="AR-K";

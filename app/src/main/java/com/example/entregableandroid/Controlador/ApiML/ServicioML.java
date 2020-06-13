@@ -15,18 +15,24 @@ import retrofit2.http.Query;
 public interface ServicioML {
 
     @GET("sites/MLA/search")
-    Call<ResultadoBusqueda> getItemsPorDescripcion(@Query("condition") String condicion, @Query("price") String rangoPrecio, @Query("state") String provincia, @Query("q") String d);
+    Call<ResultadoBusqueda> getItemsPorDescripcion(@Query("condition") String condicion,
+                                                   @Query("price") String rangoPrecio,
+                                                   @Query("state") String provincia,
+                                                   @Query("q") String d,
+                                                   @Query("limit") String limit,
+                                                   @Query("offset") String offset
+    );
 
     @GET("sites/MLA/search")
-    Call<ResultadoBusqueda> getItemsPorCategoria(@Query("category") String categoria, @Query("sort") String sort);
+    Call<ResultadoBusqueda> getItemsPorCategoria(@Query("category") String categoria,
+                                                 @Query("limit") String limit,
+                                                 @Query("offset") String offset
+    );
 
     @GET("items/{id}")
     Call<ItemAPI> getItemPorId(@Path("id") String id);
 
     @GET("items/{id}/descriptions")
     Call<List<DescripcionItem>> getItemDescripcionPorId(@Path("id") String id);
-
-    // TODO: PAGINACION!!!!
-    // https://api.mercadolibre.com/sites/MLA/search?q=fiat&limit=20&offset=25/
 
 }

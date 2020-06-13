@@ -37,7 +37,7 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewClickInterfase {
 
     private FragmentRecyclerviewBinding binding;
-    private ResultadoBusqueda resultadoBusqueda;
+    private ResultadoBusqueda ultimaBusqueda;
     private ProductoAdapter productoAdapter;
     private Item elementoBorrado;
 
@@ -55,7 +55,7 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if ( savedInstanceState != null) {
-            resultadoBusqueda = (ResultadoBusqueda) savedInstanceState.getSerializable(ResultadoBusqueda.class.toString());
+            ultimaBusqueda = (ResultadoBusqueda) savedInstanceState.getSerializable(ResultadoBusqueda.class.toString());
         }
     }
 
@@ -63,12 +63,12 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentRecyclerviewBinding.inflate(getLayoutInflater());
 
-        if (resultadoBusqueda == null) {
-            resultadoBusqueda = new ResultadoBusqueda(new ArrayList<Item>(), "Vacio");
+        if (ultimaBusqueda == null) {
+            ultimaBusqueda = new ResultadoBusqueda(new ArrayList<Item>(), "Vacio");
         }
 
         Context context = getActivity().getApplicationContext();
-        productoAdapter = new ProductoAdapter(context, this, resultadoBusqueda.getResults());
+        productoAdapter = new ProductoAdapter(context, this, ultimaBusqueda.getResults());
         LinearLayoutManager dosLayoutManager = new LinearLayoutManager(getActivity());
         binding.RecyclerView.setLayoutManager(dosLayoutManager);
         binding.RecyclerView.setAdapter(productoAdapter);
@@ -78,12 +78,9 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
 
         final Observer<ResultadoBusqueda> analizarBusqueda = new Observer<ResultadoBusqueda>() {
             @Override
-            public void onChanged(ResultadoBusqueda resultadoBusqueda_) {
-                if ( !resultadoBusqueda_.getOrigen().equals(ResultadoBusqueda.BUSQUEDA_VIEJA )) {
-                        resultadoBusqueda_.setOrigen(ResultadoBusqueda.BUSQUEDA_VIEJA);
-                        resultadoBusqueda = resultadoBusqueda_;
-                        productoAdapter.setListadDeProductos(resultadoBusqueda.getResults());
-                }
+            public void onChanged(ResultadoBusqueda resultadoBusqueda) {
+                ultimaBusqueda = resultadoBusqueda;
+                productoAdapter.setListadDeProductos(ultimaBusqueda.getResults());
             }
         };
         ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(getViewLifecycleOwner(),analizarBusqueda);
@@ -98,36 +95,11 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         super.onActivityCreated(savedInstanceState);
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
     // Se va el fragment, guardamos para no perder
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable(ResultadoBusqueda.class.toString(),resultadoBusqueda);
+        outState.putSerializable(ResultadoBusqueda.class.toString(), ultimaBusqueda);
     }
 
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END,
@@ -136,7 +108,7 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
             int fromposition = viewHolder.getAdapterPosition();
             int toposition = target.getAdapterPosition();
-            resultadoBusqueda.swapElementos(fromposition, toposition);
+            ultimaBusqueda.swapElementos(fromposition, toposition);
             recyclerView.getAdapter().notifyItemMoved(fromposition, toposition);
             return false;
         }
@@ -147,14 +119,14 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
 
             switch (direction) {
                 case ItemTouchHelper.LEFT:  // <----
-                    resultadoBusqueda.eliminarElemento(posicion);
-                    elementoBorrado = resultadoBusqueda.getResults().get(posicion);
+                    ultimaBusqueda.eliminarElemento(posicion);
+                    elementoBorrado = ultimaBusqueda.getResults().get(posicion);
                     productoAdapter.notifyItemRemoved(posicion);
                     Snackbar.make(binding.RecyclerView, "Regresar?", Snackbar.LENGTH_LONG)
                             .setAction("Si", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    resultadoBusqueda.agregarElemento(posicion, elementoBorrado);
+                                    ultimaBusqueda.agregarElemento(posicion, elementoBorrado);
                                     productoAdapter.notifyItemInserted(posicion);
                                 }
                             }).show();
@@ -187,6 +159,11 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     @Override
     public void onLongItemClick(int position) {
         Toast.makeText(getContext(), "Toma por curioso", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void necesitoMasElementos() {
+        Log.d(TAG, "Estamos llegando al final de la lista");
     }
 
 }

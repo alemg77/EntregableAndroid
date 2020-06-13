@@ -22,8 +22,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class DaoApiML extends ViewModel {
 
     private static DaoApiML daoApiML;
-
-
     private MutableLiveData<List<DescripcionItem>> descripcionItem;
     private MutableLiveData<ItemAPI> itemAPIMutableLiveData;
     private MutableLiveData<ResultadoBusqueda> resultadoBusquedaAPIMutableLiveData;
@@ -32,6 +30,11 @@ public class DaoApiML extends ViewModel {
     private ServicioML servicioML;
     private String TAG = getClass().toString();
     private String provincia;
+    private String ultimaBusquedaDescripcion;
+    private String ultimaBusquedaRangoPrecio;
+    private Integer ultimaBusquedaOffset;
+    private Integer ultimaBusquedaLimit;
+
 
     public DaoApiML() {
         retrofit = new Retrofit.Builder()
@@ -43,29 +46,29 @@ public class DaoApiML extends ViewModel {
         this.provincia = ConstantesML.CAPITAL_FEDERAL;
     }
 
-    public static DaoApiML getInstancia(ViewModelStoreOwner storeOwner){
-        if ( daoApiML == null ){
+    public static DaoApiML getInstancia(ViewModelStoreOwner storeOwner) {
+        if (daoApiML == null) {
             daoApiML = new ViewModelProvider(storeOwner).get(DaoApiML.class);
         }
         return daoApiML;
     }
 
     public MutableLiveData<ItemAPI> getItemAPIMutableLiveData() {
-        if ( itemAPIMutableLiveData == null ) {
+        if (itemAPIMutableLiveData == null) {
             itemAPIMutableLiveData = new MutableLiveData<ItemAPI>();
         }
         return itemAPIMutableLiveData;
     }
 
-    public MutableLiveData<ResultadoBusqueda> getResultadoBusquedaAPI(){
-        if ( resultadoBusquedaAPIMutableLiveData == null) {
+    public MutableLiveData<ResultadoBusqueda> getResultadoBusquedaAPI() {
+        if (resultadoBusquedaAPIMutableLiveData == null) {
             resultadoBusquedaAPIMutableLiveData = new MutableLiveData<ResultadoBusqueda>();
         }
         return resultadoBusquedaAPIMutableLiveData;
     }
 
-    public MutableLiveData<List<DescripcionItem>> getDescripcionItem(){
-        if ( descripcionItem == null) {
+    public MutableLiveData<List<DescripcionItem>> getDescripcionItem() {
+        if (descripcionItem == null) {
             descripcionItem = new MutableLiveData<List<DescripcionItem>>();
         }
         return descripcionItem;
@@ -79,35 +82,66 @@ public class DaoApiML extends ViewModel {
         this.provincia = provincia;
     }
 
-
     public void buscarPorDescripcion(String descripcion) {
-        buscarPorDescripcion("*-*",descripcion);
+        buscarPorDescripcion("*-*", descripcion, 10, 0 );
     }
 
-    public void buscarPorDescripcion(String rangoPrecio, String descripcion) {
+    public void buscarPorDescripcion(String rangoPrecio, String descripcion, Integer limit, Integer offset) {
+        ultimaBusquedaDescripcion = descripcion;
+        ultimaBusquedaRangoPrecio = rangoPrecio;
+        ultimaBusquedaLimit = limit;
+        ultimaBusquedaOffset = offset;
         Log.d(TAG, "Vamos a hacer una busqueda en MercadoLibre");
-        servicioML.getItemsPorDescripcion("all",rangoPrecio,provincia,descripcion).enqueue(new Callback<ResultadoBusqueda>() {
-            @Override
-            public void onResponse(Call<ResultadoBusqueda> call, Response<ResultadoBusqueda> response) {
-                if (!response.isSuccessful()) {
-                    Log.d(TAG, "Retrofit response code:" + response.code());
-                    return;
-                }
-                ResultadoBusqueda resultadoBusqueda = response.body();
-                resultadoBusqueda.setOrigen(ResultadoBusqueda.BUSQUEDA_API);
-                resultadoBusquedaAPIMutableLiveData.setValue(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<ResultadoBusqueda> call, Throwable t) {
-                Log.d(TAG, "Retrofit onFailure:" + t.getMessage().toString());
-            }
-        });
+        servicioML.getItemsPorDescripcion(
+                "all",
+                rangoPrecio,
+                provincia,
+                descripcion,
+                String.valueOf(limit),
+                String.valueOf(offset))
+                .enqueue(new Callback<ResultadoBusqueda>() {
+                    @Override
+                    public void onResponse(Call<ResultadoBusqueda> call, Response<ResultadoBusqueda> response) {
+                        if (!response.isSuccessful()) {
+                            Log.d(TAG, "Retrofit response code:" + response.code());
+                            return;
+                        }
+                        ResultadoBusqueda resultadoBusqueda = response.body();
+                        resultadoBusqueda.setOrigen(ResultadoBusqueda.BUSQUEDA_API);
+                        resultadoBusquedaAPIMutableLiveData.setValue(response.body());
+                    }
+                    @Override
+                    public void onFailure(Call<ResultadoBusqueda> call, Throwable t) {
+                        Log.d(TAG, "Retrofit onFailure:" + t.getMessage().toString());
+                    }
+                });
     }
 
-    public void buscarPorCategoria(String categoria, String sort){
+
+    /***
+     *   Repite la ultima busqueda realizada, pero con el offset incrementado
+     *   para poder implementar paginacion      *
+     */
+    public void masDeLaUltima() {
+        ultimaBusquedaOffset++;
+        buscarPorDescripcion(ultimaBusquedaRangoPrecio,
+                ultimaBusquedaDescripcion,
+                ultimaBusquedaLimit,
+                ultimaBusquedaOffset);
+    }
+
+
+    /***
+     *      Busca items por categoria
+     *
+     * @param categoria
+     * @param limit
+     * @param offset
+     */
+    // TODO: Seria mejor hacer las busquedas por categoria: son mas precisas.
+    public void buscarPorCategoria(String categoria, String limit, String offset) {
         Log.d(TAG, "Vamos a hacer una busqueda en MercadoLibre");
-        servicioML.getItemsPorCategoria(categoria, sort).enqueue(new Callback<ResultadoBusqueda>() {
+        servicioML.getItemsPorCategoria(categoria, limit, offset).enqueue(new Callback<ResultadoBusqueda>() {
             @Override
             public void onResponse(Call<ResultadoBusqueda> call, Response<ResultadoBusqueda> response) {
                 if (!response.isSuccessful()) {
@@ -126,7 +160,7 @@ public class DaoApiML extends ViewModel {
         });
     }
 
-    public void buscarItemPorId(String id){
+    public void buscarItemPorId(String id) {
         Log.d(TAG, "Vamos buscar un item");
         servicioML.getItemPorId(id).enqueue(new Callback<ItemAPI>() {
             @Override

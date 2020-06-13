@@ -45,6 +45,9 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
     @Override
     public void onBindViewHolder(@NonNull ProductoViewHolder holder, int position) {
         ProductoAdapter.ProductoViewHolder sillaViewHolder = holder;
+        if ((position + 6) > listadDeProductos.size()) {
+            listener.necesitoMasElementos();
+        }
         sillaViewHolder.cargarProducto(listadDeProductos.get(position));
     }
 
@@ -76,14 +79,14 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
             });
         }
 
-        public void cargarProducto (Item item){
+        public void cargarProducto(Item item) {
             binding.celdaListadoText1.setText(item.getTitle());
             binding.celdaListadoPrecio.setText("$" + item.getPrice());
 
-            if ( item.getImagenFirebase() != null ){
+            if (item.getImagenFirebase() != null) {
                 StorageReference child = FirebaseStorage.getInstance().getReference().child(item.getImagenFirebase());
                 Glide.with(binding.getRoot()).load(child).into(binding.celdaListadoImagen);
-            } else if ( item.getThumbnail() != null ) {
+            } else if (item.getThumbnail() != null) {
                 Glide.with(binding.getRoot()).load(item.getThumbnail()).into(binding.celdaListadoImagen);
             }
         }
