@@ -21,6 +21,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class DaoApiML extends ViewModel {
 
+    private static final Integer ITEMS_POR_PEDIDO = 20;
+
     private static DaoApiML daoApiML;
     private MutableLiveData<List<DescripcionItem>> descripcionItem;
     private MutableLiveData<ItemAPI> itemAPIMutableLiveData;
@@ -83,7 +85,7 @@ public class DaoApiML extends ViewModel {
     }
 
     public void buscarPorDescripcion(String descripcion) {
-        buscarPorDescripcion("*-*", descripcion, 10, 0 );
+        buscarPorDescripcion("*-*", descripcion, ITEMS_POR_PEDIDO, 0 );
     }
 
     public void buscarPorDescripcion(String rangoPrecio, String descripcion, Integer limit, Integer offset) {
@@ -108,6 +110,7 @@ public class DaoApiML extends ViewModel {
                         }
                         ResultadoBusqueda resultadoBusqueda = response.body();
                         resultadoBusqueda.setOrigen(ResultadoBusqueda.BUSQUEDA_API);
+                        resultadoBusqueda.setPagina(ultimaBusquedaOffset);
                         resultadoBusquedaAPIMutableLiveData.setValue(response.body());
                     }
                     @Override

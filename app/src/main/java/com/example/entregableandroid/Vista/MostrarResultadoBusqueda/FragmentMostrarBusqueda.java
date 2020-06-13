@@ -64,7 +64,7 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         binding = FragmentRecyclerviewBinding.inflate(getLayoutInflater());
 
         if (ultimaBusqueda == null) {
-            ultimaBusqueda = new ResultadoBusqueda(new ArrayList<Item>(), "Vacio");
+            ultimaBusqueda = new ResultadoBusqueda(new ArrayList<Item>());
         }
 
         Context context = getActivity().getApplicationContext();
@@ -79,7 +79,12 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         final Observer<ResultadoBusqueda> analizarBusqueda = new Observer<ResultadoBusqueda>() {
             @Override
             public void onChanged(ResultadoBusqueda resultadoBusqueda) {
-                ultimaBusqueda = resultadoBusqueda;
+                // Si es la siguiente pagina, agrego
+                if ( resultadoBusqueda.getPagina() > 0 ) {
+                    ultimaBusqueda.agregarListaElementos(resultadoBusqueda.getResults());
+                } else  {
+                    ultimaBusqueda = resultadoBusqueda;
+                }
                 productoAdapter.setListadDeProductos(ultimaBusqueda.getResults());
             }
         };
@@ -164,7 +169,13 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     @Override
     public void necesitoMasElementos() {
         Log.d(TAG, "Estamos llegando al final de la lista");
+        if ( ultimaBusqueda.getOrigen() == ResultadoBusqueda.BUSQUEDA_API ) {
+            DaoApiML.getInstancia(this).masDeLaUltima();
+        }
     }
+
+
+
 
 }
 
