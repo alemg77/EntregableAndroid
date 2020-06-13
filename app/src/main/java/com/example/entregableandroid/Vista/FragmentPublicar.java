@@ -1,5 +1,6 @@
 package com.example.entregableandroid.Vista;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,8 +16,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.entregableandroid.Controlador.ApiML.DaoApiML;
 import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
 import com.example.entregableandroid.Modelo.ApiML.Item;
+import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
+import com.example.entregableandroid.Vista.DetalleProducto.FragmentDetalleProducto;
 import com.example.entregableandroid.databinding.FragmentPublicarBinding;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -38,8 +42,16 @@ public class FragmentPublicar extends Fragment {
     private String precio;
     private String descripcion;
     private Boolean publicando;
+    private FragmentPublicar.Avisos listener;
+    private Boolean habilitarObservadores;
 
     public FragmentPublicar() {
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        listener = (FragmentPublicar.Avisos) context;
     }
 
     @Override
@@ -48,6 +60,10 @@ public class FragmentPublicar extends Fragment {
 
         // Esto lo uso para evitar doble disparo;
         publicando = false;
+
+        // Esto para no escuchar cosas viejas
+        habilitarObservadores = false;
+
 
         escucharBotonBuscarImagen();
         escucharBotonPublicar();
@@ -61,31 +77,48 @@ public class FragmentPublicar extends Fragment {
         });
 
         // Cuando termine de subir la imagen, sube el elemento
-        DAOFirebase.get().getArchivoSubido().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(String direccionFirebase) {
-                if ( direccionFirebase != null ) {
-                    Item item = new Item();
-                    item.setImagenFirebase(direccionFirebase);
-                    item.setVendedor(FirebaseAuth.getInstance().getUid());
-                    item.setPrice(precio);
-                    item.setTitle(titulo);
-                    item.setDescripcion(descripcion);
-                    DAOFirebase.get().guardarNuevo(item);
-                }
-            }
-        });
+        DAOFirebase.get().getArchivoSubido().observe(getViewLifecycleOwner(),
+                new Observer<String>() {
+                    @Override
+                    public void onChanged(String direccionFirebase) {
+                        if (direccionFirebase != null) {
+                            Item item = new Item();
+                            item.setImagenFirebase(direccionFirebase);
+                            item.setVendedor(FirebaseAuth.getInstance().getUid());
+                            item.setPrice(precio);
+                            item.setTitle(titulo);
+                            item.setDescripcion(descripcion);
+                            DAOFirebase.get().guardarNuevo(item);
+                        }
+                    }
+                });
 
-        DAOFirebase.get().getItemPublicado().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                if ( s != null ) {
-                    Log.d(TAG, "Se subio el item a Firebase");
-                    publicando = false;
-                    // TODO: Veria ir otro fragment
-                }
-            }
-        });
+        DAOFirebase.get().getItemPublicado().observe(getViewLifecycleOwner(),
+                new Observer<String>() {
+                    @Override
+                    public void onChanged(String s) {
+                        if (s != null) {
+                            Snackbar.make(binding.getRoot(), "Publicado!!!", BaseTransientBottomBar.LENGTH_LONG).show();
+                            binding.titulo.getEditText().setText(" ");
+                            binding.descripcion.getEditText().setText(" ");
+                            binding.imagenProducto.setImageBitmap(null);
+                            binding.precio.getEditText().setText(" ");
+                            Log.d(TAG, "Se subio el item a Firebase");
+                            publicando = false;
+                        }
+                    }
+                });
+
+        DaoApiML.getInstancia(this).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(),
+                new Observer<ResultadoBusqueda>() {
+                    @Override
+                    public void onChanged(ResultadoBusqueda resultadoBusqueda) {
+                        if ( habilitarObservadores ) {
+                            listener.llegoUnaLista();
+                        }
+                    }
+                });
+
         return binding.getRoot();
     }
 
@@ -93,7 +126,7 @@ public class FragmentPublicar extends Fragment {
         binding.buttonPublicar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if ( publicando ){
+                if (publicando) {
                     return;
                 }
                 if (imagenPublicacion == null) {
@@ -111,7 +144,7 @@ public class FragmentPublicar extends Fragment {
                     return;
                 }
                 descripcion = binding.descripcion.getEditText().getText().toString();
-                if ( descripcion.length() < 3 ){
+                if (descripcion.length() < 3) {
                     Snackbar.make(binding.getRoot(), "Descripcion muy corta", BaseTransientBottomBar.LENGTH_LONG).show();
                     return;
                 }
@@ -119,6 +152,13 @@ public class FragmentPublicar extends Fragment {
                 publicar();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Habilito los observadores aca, para solamente observa lo que paso despues de iniciar la actividad
+        habilitarObservadores = true;
     }
 
     private void publicar() {
@@ -133,6 +173,8 @@ public class FragmentPublicar extends Fragment {
             }
         });
     }
+
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -165,5 +207,9 @@ public class FragmentPublicar extends Fragment {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         scaledBitmap.compress(Bitmap.CompressFormat.JPEG, calidad, byteArrayOutputStream);
         return byteArrayOutputStream.toByteArray();
+    }
+
+    public interface Avisos {
+        void llegoUnaLista();
     }
 }

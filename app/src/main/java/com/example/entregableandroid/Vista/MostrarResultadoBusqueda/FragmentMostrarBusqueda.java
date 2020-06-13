@@ -175,8 +175,6 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     }
 
 
-
-
 }
 
 

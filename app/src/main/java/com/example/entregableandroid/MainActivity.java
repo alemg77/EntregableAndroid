@@ -40,7 +40,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, FragmentPublicar.Avisos {
     private ActivityMainBinding binding;
     private String TAG = getClass().toString();
     private DaoApiML apiMLDao;
@@ -149,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-
             case R.id.misPublicaciones:
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     DAOFirebase.get().buscarMisPublicaciones();
@@ -162,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.publicar:
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                     pegarFragment(new FragmentPublicar(), R.id.MainFragment);
+                    binding.drawerLayout.closeDrawers();
                 } else {
                     Toast.makeText(MainActivity.this, "Primero es necesario registrarse", Toast.LENGTH_LONG).show();
                 }
@@ -252,6 +252,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         outState.putString(KEY_FRAGMENT_PEGADO, ultimoFragmentePegado);
     }
 
+    @Override
+    public void llegoUnaLista() {
+        FragmentManager supportFragmentManager = this.getSupportFragmentManager();
+        int backStackEntryCount = supportFragmentManager.getBackStackEntryCount();
+        for ( int i = 1 ; i < backStackEntryCount  ; i++){
+            supportFragmentManager.popBackStack();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        FragmentManager supportFragmentManager = this.getSupportFragmentManager();
+        if ( supportFragmentManager.getBackStackEntryCount() == 0 ){
+            finish();
+        }
+    }
 }
 
 /*
