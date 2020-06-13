@@ -1,7 +1,12 @@
 package com.example.entregableandroid;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,14 +44,33 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, FragmentPublicar.Avisos {
     private ActivityMainBinding binding;
-    private String TAG = getClass().toString();
+    private static String TAG = MainActivity.class.toString();
     private DaoApiML apiMLDao;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private String ultimoFragmentePegado;
     private static final String KEY_FRAGMENT_PEGADO = "ULTIMO fragment pegado";
+
+
+    public static void printHashKey(Context pContext) {
+        try {
+            PackageInfo info = pContext.getPackageManager().getPackageInfo(pContext.getPackageName(), PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                String hashKey = new String(Base64.encode(md.digest(), 0));
+                Log.d(TAG, "printHashKey() Hash Key: " + hashKey);
+            }
+        } catch (NoSuchAlgorithmException e) {
+            Log.d(TAG, "printHashKey()", e);
+        } catch (Exception e) {
+            Log.d(TAG, "printHashKey()", e);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View view = binding.getRoot();
         setContentView(view);
         Log.d(TAG, "********* INICIO DE LA APLICACION Entregable Android **********************************");
+
+        printHashKey(this);
 
         // Preparo la API de mercaolibre
         apiMLDao = DaoApiML.getInstancia(this);
@@ -145,12 +171,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * Atiende los pedidos del menu lateral
-     */
+     *********/
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.misPublicaciones:
                 if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    // TODO: Deberia verificar si hay algo guardado en Firebase
                     DAOFirebase.get().buscarMisPublicaciones();
                     binding.drawerLayout.closeDrawers();
                 } else {

@@ -30,7 +30,6 @@ public interface ElementoListaDao {
     Item getPrimerElemento();
 
     /*
-    // TODO: Aplicar LiveData!!!!
     @Query("SELECT * FROM "+ItemListaAPI.TABLE_NAME)
     LiveData<List<ItemListaAPI>> getTodos();
 

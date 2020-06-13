@@ -22,35 +22,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/usuarioNombre"
-            android:layout_width="0dp"
-            android:layout_margin="10dp"
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/buttonLogearFacebook"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextViewNombreUsuario"
-            android:textSize="15dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="28dp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/botonLogearGoogle"  />
-
-        <TextView
-            android:id="@+id/usuarioMail"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textSize="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/usuarioNombre" />
-
-        <ImageView
-            android:id="@+id/imgenUsuario"
-            android:layout_width="0dp"
-            android:layout_height="300dp"
-            android:layout_margin="10dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/usuarioMail" />
+            app:layout_constraintTop_toBottomOf="@+id/botonLogearGoogle" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

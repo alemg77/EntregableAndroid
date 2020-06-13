@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 
 import android.util.Log;
@@ -64,7 +65,6 @@ public class FragmentPublicar extends Fragment {
         // Esto para no escuchar cosas viejas
         habilitarObservadores = false;
 
-
         escucharBotonBuscarImagen();
         escucharBotonPublicar();
 
@@ -103,6 +103,7 @@ public class FragmentPublicar extends Fragment {
                             binding.descripcion.getEditText().setText(" ");
                             binding.imagenProducto.setImageBitmap(null);
                             binding.precio.getEditText().setText(" ");
+                            getActivity().getSupportFragmentManager().popBackStack();
                             Log.d(TAG, "Se subio el item a Firebase");
                             publicando = false;
                         }

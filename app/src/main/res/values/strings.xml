@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">Giraudo Alejandro</string>
 
+    <string name="facebook_app_id">703099477134134</string>
+    <string name="fb_login_protocol_scheme">fb703099477134134</string>
+
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>
 
@@ -10,6 +14,7 @@
     <string name="labelTituloPublicacion">Titulo</string>
     <string name="labelPrecio">Precio</string>
     <string name="labeldescripcion">descripcion</string>
+
 </resources>
 
 

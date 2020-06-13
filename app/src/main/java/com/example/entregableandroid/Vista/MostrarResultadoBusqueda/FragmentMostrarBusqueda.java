@@ -107,6 +107,9 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         outState.putSerializable(ResultadoBusqueda.class.toString(), ultimaBusqueda);
     }
 
+    /***
+     *   Maneja las funciones para reordenar la lista y eliminar un elemento
+     */
     ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN | ItemTouchHelper.START | ItemTouchHelper.END,
             ItemTouchHelper.LEFT) {
         @Override
@@ -155,6 +158,11 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         }
     };
 
+    /***
+     *  Esto se ejecuta cuando el usuario selecciona un item.
+     *      Guarda el item en la base de datos
+     *      Pide a la Api mas informacion
+     */
     @Override
     public void onItemClick(Item item) {
         ItemViewModel.getInstancia(this).agregarDB(item);
@@ -171,6 +179,14 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         Log.d(TAG, "Estamos llegando al final de la lista");
         if ( ultimaBusqueda.getOrigen() == ResultadoBusqueda.BUSQUEDA_API ) {
             DaoApiML.getInstancia(this).masDeLaUltima();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if ( binding!= null ) {
+            binding = null;
         }
     }
 
