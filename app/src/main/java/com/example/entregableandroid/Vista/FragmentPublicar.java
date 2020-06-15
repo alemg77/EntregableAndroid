@@ -9,7 +9,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Observer;
 
 import android.util.Log;
@@ -21,7 +20,6 @@ import com.example.entregableandroid.Controlador.ApiML.DaoApiML;
 import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
 import com.example.entregableandroid.Modelo.ApiML.Item;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
-import com.example.entregableandroid.Vista.DetalleProducto.FragmentDetalleProducto;
 import com.example.entregableandroid.databinding.FragmentPublicarBinding;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
@@ -43,8 +41,6 @@ public class FragmentPublicar extends Fragment {
     private String precio;
     private String descripcion;
     private Boolean publicando;
-    private FragmentPublicar.Avisos listener;
-    private Boolean habilitarObservadores;
 
     public FragmentPublicar() {
     }
@@ -52,7 +48,6 @@ public class FragmentPublicar extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        listener = (FragmentPublicar.Avisos) context;
     }
 
     @Override
@@ -62,19 +57,17 @@ public class FragmentPublicar extends Fragment {
         // Esto lo uso para evitar doble disparo;
         publicando = false;
 
-        // Esto para no escuchar cosas viejas
-        habilitarObservadores = false;
-
         escucharBotonBuscarImagen();
         escucharBotonPublicar();
 
         // Actualiza el progress bar
-        DAOFirebase.get().getProgreso().observe(getViewLifecycleOwner(), new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-                binding.indeterminateBar.setProgress(integer);
-            }
-        });
+        DAOFirebase.get().getProgreso().observe(getViewLifecycleOwner(),
+                new Observer<Integer>() {
+                    @Override
+                    public void onChanged(Integer integer) {
+                        binding.indeterminateBar.setProgress(integer);
+                    }
+                });
 
         // Cuando termine de subir la imagen, sube el elemento
         DAOFirebase.get().getArchivoSubido().observe(getViewLifecycleOwner(),
@@ -106,16 +99,6 @@ public class FragmentPublicar extends Fragment {
                             getActivity().getSupportFragmentManager().popBackStack();
                             Log.d(TAG, "Se subio el item a Firebase");
                             publicando = false;
-                        }
-                    }
-                });
-
-        DaoApiML.getInstancia(this).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(),
-                new Observer<ResultadoBusqueda>() {
-                    @Override
-                    public void onChanged(ResultadoBusqueda resultadoBusqueda) {
-                        if ( habilitarObservadores ) {
-                            listener.llegoUnaLista();
                         }
                     }
                 });
@@ -155,13 +138,6 @@ public class FragmentPublicar extends Fragment {
         });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Habilito los observadores aca, para solamente observa lo que paso despues de iniciar la actividad
-        habilitarObservadores = true;
-    }
-
     private void publicar() {
         DAOFirebase.get().guardarNuevo(comprimir_imagen(imagenPublicacion, 1280, 90));
     }
@@ -174,8 +150,6 @@ public class FragmentPublicar extends Fragment {
             }
         });
     }
-
-
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -210,7 +184,4 @@ public class FragmentPublicar extends Fragment {
         return byteArrayOutputStream.toByteArray();
     }
 
-    public interface Avisos {
-        void llegoUnaLista();
-    }
 }

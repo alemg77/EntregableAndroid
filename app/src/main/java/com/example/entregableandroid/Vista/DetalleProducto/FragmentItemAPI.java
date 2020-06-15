@@ -6,9 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.ViewPager;
 
 import android.util.Log;
@@ -30,23 +28,23 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
-public class FragmentDetalleProducto extends Fragment {
+public class FragmentItemAPI extends Fragment {
 
     FragmentDetalleProductoBinding binding;
 
     private ItemAPI itemAPI;
     private String TAG = getClass().toString();
-    private FragmentDetalleProducto.Aviso listener;
+    private FragmentItemAPI.Aviso listener;
     private ListaImagenes listaImagenes;
     private Boolean habilitarObservadores;
 
-    public FragmentDetalleProducto() {
+    public FragmentItemAPI() {
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        listener = (FragmentDetalleProducto.Aviso) context;
+        listener = (FragmentItemAPI.Aviso) context;
     }
 
     @Override
@@ -67,26 +65,24 @@ public class FragmentDetalleProducto extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d(TAG, "Metodo onCreateView");
         binding = FragmentDetalleProductoBinding.inflate(getLayoutInflater());
-
         habilitarObservadores = false;
-
-        DaoApiML apiMLDao = new ViewModelProvider(this).get(DaoApiML.class);
-        apiMLDao.buscarDescripcionItemm(itemAPI.getId());
-        final Observer<List<DescripcionItem>> observadorDescripcion = new Observer<List<DescripcionItem>>() {
-            @Override
-            public void onChanged(List<DescripcionItem> descripcionItems) {
-                DescripcionItem descripcionItem = descripcionItems.get(0);
-                binding.FragmentDetalleDescripcion.setText(descripcionItem.getPlain_text());
-            }
-        };
-        apiMLDao.getDescripcionItem().observe(getViewLifecycleOwner(), observadorDescripcion);
 
         binding.FragmentDetalleViewPager.setPageTransformer(true, new ZoomOutPageTransformer());
         List<Imagen> pictures = listaImagenes.getPictures();
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getActivity().getSupportFragmentManager(), pictures);
         binding.FragmentDetalleViewPager.setAdapter(viewPagerAdapter);
+
+        DaoApiML instanciaML = DaoApiML.getInstancia(this);
+        instanciaML.buscarDescripcionItem(itemAPI.getId());
+        instanciaML.getDescripcionItem().observe(getViewLifecycleOwner(),
+                new Observer<List<DescripcionItem>>() {
+                    @Override
+                    public void onChanged(List<DescripcionItem> descripcionItems) {
+                        DescripcionItem descripcionItem = descripcionItems.get(0);
+                        binding.FragmentDetalleDescripcion.setText(descripcionItem.getPlain_text());
+                    }
+                });
 
         final ItemLocationAPI location = itemAPI.getLocation();
         if (location.getLatitude() == null) {
@@ -101,40 +97,20 @@ public class FragmentDetalleProducto extends Fragment {
                 }
             });
         }
-
-        final Observer<ResultadoBusqueda> analizarBusqueda = new Observer<ResultadoBusqueda>() {
-            @Override
-            public void onChanged(ResultadoBusqueda resultadoBusqueda_) {
-                if ( habilitarObservadores ){
-                    listener.nuevaListaItems();
-                }
-            }
-        };
-
-        ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(getViewLifecycleOwner(),analizarBusqueda);
-        DAOFirebase.get().getListaItems().observe(getViewLifecycleOwner(), analizarBusqueda);
-        DaoApiML.getInstancia(getActivity()).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(),analizarBusqueda);
         return binding.getRoot();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // Habilito los observadores aca, para solamente observa lo que paso despues de iniciar la actividad
+        // Habilito los observadores aca, para no reaccionar a lo que paso antes del inicio de la actividad
         habilitarObservadores = true;
     }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
 
     public interface Aviso {
         // Le pide a la MainActivity que pegue una actividad con Google Map
         void mostrarMapa(LatLng coordenadas);
-        // Le pide a la MainActivity que muestre la lista que llego
-        void nuevaListaItems();
+
     }
 
     // Genera el efecto de transicion entre las imagenes de los Items

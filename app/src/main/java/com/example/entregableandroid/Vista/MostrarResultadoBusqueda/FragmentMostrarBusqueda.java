@@ -40,26 +40,26 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     private ResultadoBusqueda ultimaBusqueda;
     private ProductoAdapter productoAdapter;
     private Item elementoBorrado;
+    private FragmentMostrarBusqueda.Aviso listener;
 
     public FragmentMostrarBusqueda() {
     }
 
-    // 1° en la creacion
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+        listener = (Aviso) context;
     }
 
-    // 2° En la creacion
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if ( savedInstanceState != null) {
+        if (savedInstanceState != null) {
             ultimaBusqueda = (ResultadoBusqueda) savedInstanceState.getSerializable(ResultadoBusqueda.class.toString());
         }
     }
 
-    @Override // 3° En la creacion
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentRecyclerviewBinding.inflate(getLayoutInflater());
 
@@ -80,17 +80,17 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
             @Override
             public void onChanged(ResultadoBusqueda resultadoBusqueda) {
                 // Si es la siguiente pagina, agrego
-                if ( resultadoBusqueda.getPagina() > 0 ) {
+                if (resultadoBusqueda.getPagina() > 0) {
                     ultimaBusqueda.agregarListaElementos(resultadoBusqueda.getResults());
-                } else  {
+                } else {
                     ultimaBusqueda = resultadoBusqueda;
                 }
                 productoAdapter.setListadDeProductos(ultimaBusqueda.getResults());
             }
         };
-        ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(getViewLifecycleOwner(),analizarBusqueda);
+        ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(getViewLifecycleOwner(), analizarBusqueda);
         DAOFirebase.get().getListaItems().observe(getViewLifecycleOwner(), analizarBusqueda);
-        DaoApiML.getInstancia(getActivity()).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(),analizarBusqueda);
+        DaoApiML.getInstancia(getActivity()).getResultadoBusquedaAPI().observe(getViewLifecycleOwner(), analizarBusqueda);
 
         return binding.getRoot();
     }
@@ -165,8 +165,13 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
      */
     @Override
     public void onItemClick(Item item) {
-        ItemViewModel.getInstancia(this).agregarDB(item);
-        DaoApiML.getInstancia(this).buscarItemPorId(item.getId());
+        // Si la ultima busqueda fue en firebase.
+        if (ultimaBusqueda.getOrigen().equals(ResultadoBusqueda.BUSQUEDA_FIREBASE)) {
+            listener.mostrarItemFirebase(item);
+        } else {
+            ItemViewModel.getInstancia(this).agregarDB(item);
+            DaoApiML.getInstancia(this).buscarItemPorId(item.getId());
+        }
     }
 
     @Override
@@ -177,7 +182,7 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     @Override
     public void necesitoMasElementos() {
         Log.d(TAG, "Estamos llegando al final de la lista");
-        if ( ultimaBusqueda.getOrigen() == ResultadoBusqueda.BUSQUEDA_API ) {
+        if (ultimaBusqueda.getOrigen() == ResultadoBusqueda.BUSQUEDA_API) {
             DaoApiML.getInstancia(this).masDeLaUltima();
         }
     }
@@ -185,11 +190,14 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if ( binding!= null ) {
+        if (binding != null) {
             binding = null;
         }
     }
 
+    public interface Aviso {
+        void mostrarItemFirebase(Item item);
+    }
 
 }
 

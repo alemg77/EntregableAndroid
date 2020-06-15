@@ -182,7 +182,7 @@ public class DaoApiML extends ViewModel {
         });
     }
 
-    public void buscarDescripcionItemm(String id) {
+    public void buscarDescripcionItem(String id) {
         Log.d(TAG, "Vamos buscar la descripcion de un item");
 
         servicioML.getItemDescripcionPorId(id).enqueue(new Callback<List<DescripcionItem>>() {

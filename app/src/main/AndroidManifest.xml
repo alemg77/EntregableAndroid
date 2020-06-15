@@ -37,8 +37,6 @@
         </activity>
 
 
-        <activity android:name=".Vista.Usuario.ActivityUsuario"></activity>
-
         <service
             android:name=".Controlador.GoogleMap.FetchAddressIntentService"
             android:exported="false" />

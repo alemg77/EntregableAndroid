@@ -21,7 +21,6 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
@@ -30,8 +29,11 @@ import com.example.entregableandroid.Controlador.ApiML.DaoApiML;
 import com.example.entregableandroid.Controlador.ApiML.ConstantesML;
 import com.example.entregableandroid.Controlador.Firebase.DAOFirebase;
 import com.example.entregableandroid.Controlador.ItemViewModel;
+import com.example.entregableandroid.Modelo.ApiML.Item;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
-import com.example.entregableandroid.Vista.DetalleProducto.FragmentDetalleProducto;
+import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
+import com.example.entregableandroid.Vista.DetalleProducto.FragmentItemAPI;
+import com.example.entregableandroid.Vista.DetalleProducto.FragmentItemFirebase;
 import com.example.entregableandroid.Vista.MostrarResultadoBusqueda.FragmentMostrarBusqueda;
 import com.example.entregableandroid.Vista.Usuario.FragmentLogin;
 import com.example.entregableandroid.Vista.FragmentPublicar;
@@ -47,7 +49,7 @@ import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentDetalleProducto.Aviso, FragmentPublicar.Avisos {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FragmentItemAPI.Aviso, FragmentMostrarBusqueda.Aviso {
     private ActivityMainBinding binding;
     private static String TAG = MainActivity.class.toString();
     private DaoApiML apiMLDao;
@@ -80,16 +82,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(view);
         Log.d(TAG, "********* INICIO DE LA APLICACION Entregable Android **********************************");
 
-        printHashKey(this);
-
-        // Preparo la API de mercaolibre
-        apiMLDao = DaoApiML.getInstancia(this);
-        apiMLDao.setProvincia(ConstantesML.BUENOS_AIRES);
-
         // Si es una reconstruccion, nos llega informacion
         if (savedInstanceState != null) {
             ultimoFragmentePegado = savedInstanceState.getString(KEY_FRAGMENT_PEGADO);
         }
+
+        //printHashKey(this);
+        // Preparo la API de mercaolibre
+        apiMLDao = DaoApiML.getInstancia(this);
+        apiMLDao.setProvincia(ConstantesML.BUENOS_AIRES);
 
         // Si no hay ningun fragment pegado, pido
         if (ultimoFragmentePegado == null) {
@@ -106,20 +107,44 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Preparo el menu de Navegacion
         binding.navigation.setNavigationItemSelectedListener(this);
 
-        //
-        final Observer<ItemAPI> observadorItem = new Observer<ItemAPI>() {
+        apiMLDao.getItemAPIMutableLiveData().observe(this,
+                new Observer<ItemAPI>() {
+                    @Override
+                    public void onChanged(ItemAPI itemAPI) {
+                        pegarFragment(new FragmentItemAPI(), R.id.MainFragment, itemAPI);
+                    }
+                });
+
+
+        // Si se realizo una busqueda en la base de datos local, hay que mostrarla
+        final Observer<ResultadoBusqueda> observarBusqueda = new Observer<ResultadoBusqueda>() {
             @Override
-            public void onChanged(ItemAPI itemAPI) {
-                pegarFragment(new FragmentDetalleProducto(), R.id.MainFragment, itemAPI);
+            public void onChanged(ResultadoBusqueda resultadoBusqueda) {
+                regresarAFragmentMostrarResultadoBusqueda();
             }
         };
-        apiMLDao.getItemAPIMutableLiveData().observe(this, observadorItem);
 
+        // Asigno a todas las fuentes de busqueda el mismo comportamiento
+        apiMLDao.getResultadoBusquedaAPI().observe(this, observarBusqueda);
+        DAOFirebase.get().getListaItems().observe(this, observarBusqueda);
+        ItemViewModel.getInstancia(this).getResultadoBusquedaDB().observe(this, observarBusqueda);
     }
 
-    /**
-     * Atiende los pedidos de busqueda que se realizan en la Tool Bar.
+    /***
+     *  Esta funcion se asegura que se muestre el fragment original.
+     *  El fragment original muestra el resultado de una busqueda
      */
+    private void regresarAFragmentMostrarResultadoBusqueda() {
+        FragmentManager supportFragmentManager = this.getSupportFragmentManager();
+        while ( supportFragmentManager.getBackStackEntryCount() > 1 ){
+            supportFragmentManager.popBackStackImmediate();
+        }
+    }
+
+
+    /**************************
+     * Atiende los pedidos de busqueda que se realizan en la Tool Bar.
+     ********/
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -153,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (item.getItemId()) {
             case R.id.action_bar_usuario:
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                if ( currentUser == null) {
+                if (currentUser == null) {
                     pegarFragment(new FragmentLogin(), R.id.MainFragment);
                 } else {
                     pegarFragment(new FragmentMostrarUsuario(), R.id.MainFragment);
@@ -169,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         actionBarDrawerToggle.syncState();
     }
 
-    /**
+    /************
      * Atiende los pedidos del menu lateral
      *********/
     @Override
@@ -235,25 +260,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
-    /**
+    /****************
      * Pasa a otra actividad para mostrar el mapa de google
      *
      * @param coordenadas: lugar a mostrar
-     */
+     *********/
     @Override
     public void mostrarMapa(LatLng coordenadas) {
         Intent intent = new Intent(MainActivity.this, MapsActivity.class);
         intent.putExtra(LatLng.class.toString(), coordenadas);
         startActivity(intent);
-    }
-
-    @Override
-    public void nuevaListaItems() {
-        FragmentManager supportFragmentManager = this.getSupportFragmentManager();
-        int backStackEntryCount = supportFragmentManager.getBackStackEntryCount();
-        if ( backStackEntryCount > 0) {
-            supportFragmentManager.popBackStack();
-        }
     }
 
     private void pegarFragment(Fragment fragmentAPegar, int containerViewId) {
@@ -280,21 +296,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void llegoUnaLista() {
+    public void onBackPressed() {
+        super.onBackPressed();
         FragmentManager supportFragmentManager = this.getSupportFragmentManager();
-        int backStackEntryCount = supportFragmentManager.getBackStackEntryCount();
-        for ( int i = 1 ; i < backStackEntryCount  ; i++){
-            supportFragmentManager.popBackStack();
+        if (supportFragmentManager.getBackStackEntryCount() == 0) {
+            finish();
         }
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        FragmentManager supportFragmentManager = this.getSupportFragmentManager();
-        if ( supportFragmentManager.getBackStackEntryCount() == 0 ){
-            finish();
-        }
+    public void mostrarItemFirebase(Item item) {
+        pegarFragment(new FragmentItemFirebase(), R.id.MainFragment, item);
     }
 }
 

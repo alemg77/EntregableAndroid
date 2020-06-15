@@ -21,9 +21,7 @@ public class ItemViewModel extends AndroidViewModel {
 
     private String TAG = getClass().toString();
     private static AppDatabase db;
-    private static DaoApiML daoApiML;
     private static ItemViewModel instancia;
-    private ViewModelStoreOwner storeOwner;
 
 
     private MutableLiveData<ResultadoBusqueda> resultadoBusquedaDB;
