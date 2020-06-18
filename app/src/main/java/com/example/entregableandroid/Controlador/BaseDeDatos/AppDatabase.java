@@ -14,31 +14,24 @@ import com.example.entregableandroid.Modelo.ApiML.Item;
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract ElementoListaDao elementoListaDao();
-
     private static AppDatabase sIntance;
 
-
     public static AppDatabase get (Context context){
-        return Room.databaseBuilder(context,AppDatabase.class, Constantes.BD_NAME)
-                .allowMainThreadQueries()
-                .fallbackToDestructiveMigration()       // Borra la base existente si en una version anterior
-                .build();
-    }
-
-    // TODO: Hacer una version que realize la busqueda en otro hilo
-
-    /*
-    // synchronized: Un solo hilo puede acceder para que no se creen dos instancias.
-    public static synchronized AppDatabase getInstance(Context context){
-        if ( sIntance == null ) {
-            // No se pude hacer un new porque es abstracta
-            sIntance = Room.databaseBuilder(context.getApplicationContext(),
-                    AppDatabase.class,Constantes.BD_NAME)
+        if ( sIntance == null) {
+            sIntance = Room.databaseBuilder(context, AppDatabase.class, Constantes.BD_NAME)
+                    .allowMainThreadQueries()
                     .fallbackToDestructiveMigration()       // Borra la base existente si en una version anterior
                     .build();
         }
         return sIntance;
     }
+
+
+
+    // Para mejorar: Hacer una version que realize la busqueda en otro hilo
+    /*
+    // synchronized: Un solo hilo puede acceder para que no se creen dos instancias.
+    public static synchronized AppDatabase getInstance(Context context){
     */
 
 }

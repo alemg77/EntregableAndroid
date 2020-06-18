@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String ultimoFragmentePegado;
     private static final String KEY_FRAGMENT_PEGADO = "ULTIMO fragment pegado";
 
-
     public static void printHashKey(Context pContext) {
         try {
             PackageInfo info = pContext.getPackageManager().getPackageInfo(pContext.getPackageName(), PackageManager.GET_SIGNATURES);
