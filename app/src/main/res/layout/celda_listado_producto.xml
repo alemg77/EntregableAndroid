@@ -28,12 +28,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.41" />
+                app:layout_constraintGuide_percent="0.50" />
 
             <ImageView
                 android:id="@+id/celdaListadoImagen"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_margin="5dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/celdaListadoGuideVertical"
                 app:layout_constraintHorizontal_bias="0.352"
@@ -46,6 +47,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:gravity="center"
+                android:textColor="@color/negro"
+                android:fontFamily="sans-serif"
                 android:text="Text1"
                 android:textSize="18dp"
                 app:layout_constraintBottom_toTopOf="@+id/celdaListadoPrecio"
@@ -61,6 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:gravity="center"
+                android:textColor="@color/rojoOscuro"
                 android:text="Text3"
                 android:textSize="25dp"
                 app:layout_constraintBottom_toBottomOf="parent"
