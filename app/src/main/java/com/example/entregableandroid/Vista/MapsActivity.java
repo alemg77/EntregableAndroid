@@ -98,19 +98,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         if(mGeoApiContext == null) mGeoApiContext = new GeoApiContext.Builder().apiKey(getString(R.string.google_maps_key)).build();
+
         mMap = googleMap;
-
         mMap.setOnMarkerClickListener(this);
-
         mMap.setOnMapClickListener(this);
-
 
         mMap.addMarker(new MarkerOptions()
                 .position(coordenadas)
                 .icon(vectorToBitmap(R.drawable.ic_person_black_24dp, Color.parseColor("#FF0000")))
                 .title("Vendedor"));
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordenadas,15));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coordenadas,13));
     }
 
     private BitmapDescriptor vectorToBitmap(@DrawableRes int id, @ColorInt int color) {

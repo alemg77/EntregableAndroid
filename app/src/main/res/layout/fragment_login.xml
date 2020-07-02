@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Vista.Usuario.FragmentLogin"
     android:background="#FFFFFF"
-    >
+    tools:context=".Vista.Usuario.FragmentLogin">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true"
-        android:layout_width="match_parent" >
+        android:clickable="true">
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/botonLogearGoogle"
@@ -19,6 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/buttonLogearFacebook"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -32,7 +32,111 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/fragmentLoginCardViewMail"
             app:layout_constraintTop_toBottomOf="@+id/botonLogearGoogle" />
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/fragmentLoginCardViewMail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginBottom="100dp"
+            android:elevation="15dp"
+            android:backgroundTint="#A0A4A5"
+            app:cardCornerRadius="15dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/buttonLogearFacebook">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/CardViewLoginMail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/MaterialMail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal|top"
+                    android:layout_margin="10dp"
+                    android:background="@color/blanco"
+                    android:hint="E-Mail"
+                    android:textColorHint="@color/negro"
+                    app:counterTextColor="@color/colorPrimaryDark"
+                    app:helperTextTextColor="@color/negro"
+                    app:layout_constraintBottom_toTopOf="@+id/MaterialPassword"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/usarioMail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/negro" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/MaterialPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textColorHint="@color/negro"
+                    android:layout_margin="10dp"
+                    app:hintTextColor="@color/rojo"
+                    android:background="@color/blanco"
+                    android:hint="Password"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toTopOf="@+id/botonLoginMailyPassword"
+                    app:layout_constraintTop_toBottomOf="@+id/MaterialMail">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/usuarioPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Button
+                    android:id="@+id/botonLoginMailyPassword"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Ingresar"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_margin="5dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/botonRegisrtrarse"
+                    app:layout_constraintTop_toBottomOf="@+id/MaterialPassword" />
+
+                <Button
+                    android:id="@+id/botonRegisrtrarse"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="Registrarse"
+                    app:layout_constraintBottom_toBottomOf="@+id/botonLoginMailyPassword"
+                    app:layout_constraintEnd_toStartOf="@+id/botonLoginMailyPassword"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/botonLoginMailyPassword" />
+
+                <Button
+                    android:id="@+id/botonRecuperarPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:text="Recuperar Password"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/botonLoginMailyPassword" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

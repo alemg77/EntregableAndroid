@@ -42,6 +42,13 @@ public class DAOFirebase extends ViewModel {
     private MutableLiveData<Integer> progreso;
     private MutableLiveData<String> archivoSubido;
 
+    public static DAOFirebase get() {
+        if (instanciaUnica == null) {
+            instanciaUnica = new DAOFirebase();
+        }
+        return instanciaUnica;
+    }
+
     public DAOFirebase() {
         this.referenciaDB = FirebaseFirestore.getInstance().collection(NOMBRE_BD_ITEMS);
         this.storage = FirebaseStorage.getInstance();
@@ -77,13 +84,6 @@ public class DAOFirebase extends ViewModel {
             archivoSubido = new MutableLiveData<String>();
         }
         return archivoSubido;
-    }
-
-    public static DAOFirebase get() {
-        if (instanciaUnica == null) {
-            instanciaUnica = new DAOFirebase();
-        }
-        return instanciaUnica;
     }
 
     public void leerTodos() {

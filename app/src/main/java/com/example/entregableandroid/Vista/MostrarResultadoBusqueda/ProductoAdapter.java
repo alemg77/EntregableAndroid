@@ -59,6 +59,7 @@ public class ProductoAdapter extends RecyclerView.Adapter<ProductoAdapter.Produc
     public class ProductoViewHolder extends RecyclerView.ViewHolder {
         private CeldaListadoProductoBinding binding;
 
+
         public ProductoViewHolder(@NonNull CeldaListadoProductoBinding celdaListadoProductoBinding) {
             super(celdaListadoProductoBinding.getRoot());
             binding = celdaListadoProductoBinding;
