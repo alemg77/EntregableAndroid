@@ -70,11 +70,11 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
         Context context = getActivity().getApplicationContext();
         productoAdapter = new ProductoAdapter(context, this, ultimaBusqueda.getResults());
         LinearLayoutManager dosLayoutManager = new LinearLayoutManager(getActivity());
-        binding.RecyclerView.setLayoutManager(dosLayoutManager);
-        binding.RecyclerView.setAdapter(productoAdapter);
+        binding.RecyclerViewListaProductos.setLayoutManager(dosLayoutManager);
+        binding.RecyclerViewListaProductos.setAdapter(productoAdapter);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
-        itemTouchHelper.attachToRecyclerView(binding.RecyclerView);
+        itemTouchHelper.attachToRecyclerView(binding.RecyclerViewListaProductos);
 
         final Observer<ResultadoBusqueda> analizarBusqueda = new Observer<ResultadoBusqueda>() {
             @Override
@@ -130,7 +130,7 @@ public class FragmentMostrarBusqueda extends Fragment implements RecyclerViewCli
                     ultimaBusqueda.eliminarElemento(posicion);
                     elementoBorrado = ultimaBusqueda.getResults().get(posicion);
                     productoAdapter.notifyItemRemoved(posicion);
-                    Snackbar.make(binding.RecyclerView, "Regresar?", Snackbar.LENGTH_LONG)
+                    Snackbar.make(binding.RecyclerViewListaProductos, "Regresar?", Snackbar.LENGTH_LONG)
                             .setAction("Si", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {

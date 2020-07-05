@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import com.example.entregableandroid.Modelo.ApiML.DescripcionItem;
 import com.example.entregableandroid.Modelo.ApiML.ItemAPI;
 import com.example.entregableandroid.Modelo.ApiML.ResultadoBusqueda;
+import com.example.entregableandroid.utils.EspressoIdlingTask;
 
 import java.util.List;
 
@@ -93,6 +94,7 @@ public class DaoApiML extends ViewModel {
         ultimaBusquedaRangoPrecio = rangoPrecio;
         ultimaBusquedaLimit = limit;
         ultimaBusquedaOffset = offset;
+        EspressoIdlingTask.INSTANCE.increment();
         Log.d(TAG, "Vamos a hacer una busqueda en MercadoLibre");
         servicioML.getItemsPorDescripcion(
                 "all",
@@ -112,6 +114,7 @@ public class DaoApiML extends ViewModel {
                         resultadoBusqueda.setOrigen(ResultadoBusqueda.BUSQUEDA_API);
                         resultadoBusqueda.setPagina(ultimaBusquedaOffset);
                         resultadoBusquedaAPIMutableLiveData.setValue(response.body());
+                        EspressoIdlingTask.INSTANCE.decrement();
                     }
                     @Override
                     public void onFailure(Call<ResultadoBusqueda> call, Throwable t) {
